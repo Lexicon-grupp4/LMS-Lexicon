@@ -12,6 +12,66 @@ Slutprojekt på Lexicon: en lärplattform (LMS) byggd med Blazor Web App, remote
 | Azure (LMS.API) | https://lms-grupp4-ebaygyhdcwhzbkgg.swedencentral-01.azurewebsites.net/ |
 | Deploy-workflow | [`.github/workflows/main_lms-grupp4.yml`](.github/workflows/main_lms-grupp4.yml) |
 
+## Datamodell
+
+> Utkast. Uppdateras när entiteterna är bestämda och skapade i `Domain.Models`.
+
+```mermaid
+erDiagram
+    Course ||--o{ Module : "har"
+    Module ||--o{ Activity : "har"
+    ActivityType ||--o{ Activity : "typ av"
+    Course ||--o{ ApplicationUser : "har deltagare"
+    Course ||--o{ Document : "kan ha"
+    Module ||--o{ Document : "kan ha"
+    Activity ||--o{ Document : "kan ha"
+    ApplicationUser ||--o{ Document : "laddar upp"
+
+    Course {
+        int Id PK
+        string Name
+        string Description
+        datetime StartDate
+    }
+    Module {
+        int Id PK
+        int CourseId FK
+        string Name
+        string Description
+        datetime StartDate
+        datetime EndDate
+    }
+    Activity {
+        int Id PK
+        int ModuleId FK
+        int ActivityTypeId FK
+        string Name
+        string Description
+        datetime StartDate
+        datetime EndDate
+    }
+    ActivityType {
+        int Id PK
+        string Name
+    }
+    ApplicationUser {
+        string Id PK
+        int CourseId FK "nullable"
+        string Name
+        string Email
+    }
+    Document {
+        int Id PK
+        string Name
+        string FilePath
+        datetime UploadedAt
+        string UploaderId FK
+        int CourseId FK "nullable"
+        int ModuleId FK "nullable"
+        int ActivityId FK "nullable"
+    }
+```
+
 ## Branches
 
 | Branch | Syfte |
