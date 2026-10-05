@@ -18,7 +18,7 @@ Slutprojekt på Lexicon: en lärplattform (LMS) byggd med Blazor Web App, remote
 
 ```mermaid
 erDiagram
-   erDiagram
+erDiagram
 
     Course ||--o{ Module : "has"
     Module ||--o{ Activity : "has"
