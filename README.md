@@ -118,6 +118,9 @@ Håll högst 2–3 PRs samtidigt i Ready for review. Prioritera review när kön
 - [ ] Mergad till `development` och berörda sub-issues stängda.
 - [ ] README uppdaterad vid ändrad installation eller konfiguration.
 
+Sprint Goal 1
+Skapa en stabil grund för LMS:et genom att verifiera templaten och GitHub-flödet samt bygga den grundläggande strukturen för användare och kurser.
+
 ## Kom igång
 
 _Fylls i när templaten finns: krav (.NET 10 SDK), secrets, databas och hur API och Blazor startas._
