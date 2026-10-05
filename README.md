@@ -18,21 +18,35 @@ Slutprojekt på Lexicon: en lärplattform (LMS) byggd med Blazor Web App, remote
 
 ```mermaid
 erDiagram
-    Course ||--o{ Module : "har"
-    Module ||--o{ Activity : "har"
-    ActivityType ||--o{ Activity : "typ av"
-    Course ||--o{ ApplicationUser : "har deltagare"
-    Course ||--o{ Document : "kan ha"
-    Module ||--o{ Document : "kan ha"
-    Activity ||--o{ Document : "kan ha"
-    ApplicationUser ||--o{ Document : "laddar upp"
+   erDiagram
+
+    Course ||--o{ Module : "has"
+    Module ||--o{ Activity : "has"
+    ActivityType ||--o{ Activity : "type of"
+
+    Course ||--o{ ApplicationUser : "has users"
+
+    Course ||--o{ Document : "has"
+    Module ||--o{ Document : "has"
+    Activity ||--o{ Document : "has"
+
+    ApplicationUser ||--o{ Document : "uploads"
+    ApplicationUser ||--o{ Notification : "receives"
+    ApplicationUser ||--o{ Submission : "submits"
+    ApplicationUser ||--o{ Feedback : "gives"
+
+    Activity ||--o{ Submission : "has"
+    Submission ||--o{ Feedback : "has"
 
     Course {
         int Id PK
         string Name
+        string Code
         string Description
         datetime StartDate
+        datetime EndDate
     }
+
     Module {
         int Id PK
         int CourseId FK
@@ -41,36 +55,67 @@ erDiagram
         datetime StartDate
         datetime EndDate
     }
-    Activity {
-        int Id PK
-        int ModuleId FK
-        int ActivityTypeId FK
-        string Name
-        string Description
-        datetime StartDate
-        datetime EndDate
-    }
+
     ActivityType {
         int Id PK
         string Name
     }
+
+    Activity {
+        int Id PK
+        int ModuleId FK
+        int ActivityTypeId FK
+        string Title
+        string Description
+        datetime StartTime
+        datetime EndTime
+    }
+
     ApplicationUser {
         string Id PK
-        int CourseId FK "nullable"
-        string Name
+        string FirstName
+        string LastName
         string Email
+        int CourseId FK "nullable"
     }
+
     Document {
         int Id PK
-        string Name
-        string FilePath
-        datetime UploadedAt
-        string UploaderId FK
+        int ActivityId FK "nullable"
         int CourseId FK "nullable"
         int ModuleId FK "nullable"
-        int ActivityId FK "nullable"
+        string FileName
+        string FilePath
+        datetime UploadedAt
+        string UploadedById FK
     }
-```
+
+    Submission {
+        int Id PK
+        int ActivityId FK
+        string UserId FK
+        string FileName
+        string FilePath
+        datetime SubmittedAt
+        string Status
+    }
+
+    Feedback {
+        int Id PK
+        int SubmissionId FK
+        string UserId FK
+        string Comment
+        string Grade
+        datetime CreatedAt
+    }
+
+    Notification {
+        int Id PK
+        string UserId FK
+        string Message
+        bool IsRead
+        datetime CreatedAt
+    }
 
 ## Branches
 
