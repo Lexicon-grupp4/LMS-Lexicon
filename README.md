@@ -12,10 +12,10 @@ Slutprojekt på Lexicon: en lärplattform (LMS) byggd med Blazor Web App, remote
 | Azure (LMS.API) | https://lms-grupp4-ebaygyhdcwhzbkgg.swedencentral-01.azurewebsites.net/ |
 | Deploy-workflow | [`.github/workflows/main_lms-grupp4.yml`](.github/workflows/main_lms-grupp4.yml) |
 
-## Datamodell
-
+# Data Model
 > Utkast. Uppdateras när entiteterna är bestämda och skapade i `Domain.Models`.
 
+```mermaid
 erDiagram
  
     Course ||--o{ Module : "has"
