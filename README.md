@@ -106,7 +106,7 @@ Håll högst 2–3 PRs samtidigt i Ready for review. Prioritera review när kön
 | In review | En PR är Ready for review. |
 | Done | Granskat, mergat och verifierat. |
 
-## Definition of Done
+## Definition of Done 
 
 - [ ] Uppfyller issuebeskrivningen och berörda acceptance criteria.
 - [ ] Bygger utan fel och kan startas.
@@ -119,6 +119,7 @@ Håll högst 2–3 PRs samtidigt i Ready for review. Prioritera review när kön
 - [ ] README uppdaterad vid ändrad installation eller konfiguration.
 
 Sprint Goal 1
+
 Skapa en stabil grund för LMS:et genom att verifiera templaten och GitHub-flödet samt bygga den grundläggande strukturen för användare och kurser.
 
 ## Kom igång
