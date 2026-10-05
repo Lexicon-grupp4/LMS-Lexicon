@@ -1,36 +1,56 @@
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-
-app.UseHttpsRedirection();
-
-app.MapGet("/", () => "LMS.API deploy test OK");
-
-var summaries = new[]
+using LMS.API.Extensions;
+using LMS.API.Services;
+using LMS.Infrastructure.Data;
+using LMS.Presentation;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+internal class Program
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    private static void Main(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-});
+        var connectionString = builder.Configuration.GetConnectionString("ApplicationDbContext") ?? throw new InvalidOperationException("Connection string 'ApplicationDbContext' not found.");
+        builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 
-app.Run();
+        builder.Services.AddControllers(opt =>
+        {
+            opt.ReturnHttpNotAcceptable = true;
+            opt.Filters.Add(new ProducesAttribute("application/json"));
+        })
+        .AddApplicationPart(typeof(AssemblyReference).Assembly);
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        builder.Services.AddHostedService<DataSeedService>();
+        builder.Services.ConfigureSwagger();
+        builder.Services.AddRepositories();
+        builder.Services.AddServiceLayer();
+        builder.Services.ConfigureAuthentication(builder.Configuration);
+        builder.Services.ConfigureIdentity();
+        builder.Services.ConfigurePolicys();
+
+        var app = builder.Build();
+
+        app.ConfigureExceptionHandler();
+
+        // Configure the HTTP request pipeline.
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+
+            app.UseSwaggerUI();
+        }
+
+        app.UseHttpsRedirection();
+
+        app.UseCors();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        app.MapControllers()
+           .RequireAuthorization("Default");
+
+        app.Run();
+    }
 }
