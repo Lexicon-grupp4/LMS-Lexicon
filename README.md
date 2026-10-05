@@ -112,7 +112,7 @@ erDiagram
 
         string Email
 
-        int CourseId FK "nullable"
+        int CourseId FK
 
     }
  
@@ -120,11 +120,11 @@ erDiagram
 
         int Id PK
 
-        int ActivityId FK "nullable"
+        int ActivityId FK 
 
-        int CourseId FK "nullable"
+        int CourseId FK 
 
-        int ModuleId FK "nullable"
+        int ModuleId FK 
 
         string FileName
 
@@ -183,7 +183,7 @@ erDiagram
         datetime CreatedAt
 
     }
- 
+ ```
 
 ## Branches
 
