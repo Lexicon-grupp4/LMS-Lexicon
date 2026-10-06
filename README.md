@@ -9,68 +9,181 @@ Slutprojekt på Lexicon: en lärplattform (LMS) byggd med Blazor Web App, remote
 | Vad | Länk |
 |---|---|
 | Projektboard | https://github.com/orgs/Lexicon-grupp4/projects/1 |
-| Azure (LMS.API) | https://lms-grupp4-ebaygyhdcwhzbkgg.swedencentral-01.azurewebsites.net/ |
+| Azure (LMS.API) | https://lms2-api.azurewebsites.net/ |
 | Deploy-workflow | [`.github/workflows/main_lms-grupp4.yml`](.github/workflows/main_lms-grupp4.yml) |
 
-## Datamodell
-
+# Data Model
 > Utkast. Uppdateras när entiteterna är bestämda och skapade i `Domain.Models`.
 
 ```mermaid
 erDiagram
-    Course ||--o{ Module : "har"
-    Module ||--o{ Activity : "har"
-    ActivityType ||--o{ Activity : "typ av"
-    Course ||--o{ ApplicationUser : "har deltagare"
-    Course ||--o{ Document : "kan ha"
-    Module ||--o{ Document : "kan ha"
-    Activity ||--o{ Document : "kan ha"
-    ApplicationUser ||--o{ Document : "laddar upp"
+ 
+    Course ||--o{ Module : "has"
 
+    Module ||--o{ Activity : "has"
+
+    ActivityType ||--o{ Activity : "type of"
+ 
+    Course ||--o{ ApplicationUser : "has users"
+ 
+    Course ||--o{ Document : "has"
+
+    Module ||--o{ Document : "has"
+
+    Activity ||--o{ Document : "has"
+ 
+    ApplicationUser ||--o{ Document : "uploads"
+
+    ApplicationUser ||--o{ Notification : "receives"
+
+    ApplicationUser ||--o{ Submission : "submits"
+
+    ApplicationUser ||--o{ Feedback : "gives"
+ 
+    Activity ||--o{ Submission : "has"
+
+    Submission ||--o{ Feedback : "has"
+ 
     Course {
+
         int Id PK
+
         string Name
+
+        string Code
+
         string Description
+
         datetime StartDate
+
+        datetime EndDate
+
     }
+ 
     Module {
+
         int Id PK
+
         int CourseId FK
+
         string Name
+
         string Description
+
         datetime StartDate
+
         datetime EndDate
+
     }
-    Activity {
-        int Id PK
-        int ModuleId FK
-        int ActivityTypeId FK
-        string Name
-        string Description
-        datetime StartDate
-        datetime EndDate
-    }
+ 
     ActivityType {
+
         int Id PK
+
         string Name
+
     }
+ 
+    Activity {
+
+        int Id PK
+
+        int ModuleId FK
+
+        int ActivityTypeId FK
+
+        string Title
+
+        string Description
+
+        datetime StartTime
+
+        datetime EndTime
+
+    }
+ 
     ApplicationUser {
+
         string Id PK
-        int CourseId FK "nullable"
-        string Name
+
+        string FirstName
+
+        string LastName
+
         string Email
+
+        int CourseId FK
+
     }
+ 
     Document {
+
         int Id PK
-        string Name
+
+        int ActivityId FK 
+
+        int CourseId FK 
+
+        int ModuleId FK 
+
+        string FileName
+
         string FilePath
+
         datetime UploadedAt
-        string UploaderId FK
-        int CourseId FK "nullable"
-        int ModuleId FK "nullable"
-        int ActivityId FK "nullable"
+
+        string UploadedById FK
+
     }
-```
+ 
+    Submission {
+
+        int Id PK
+
+        int ActivityId FK
+
+        string UserId FK
+
+        string FileName
+
+        string FilePath
+
+        datetime SubmittedAt
+
+        string Status
+
+    }
+ 
+    Feedback {
+
+        int Id PK
+
+        int SubmissionId FK
+
+        string UserId FK
+
+        string Comment
+
+        string Grade
+
+        datetime CreatedAt
+
+    }
+ 
+    Notification {
+
+        int Id PK
+
+        string UserId FK
+
+        string Message
+
+        bool IsRead
+
+        datetime CreatedAt
+
+    }
+ ```
 
 ## Branches
 
@@ -128,4 +241,4 @@ _Fylls i när templaten finns: krav (.NET 10 SDK), secrets, databas och hur API 
 
 ## Deploy
 
-Push till `main` kör GitHub Actions som bygger och publicerar `LMS.API` till Azure App Service `lms-grupp4`. Azure-inloggningen gäller bara körningar från `main`.
+Push till `main` kör GitHub Actions som bygger och publicerar `LMS.API` till Azure App Service `lms2-api`. Azure-inloggningen gäller bara körningar från `main`.
