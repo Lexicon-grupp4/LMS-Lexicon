@@ -231,9 +231,37 @@ Håll högst 2–3 PRs samtidigt i Ready for review. Prioritera review när kön
 - [ ] Mergad till `development` och berörda sub-issues stängda.
 - [ ] README uppdaterad vid ändrad installation eller konfiguration.
 
-Sprint Goal 1
+**Sprint Goal 1**
 
 Skapa en stabil grund för LMS:et genom att verifiera templaten och GitHub-flödet samt bygga den grundläggande strukturen för användare och kurser.
+
+**Arbetssätt Under Sprint 1** 
+
+- **Daily Standup kl.  09:15** 
+  - Vad gjorde jag igår?
+  - Vad ska jag göra idag?
+  - Finns det något som blockerar mig?
+
+- **Avstämning efter lunch kl. 13:15**
+  - Kort check-in på hur arbetet går.
+  - Ta upp eventuella problem eller blockeringar.
+  - Stäm av om någon behöver hjälp från gruppen.
+
+- **När en Pull Request är skickad**
+  - Skriv i **Grupp 4-chatten** att PR:n är skickad.
+  - **Marwan eller Peter** granskar PR:n.
+  - Marwan eller Peter mergar PR:n till `develop` när den är godkänd.
+
+- **PR får inte bli sittande**
+  - Vi ska inte låta Pull Requests ligga obesvarade eller blockera arbetet.
+  - Om en PR inte går att granska eller merga på grund av fel, konflikter eller andra problem ska vi **stanna upp arbetet**.
+  - Gruppen samlas i ett kort möte och hjälps åt att lösa problemet.
+  - Arbetet fortsätter när PR:n är löst och gruppen kan arbeta vidare från en uppdaterad `develop`.
+
+- **Efter merge**
+  - Skriv i **Grupp 4-chatten** att PR:n är mergad.
+  - Meddela gruppen att de nu kan **fetcha/pulla senaste versionen från `develop`**.
+  - Alla hämtar senaste ändringarna innan de fortsätter arbeta, så att hela gruppen arbetar med uppdaterad kod.
 
 ## Kom igång
 
