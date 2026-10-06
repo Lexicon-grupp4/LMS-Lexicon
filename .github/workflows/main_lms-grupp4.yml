@@ -29,11 +29,20 @@ jobs:
       - name: dotnet publish
         run: dotnet publish LMS.API -c Release -o "${{env.DOTNET_ROOT}}/myapp"
 
+      - name: dotnet publish web
+        run: dotnet publish LMS.Blazor/LMS.Blazor -c Release -o "${{env.DOTNET_ROOT}}/myweb"
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
+
+      - name: Upload web artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: .net-web
+          path: ${{env.DOTNET_ROOT}}/myweb
 
   deploy:
     runs-on: windows-latest
@@ -47,6 +56,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: .net-app
+          path: api
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -61,4 +71,18 @@ jobs:
         with:
           app-name: "lms2-api"
           slot-name: "Production"
-          package: .
+          package: api
+
+      - name: Download web artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: .net-web
+          path: web
+
+      - name: Deploy web to Azure Web App
+        id: deploy-web-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: "lms2-web"
+          slot-name: "Production"
+          package: web
