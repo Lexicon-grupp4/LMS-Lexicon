@@ -185,6 +185,7 @@ erDiagram
     }
  ```
 
+
 ## Branches
 
 | Branch | Syfte |
@@ -193,6 +194,10 @@ erDiagram
 | `development` | Default-branch. Alla feature-PRs går hit. |
 | `feature/usXX-kort-namn` | Ny funktionalitet, t.ex. `feature/us04-modules` |
 | `bugfix/kort-namn` | Buggrättningar, t.ex. `bugfix/submission-deadline` |
+
+**Sprint Goal 1**
+
+Skapa en stabil grund för LMS:et genom att verifiera templaten och GitHub-flödet samt bygga den grundläggande strukturen för användare och kurser.
 
 ## Arbetsflöde
 
@@ -208,6 +213,34 @@ erDiagram
 7. `development` → `main` via PR när gruppen har en verifierad leveranspunkt.
 
 Håll högst 2–3 PRs samtidigt i Ready for review. Prioritera review när kön växer.
+
+## Arbetssätt under Sprint 1
+
+- **15 min Daily Standup kl. 09:15**
+  - Vad gjorde jag igår?
+  - Vad ska jag göra idag?
+  - Finns det något som blockerar mig?
+
+- **Avstämning efter lunch kl. 13:15**
+  - Kort avstämning om hur arbetet går.
+  - Ta upp problem eller blockeringar.
+  - Stäm av om någon behöver hjälp.
+
+- **Mötesdisciplin**
+  - En person pratar i taget.
+  - Låt den som pratar tala till punkt innan nästa person börjar.
+  - Håll diskussionerna korta och relevanta för sprinten.
+  - Om en längre diskussion behövs tas den efter standup eller i ett separat kort möte.
+
+- **Pull Request**
+  - Skriv issue-numret, t.ex. `#123`, när du skickar PR.
+
+- **PR får inte bli sittande**
+  - Pull Requests ska inte ligga och blockera gruppens arbete.
+  - Om en PR fastnar på grund av fel, konflikter eller annat problem stannar gruppen upp.
+  - Gruppen tar ett kort gemensamt möte och hjälps åt att lösa problemet samt frågar läraren vid behov.
+  - Review prioriteras när PR-kön växer.
+
 
 ## Statusar på boarden
 
@@ -231,9 +264,6 @@ Håll högst 2–3 PRs samtidigt i Ready for review. Prioritera review när kön
 - [ ] Mergad till `development` och berörda sub-issues stängda.
 - [ ] README uppdaterad vid ändrad installation eller konfiguration.
 
-Sprint Goal 1
-
-Skapa en stabil grund för LMS:et genom att verifiera templaten och GitHub-flödet samt bygga den grundläggande strukturen för användare och kurser.
 
 ## Kom igång
 
