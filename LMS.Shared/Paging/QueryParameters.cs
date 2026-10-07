@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LMS.Shared.Paging
 {
-    public abstract record QueryParameters : IValidatableObject
+    public sealed record QueryParameters : IValidatableObject
     {
         private const int _maxPageSize = 100;
 

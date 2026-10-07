@@ -1,8 +1,10 @@
 ﻿using Domain.Contracts;
 using Domain.Models.Entities;
+using Domain.Models.ReadModels;
 using LMS.Infrastructure.Data;
 using LMS.Infrastructure.Extensions;
 using LMS.Infrastructure.Paging;
+using LMS.Shared.DTOs.UserDtos;
 using LMS.Shared.Paging;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -69,6 +71,23 @@ namespace LMS.Infrastructure.Repositories
                                         .Include(u => u.Course)
                                         :
                                        FindAll(trackChanges);
+        }
+        public async Task<IPagedList<UserWithRole>> GetAllUsersWithRolesAsync(
+        QueryParameters parameters)
+        {
+            var query =
+                from user in _context.Users
+                join userRole in _context.UserRoles
+                    on user.Id equals userRole.UserId
+                join role in _context.Roles
+                    on userRole.RoleId equals role.Id
+                select new UserWithRole
+                {
+                    User = user,
+                    Role = role.Name
+                };
+
+            return await query.ToPagedListAsync(parameters);
         }
     }
 
