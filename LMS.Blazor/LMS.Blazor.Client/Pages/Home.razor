@@ -1,13 +1,12 @@
 ﻿@page "/"
+@using LMS.Blazor.Client.Components
 
 <PageTitle>Dashboard</PageTitle>
 
 <div class="dashboard-page">
 
-    <div class="dashboard-header">
-        <h1>Dashboard</h1>
-        <p>Här ser du veckans aktiviteter och kommande inlämningar.</p>
-    </div>
+    <PageHeader Title="Dashboard"
+                Description="Här ser du veckans aktiviteter och kommande inlämningar." />
 
     <section class="dashboard-section">
         <h2>Veckans aktiviteter</h2>
