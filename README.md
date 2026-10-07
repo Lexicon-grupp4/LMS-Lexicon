@@ -9,7 +9,8 @@ Slutprojekt på Lexicon: en lärplattform (LMS) byggd med Blazor Web App, remote
 | Vad | Länk |
 |---|---|
 | Projektboard | https://github.com/orgs/Lexicon-grupp4/projects/1 |
-| Azure (LMS.API) | https://lms2-api.azurewebsites.net/ |
+| Azure – webbapp (LMS.Blazor) | https://lms2-web.azurewebsites.net/ |
+| Azure – API (LMS.API, Swagger) | https://lms2-api.azurewebsites.net/swagger |
 | Deploy-workflow | [`.github/workflows/main_lms-grupp4.yml`](.github/workflows/main_lms-grupp4.yml) |
 
 # Data Model
@@ -241,4 +242,13 @@ _Fylls i när templaten finns: krav (.NET 10 SDK), secrets, databas och hur API 
 
 ## Deploy
 
-Push till `main` kör GitHub Actions som bygger och publicerar `LMS.API` till Azure App Service `lms2-api`. Azure-inloggningen gäller bara körningar från `main`.
+Push till `main` kör GitHub Actions som bygger och publicerar två appar till Azure App Service:
+
+| Projekt | App Service | URL |
+|---|---|---|
+| `LMS.Blazor/LMS.Blazor` | `lms2-web` | https://lms2-web.azurewebsites.net/ |
+| `LMS.API` | `lms2-api` | https://lms2-api.azurewebsites.net/swagger |
+
+Azure-inloggningen gäller bara körningar från `main`.
+
+API:et har ingen sida på rot-URL:en (`/` ger 404), använd `/swagger`. Swagger visas bara när `ASPNETCORE_ENVIRONMENT` är `Development`, vilket just nu är satt i appinställningarna för `lms2-api`. Om den inställningen tas bort slutar Swagger-länken att fungera.
