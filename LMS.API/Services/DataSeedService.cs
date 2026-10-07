@@ -84,6 +84,11 @@ internal class DataSeedService : IHostedService
         {
             Email = DefaultUserEmail,
             UserName = DefaultUserEmail,
+            CourseId = null,
+            FirstName = "Demo",
+            LastName = "User",
+            Course = null
+
         };
 
         await CreateUserAsync(user, DemoRole);
