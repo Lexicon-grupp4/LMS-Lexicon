@@ -8,40 +8,63 @@
     <PageHeader Title="Inlämningar"
                 Description="Här ser du dina inlämningsuppgifter och deras status." />
 
-    <div class="assignment-card">
-        <div>
-            <span class="assignment-status pending">Ej inlämnad</span>
-            <h2>React application</h2>
-            <p>Deadline: 2026-10-10</p>
+    @if (isLoading)
+    {
+        <ContentState Type="loading" />
+    }
+    else if (hasError)
+    {
+        <ContentState Type="error"
+                      Message="Kunde inte hämta inlämningarna." />
+    }
+    else if (!hasAssignments)
+    {
+        <ContentState Type="empty"
+                      Message="Det finns inga inlämningar att visa." />
+    }
+    else
+    {
+        <div class="assignment-card">
+            <div>
+                <span class="assignment-status pending">Ej inlämnad</span>
+                <h2>React application</h2>
+                <p>Deadline: 2026-10-10</p>
+            </div>
+
+            <button class="assignment-button">
+                Lämna in
+            </button>
         </div>
 
-        <button class="assignment-button">
-            Lämna in
-        </button>
-    </div>
+        <div class="assignment-card">
+            <div>
+                <span class="assignment-status submitted">Inlämnad</span>
+                <h2>Databasdesign</h2>
+                <p>Deadline: 2026-10-15</p>
+            </div>
 
-    <div class="assignment-card">
-        <div>
-            <span class="assignment-status submitted">Inlämnad</span>
-            <h2>Databasdesign</h2>
-            <p>Deadline: 2026-10-15</p>
+            <button class="assignment-button secondary">
+                Visa inlämning
+            </button>
         </div>
 
-        <button class="assignment-button secondary">
-            Visa inlämning
-        </button>
-    </div>
+        <div class="assignment-card">
+            <div>
+                <span class="assignment-status late">Försenad</span>
+                <h2>ASP.NET Core Exercise</h2>
+                <p>Deadline: 2026-10-05</p>
+            </div>
 
-    <div class="assignment-card">
-        <div>
-            <span class="assignment-status late">Försenad</span>
-            <h2>ASP.NET Core Exercise</h2>
-            <p>Deadline: 2026-10-05</p>
+            <button class="assignment-button">
+                Lämna in
+            </button>
         </div>
-
-        <button class="assignment-button">
-            Lämna in
-        </button>
-    </div>
+    }
 
 </div>
+
+@code {
+    private bool isLoading = false;
+    private bool hasError = false;
+    private bool hasAssignments = true;
+}
