@@ -37,7 +37,8 @@ public sealed class ApiProxyClient(HttpClient httpClient) : IApiProxyClient
         return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken);
     }
 
-    private async Task<string> GetAntiforgeryTokenAsync(CancellationToken cancellationToken)
+    private async Task<string> GetAntiforgeryTokenAsync(
+        CancellationToken cancellationToken)
     {
         using var response = await httpClient.GetAsync(
             AntiforgeryProtocol.TokenEndpoint,
@@ -58,7 +59,18 @@ public sealed class ApiProxyClient(HttpClient httpClient) : IApiProxyClient
     private static void EnsureAuthenticated(HttpResponseMessage response)
     {
         if (response.StatusCode == HttpStatusCode.Unauthorized)
-            throw new UnauthorizedAccessException("The Blazor session is no longer valid.");
+        {
+            throw new UnauthorizedAccessException(
+                "The Blazor session is no longer valid.");
+        }
+
+        if (response.StatusCode == HttpStatusCode.Forbidden)
+        {
+            throw new HttpRequestException(
+                "You do not have permission to access this resource.",
+                null,
+                HttpStatusCode.Forbidden);
+        }
     }
 
     private static bool RequiresAntiforgery(HttpMethod method) =>
@@ -82,6 +94,7 @@ public sealed class ApiProxyClient(HttpClient httpClient) : IApiProxyClient
         }
 
         var path = endpoint.Split('?', 2)[0];
+
         if (Uri.UnescapeDataString(path)
             .Split('/', StringSplitOptions.RemoveEmptyEntries)
             .Any(segment => segment is "." or ".."))
