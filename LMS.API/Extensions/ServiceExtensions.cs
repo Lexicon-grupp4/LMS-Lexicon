@@ -7,7 +7,9 @@ public static class ServiceExtensions
 {
     public static void AddRepositories(this IServiceCollection services)
     {
+        services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddLazy<IUserRepository>();
     }
 
     public static void AddServiceLayer(this IServiceCollection services)
