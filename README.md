@@ -275,7 +275,7 @@ Det behövs framför allt för US06 Dokument, US07 studentdelning och US09 inlä
 - Tillåtna filtyper: PDF, DOCX, PPTX, XLSX, TXT, JPG/JPEG och PNG.
 - Maximal filstorlek: 10 MB per fil.
 - Filtyp och filstorlek valideras server-side.
-- Filer får ett unikt internt filnamn för att undvika namnkonflikter.
+- Vi kommer att ha server-side-validering för säkerhet och prestanda, samt client-side-validering för användarfeedback och för att undvika onödiga requests till servern.
 - Nedladdning sker genom API/BFF/YARP med behörighetskontroll.
 - Samma filregler återanvänds för dokumentdelning och inlämningar.
 
