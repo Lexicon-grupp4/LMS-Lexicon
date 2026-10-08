@@ -12,7 +12,6 @@ namespace LMS.API.Services;
 //  }
 //}
 
-
 internal class DataSeedService : IHostedService
 {
     private readonly IServiceProvider serviceProvider;
@@ -21,10 +20,14 @@ internal class DataSeedService : IHostedService
     private UserManager<ApplicationUser> userManager = null!;
     private RoleManager<IdentityRole> roleManager = null!;
     private string _password = null!;
+
     private const string DemoRole = "Demo";
     private const string DefaultUserEmail = "DemoUser@Lms.com";
 
-    public DataSeedService(IServiceProvider serviceProvider, IConfiguration configuration, ILogger<DataSeedService> logger)
+    public DataSeedService(
+        IServiceProvider serviceProvider,
+        IConfiguration configuration,
+        ILogger<DataSeedService> logger)
     {
         this.serviceProvider = serviceProvider;
         this.configuration = configuration;
@@ -36,50 +39,78 @@ internal class DataSeedService : IHostedService
         using var scope = serviceProvider.CreateScope();
 
         var env = scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
-        if (!env.IsDevelopment()) return;
 
-        ApplicationDbContext context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>()
-                            ?? throw new ArgumentNullException();
+        if (!env.IsDevelopment())
+            return;
 
-        if (await context.Users.AnyAsync(cancellationToken)&& await context.Roles.CountAsync(cancellationToken)>=3) return;
+        ApplicationDbContext context =
+            scope.ServiceProvider.GetRequiredService<ApplicationDbContext>()
+            ?? throw new ArgumentNullException();
 
-        userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>()
-                            ?? throw new ArgumentNullException();
+        if (await context.Users.AnyAsync(cancellationToken) &&
+            await context.Roles.CountAsync(cancellationToken) >= 3)
+            return;
 
-        roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>()
-                            ?? throw new ArgumentNullException();
+        userManager =
+            scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>()
+            ?? throw new ArgumentNullException();
+
+        roleManager =
+            scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>()
+            ?? throw new ArgumentNullException();
 
         _password = configuration["password"]!;
+
         ArgumentNullException.ThrowIfNull(_password, nameof(_password));
 
         try
         {
-            await CreateRolesAsync([DemoRole,"Student","Teacher"]);
+            await CreateRolesAsync([DemoRole, "Student", "Teacher"]);
             await CreateDefaultUserAsync();
+
             logger.LogInformation("Seed complete");
         }
         catch (Exception ex)
         {
-            logger.LogError($"Data seed fail with message: {ex.Message}. Exceeption: {ex.InnerException}");
+            logger.LogError(
+                $"Data seed fail with message: {ex.Message}. Exception: {ex.InnerException}");
+
             throw;
         }
     }
-
 
     private async Task CreateRolesAsync(string[] rolenames)
     {
         foreach (string rolename in rolenames)
         {
-            if (await roleManager.RoleExistsAsync(rolename)) continue;
-            var role = new IdentityRole { Name = rolename };
+            if (await roleManager.RoleExistsAsync(rolename))
+                continue;
+
+            var role = new IdentityRole
+            {
+                Name = rolename
+            };
+
             var res = await roleManager.CreateAsync(role);
 
-            if (!res.Succeeded) throw new Exception
-                    (string.Join("\n", res.Errors.Select(e => $"{e.Code}: {e.Description}")));
+            if (!res.Succeeded)
+            {
+                throw new Exception(
+                    string.Join(
+                        "\n",
+                        res.Errors.Select(e => $"{e.Code}: {e.Description}")));
+            }
         }
     }
+
     private async Task CreateDefaultUserAsync()
     {
+        var existingUser =
+            await userManager.FindByEmailAsync(DefaultUserEmail);
+
+        if (existingUser is not null)
+            return;
+
         var user = new ApplicationUser
         {
             Email = DefaultUserEmail,
@@ -88,28 +119,38 @@ internal class DataSeedService : IHostedService
             FirstName = "Demo",
             LastName = "User",
             Course = null
-
         };
-        if (await userManager.GetEmailAsync(user) == null) return;
+
         await CreateUserAsync(user, DemoRole);
     }
 
-    private async Task CreateUserAsync(ApplicationUser user, string role)
+    private async Task CreateUserAsync(
+        ApplicationUser user,
+        string role)
     {
-        var result = await userManager.CreateAsync(user, _password);
+        var result =
+            await userManager.CreateAsync(user, _password);
 
         if (!result.Succeeded)
-            throw new Exception(string.Join("\n",
-            result.Errors.Select(e => $"{e.Code}: {e.Description}")));
+        {
+            throw new Exception(
+                string.Join(
+                    "\n",
+                    result.Errors.Select(e => $"{e.Code}: {e.Description}")));
+        }
 
-        var roleResult = await userManager.AddToRoleAsync(user, role);
+        var roleResult =
+            await userManager.AddToRoleAsync(user, role);
 
         if (!roleResult.Succeeded)
-            throw new Exception(string.Join("\n",
-            roleResult.Errors.Select(e => $"{e.Code}: {e.Description}")));
-
+        {
+            throw new Exception(
+                string.Join(
+                    "\n",
+                    roleResult.Errors.Select(e => $"{e.Code}: {e.Description}")));
+        }
     }
 
-    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
-
+    public Task StopAsync(CancellationToken cancellationToken)
+        => Task.CompletedTask;
 }
