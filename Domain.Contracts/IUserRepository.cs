@@ -1,4 +1,6 @@
 ﻿using Domain.Models.Entities;
+using Domain.Models.ReadModels;
+using LMS.Shared.Paging;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -8,8 +10,10 @@ namespace Domain.Contracts
 {
     public interface IUserRepository : IRepositoryBase<ApplicationUser>
     {
-       Task<ApplicationUser?> GetUserByEmailAsync(bool includeCourses = false, string email=null!);
-       Task<ApplicationUser?> GetUserByIdAsync(bool includeCourses = false, string id = null!);
-
+        Task<ApplicationUser?> GetUserByEmailAsync(string email,bool includeCourse = false, bool trackChanges = false);
+        Task<ApplicationUser?> GetUserByIdAsync(string id, bool includeCourse = false, bool trackChanges = false);
+        Task<IPagedList<ApplicationUser>> GetAllUsersAsync(QueryParameters parameters,bool includeCourse = false, bool trackChanges = false);
+        Task<IPagedList<UserWithRole>> GetAllUsersWithRolesAsync(QueryParameters parameters);
+        
     }
 }

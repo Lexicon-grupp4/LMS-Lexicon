@@ -41,7 +41,7 @@ internal class DataSeedService : IHostedService
         ApplicationDbContext context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>()
                             ?? throw new ArgumentNullException();
 
-        if (await context.Users.AnyAsync(cancellationToken)) return;
+        if (await context.Users.AnyAsync(cancellationToken)&& await context.Roles.CountAsync(cancellationToken)>=3) return;
 
         userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>()
                             ?? throw new ArgumentNullException();
@@ -54,7 +54,7 @@ internal class DataSeedService : IHostedService
 
         try
         {
-            await CreateRolesAsync([DemoRole]);
+            await CreateRolesAsync([DemoRole,"Student","Teacher"]);
             await CreateDefaultUserAsync();
             logger.LogInformation("Seed complete");
         }
@@ -90,7 +90,7 @@ internal class DataSeedService : IHostedService
             Course = null
 
         };
-
+        if (await userManager.GetEmailAsync(user) == null) return;
         await CreateUserAsync(user, DemoRole);
     }
 

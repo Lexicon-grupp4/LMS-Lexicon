@@ -1,0 +1,234 @@
+﻿@page "/users"
+
+@using LMS.Shared.DTOs.UserDtos
+@using LMS.Shared.Paging
+@using LMS.Blazor.Client.Services.ApiProxy
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize(Roles = "Teacher")]
+
+@inject IApiProxyClient ApiProxyClient
+@inject NavigationManager NavigationManager
+
+<PageTitle>User Management</PageTitle>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <h3>User Management</h3>
+
+    <a href="/users/create"
+       class="btn btn-primary">
+
+        <span class="bi bi-person-plus"></span>
+        Add User
+
+    </a>
+
+</div>
+
+@if (isLoading)
+{
+    <div class="text-center">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">
+                Loading...
+            </span>
+        </div>
+    </div>
+}
+else if (!string.IsNullOrWhiteSpace(errorMessage))
+{
+    <div class="alert alert-danger">
+        @errorMessage
+    </div>
+}
+else
+{
+    @if (users.Count == 0)
+    {
+        <div class="alert alert-info">
+            No users found.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+
+            <table class="table table-striped table-hover">
+
+                <thead>
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Course</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (var user in users)
+                    {
+                        <tr>
+
+                            <td>
+                                @user.FirstName
+                            </td>
+
+                            <td>
+                                @user.LastName
+                            </td>
+                            <td>
+                                @user.Email
+                            </td>
+
+                            <td>
+                                @(user.CourseId == null ? "No course" : user.CourseId.ToString())
+                            </td>
+
+                            <td>
+
+                                <a class="btn btn-sm btn-primary"
+                                   href="@($"/users/edit/{user.Id}")">
+
+                                    <span class="bi bi-pencil"></span>
+                                    Edit
+
+                                </a>
+
+                                <a class="btn btn-sm btn-danger ms-2"
+                                   href="@($"/users/delete/{user.Id}")">
+
+                                    <span class="bi bi-trash"></span>
+                                    Delete
+
+                                </a>
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <!-- Pagination -->
+        @if (pagedResponse is not null && pagedResponse.TotalPages > 1)
+        {
+            <div class="d-flex justify-content-between align-items-center mt-3">
+
+                <button class="btn btn-outline-primary"
+                        disabled="@(!pagedResponse.HasPreviousPage)"
+                        @onclick="PreviousPage">
+
+                    <span class="bi bi-chevron-left"></span>
+                    Previous
+
+                </button>
+
+                <span>
+                    Page @pagedResponse.PageNumber
+                    of @pagedResponse.TotalPages
+                </span>
+
+                <button class="btn btn-outline-primary"
+                        disabled="@(!pagedResponse.HasNextPage)"
+                        @onclick="NextPage">
+
+                    Next
+                    <span class="bi bi-chevron-right"></span>
+
+                </button>
+
+            </div>
+        }
+    }
+}
+
+@code
+{
+    private List<UserDto> users = [];
+
+    private PagedResponse<UserDto>? pagedResponse;
+
+    private bool isLoading = true;
+
+    private string? errorMessage;
+
+    private int currentPage = 1;
+
+    private const int PageSize = 10;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUsers();
+    }
+
+    private async Task LoadUsers()
+    {
+        isLoading = true;
+        errorMessage = null;
+
+        try
+        {
+            var response =
+                await ApiProxyClient.GetAsync<PagedResponse<UserDto>>(
+                    $"users?pageNumber={currentPage}&pageSize={PageSize}");
+
+            if (response is not null)
+            {
+                pagedResponse = response;
+
+                users = response.Items.ToList();
+            }
+            else
+            {
+                users = [];
+            }
+        }
+        catch (UnauthorizedAccessException)
+        {
+            NavigationManager.NavigateTo(
+                "/Account/Login",
+                forceLoad: true);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task NextPage()
+    {
+        if (pagedResponse is null ||
+            !pagedResponse.HasNextPage)
+        {
+            return;
+        }
+
+        currentPage++;
+
+        await LoadUsers();
+    }
+
+    private async Task PreviousPage()
+    {
+        if (pagedResponse is null ||
+            !pagedResponse.HasPreviousPage)
+        {
+            return;
+        }
+
+        currentPage--;
+
+        await LoadUsers();
+    }
+}
