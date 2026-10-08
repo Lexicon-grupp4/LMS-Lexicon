@@ -14,7 +14,7 @@ namespace LMS.Presentation.Controllers
     [Route("api/users")]
     [Consumes("application/json")]
     [Produces("application/json")]
-    [Authorize]
+    [Authorize(Roles = "Teacher")]
 
     public class UsersController : ControllerBase
     {
