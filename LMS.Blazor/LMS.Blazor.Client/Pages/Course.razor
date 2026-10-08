@@ -1,0 +1,51 @@
+﻿@page "/course"
+@using LMS.Blazor.Client.Components
+
+<PageTitle>Min kurs</PageTitle>
+
+<div class="course-page">
+
+    <PageHeader Title="Min kurs"
+                Description="Här ser du information om din kurs och de moduler som ingår." />
+
+    <section class="course-card">
+        <h2>Lexicon LTU</h2>
+        <p>
+            Full-stack utbildning med fokus på .NET, databaser och frontend.
+        </p>
+
+        <div class="course-dates">
+            <span>Start: 2026-09-01</span>
+            <span>Slut: 2027-05-31</span>
+        </div>
+    </section>
+
+    <section class="modules-section">
+        <h2>Moduler</h2>
+
+        <div class="module-card">
+            <div>
+                <h3>HTML & CSS</h3>
+                <p>Grundläggande webbdesign och responsiv layout.</p>
+            </div>
+            <span>Avslutad</span>
+        </div>
+
+        <div class="module-card">
+            <div>
+                <h3>Javascript</h3>
+                <p>Javascript, DOM och moderna webbapplikationer.</p>
+            </div>
+            <span>Pågående</span>
+        </div>
+
+        <div class="module-card">
+            <div>
+                <h3>.NET</h3>
+                <p>C#, ASP.NET Core och full-stack utveckling.</p>
+            </div>
+            <span>Kommande</span>
+        </div>
+    </section>
+
+</div>
