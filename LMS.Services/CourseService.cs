@@ -25,4 +25,29 @@ public class CourseService : ICourseService
             c.EndDate
             )).ToListAsync();
     }
+
+    public async Task<IEnumerable<CourseDto>> GetCourseAsync(int id)
+    {
+        return await _context.Courses.Where(c => c.Id == id).Select(c => new CourseDto(
+            c.Id,
+            c.Name,
+            c.Code,
+            c.Description,
+            c.StartDate,
+            c.EndDate
+            )).ToListAsync();
+    }
+
+    public async Task<CourseDto> NewCourseAsync(NewCourseDto course)
+    {
+        var c = new Domain.Models.Entities.Course();
+        c.Name = course.Name;
+        c.Code = course.Code;
+        c.Description = course.Description;
+        c.StartDate = course.StartDate;
+        c.EndDate = course.EndDate;
+        await _context.Courses.AddAsync(c);
+        await _context.SaveChangesAsync();
+        return new CourseDto(c.Id, c.Name, c.Code, c.Description, c.StartDate, c.EndDate);
+    }
 }
