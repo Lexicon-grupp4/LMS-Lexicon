@@ -49,16 +49,16 @@ namespace LMS.Presentation.Controllers
 
         // POST: api/users
         [HttpPost]
-        public async Task<ActionResult<UserDto>> CreateUser(
+        public async Task<ActionResult<CreateUserResponseDto>> CreateUser(
             [FromBody] CreateUserDto dto)
         {
-            var user =
+            var result =
                 await _userService.CreateUserAsync(dto);
 
             return CreatedAtAction(
                 nameof(GetUser),
-                new { id = user.Id },
-                user);
+                new { id = result.User.Id },
+                result);
         }
 
         // PUT: api/users/{id}
@@ -81,6 +81,16 @@ namespace LMS.Presentation.Controllers
             string id)
         {
             await _userService.DeleteUserAsync(id);
+
+            return NoContent();
+        }
+        // POST: api/users/set-password
+        [AllowAnonymous]
+        [HttpPost("set-password")]
+        public async Task<IActionResult> SetPassword(
+            [FromBody] SetPasswordDto dto)
+        {
+            await _userService.SetPasswordAsync(dto);
 
             return NoContent();
         }
