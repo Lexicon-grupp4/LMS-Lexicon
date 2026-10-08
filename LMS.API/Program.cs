@@ -6,6 +6,7 @@ using LMS.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using System.Reflection;
 internal class Program
 {
     private static void Main(string[] args)
@@ -23,6 +24,9 @@ internal class Program
         .AddApplicationPart(typeof(AssemblyReference).Assembly);
 
         builder.Services.AddHostedService<DataSeedService>();
+       
+        builder.Services.AddAutoMapper(cfg => { }, typeof(MapperProfile));
+      
         builder.Services.ConfigureSwagger();
         builder.Services.AddRepositories();
         builder.Services.AddServiceLayer();
