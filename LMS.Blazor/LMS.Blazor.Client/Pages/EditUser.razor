@@ -1,7 +1,7 @@
 ﻿@page "/users/edit/{Id}"
 
-@using LMS.Shared.DTOs.UserDtos
 @using LMS.Blazor.Client.Services.ApiProxy
+@using LMS.Shared.DTOs.UserDtos
 @using Microsoft.AspNetCore.Authorization
 
 @attribute [Authorize(Roles = "Teacher")]
@@ -17,9 +17,7 @@
 {
     <div class="text-center">
         <div class="spinner-border" role="status">
-            <span class="visually-hidden">
-                Loading...
-            </span>
+            <span class="visually-hidden">Loading...</span>
         </div>
     </div>
 }
@@ -28,37 +26,43 @@ else if (!string.IsNullOrWhiteSpace(errorMessage))
     <div class="alert alert-danger">
         @errorMessage
     </div>
+
+    <button type="button"
+            class="btn btn-secondary"
+            @onclick="Cancel">
+        Back to Users
+    </button>
 }
 else
 {
-    <EditForm Model="model"
-              OnValidSubmit="UpdateUser">
+    <EditForm Model="model" OnValidSubmit="UpdateUser">
 
         <DataAnnotationsValidator />
         <ValidationSummary />
 
+        @if (!string.IsNullOrWhiteSpace(successMessage))
+        {
+            <div class="alert alert-success">
+                @successMessage
+            </div>
+        }
+
         <div class="mb-3">
-            <label class="form-label">
-                First Name
-            </label>
+            <label class="form-label">First Name</label>
 
             <InputText class="form-control"
                        @bind-Value="model.FirstName" />
         </div>
 
         <div class="mb-3">
-            <label class="form-label">
-                Last Name
-            </label>
+            <label class="form-label">Last Name</label>
 
             <InputText class="form-control"
                        @bind-Value="model.LastName" />
         </div>
 
         <div class="mb-3">
-            <label class="form-label">
-                Email
-            </label>
+            <label class="form-label">Email</label>
 
             <InputText class="form-control"
                        type="email"
@@ -66,39 +70,41 @@ else
         </div>
 
         <div class="mb-3">
-            <label class="form-label">
-                Role
-            </label>
+            <label class="form-label">Role</label>
 
             <InputSelect class="form-select"
                          @bind-Value="model.Role">
 
-                <option value="">
-                    -- Select role --
-                </option>
-
-                <option value="Student">
-                    Student
-                </option>
-
-                <option value="Teacher">
-                    Teacher
-                </option>
+                <option value="">-- Select role --</option>
+                <option value="Student">Student</option>
+                <option value="Teacher">Teacher</option>
 
             </InputSelect>
         </div>
 
         <div class="mb-3">
-            <label class="form-label">
-                Course ID
-            </label>
+            <label class="form-label">Course (Optional)</label>
 
-            <InputNumber class="form-control"
-                         @bind-Value="model.CourseId" />
+            <InputSelect class="form-select"
+                         @bind-Value="model.CourseId">
+
+                <option value="">-- No course assigned --</option>
+
+                @* @foreach (var course in courses)
+                {
+                    <option value="@course.Id">
+                        @course.Name
+                    </option>
+                } *@
+
+            </InputSelect>
+
+            <div class="form-text">
+                Select a course or leave the user without a course.
+            </div>
         </div>
 
         <div class="mt-4">
-
             <button type="submit"
                     class="btn btn-primary"
                     disabled="@isSaving">
@@ -106,18 +112,13 @@ else
                 @if (isSaving)
                 {
                     <span>
-                        <span class="spinner-border spinner-border-sm me-1">
-                        </span>
-
+                        <span class="spinner-border spinner-border-sm me-1"></span>
                         Saving...
                     </span>
                 }
                 else
                 {
-                    <span>
-                        <span class="bi bi-check-lg"></span>
-                        Save Changes
-                    </span>
+                    <span>Save Changes</span>
                 }
 
             </button>
@@ -126,30 +127,28 @@ else
                     class="btn btn-secondary ms-2"
                     @onclick="Cancel"
                     disabled="@isSaving">
-
                 Cancel
-
             </button>
-
         </div>
 
     </EditForm>
 }
 
-@code
-{
+@code {
     [Parameter]
     public string Id { get; set; } = string.Empty;
 
     private UpdateUserDto model = new();
 
-    private bool isLoading = true;
+    // private List<CourseDto> courses = new();
 
+    private bool isLoading = true;
     private bool isSaving;
 
     private string? errorMessage;
+    private string? successMessage;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
         await LoadUser();
     }
@@ -158,12 +157,14 @@ else
     {
         isLoading = true;
         errorMessage = null;
+        successMessage = null;
 
         try
         {
-            var user =
-                await ApiProxyClient.GetAsync<UserDto>(
-                    $"users/{Id}");
+            // await LoadCourses();
+
+            var user = await ApiProxyClient
+                .GetAsync<UserDto>($"users/{Id}");
 
             if (user is null)
             {
@@ -173,11 +174,11 @@ else
 
             model = new UpdateUserDto
             {
-                Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                CourseId = user.CourseId,
-                Role = user.Role
+                Email = user.Email,
+                Role = user.Role,
+                CourseId = user.CourseId
             };
         }
         catch (UnauthorizedAccessException)
@@ -196,15 +197,24 @@ else
         }
     }
 
+    private async Task LoadCourses()
+    {
+        var result = await ApiProxyClient
+            .GetAsync<List<CourseDto>>("courses");
+
+        courses = result ?? new List<CourseDto>();
+    }
+
     private async Task UpdateUser()
     {
         isSaving = true;
         errorMessage = null;
+        successMessage = null;
 
         try
         {
-            var updatedUser =
-                await ApiProxyClient.PutAsync<UpdateUserDto, UserDto>(
+            var updatedUser = await ApiProxyClient
+                .PutAsync<UpdateUserDto, UserDto>(
                     $"users/{Id}",
                     model);
 
@@ -214,8 +224,7 @@ else
             }
             else
             {
-                errorMessage =
-                    "The user could not be updated.";
+                errorMessage = "The user could not be updated.";
             }
         }
         catch (UnauthorizedAccessException)

@@ -3,14 +3,9 @@ using Domain.Models.Entities;
 using Domain.Models.ReadModels;
 using LMS.Infrastructure.Data;
 using LMS.Infrastructure.Extensions;
-using LMS.Infrastructure.Paging;
-using LMS.Shared.DTOs.UserDtos;
 using LMS.Shared.Paging;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+
 
 namespace LMS.Infrastructure.Repositories
 {
@@ -75,17 +70,23 @@ namespace LMS.Infrastructure.Repositories
         public async Task<IPagedList<UserWithRole>> GetAllUsersWithRolesAsync(
         QueryParameters parameters)
         {
-            var query =
-                from user in _context.Users
-                join userRole in _context.UserRoles
-                    on user.Id equals userRole.UserId
-                join role in _context.Roles
-                    on userRole.RoleId equals role.Id
-                select new UserWithRole
-                {
-                    User = user,
-                    Role = role.Name
-                };
+            var query = _context.Users
+            .Include(u => u.Course)
+            .Join(
+            _context.UserRoles,
+        user => user.Id,
+        userRole => userRole.UserId,
+        (user, userRole) => new { user, userRole }
+                 )
+         .Join(
+            _context.Roles,
+        x => x.userRole.RoleId,
+        role => role.Id,
+        (x, role) => new UserWithRole
+        {
+            User = x.user,
+            Role = role.Name
+        });
 
             return await query.ToPagedListAsync(parameters);
         }

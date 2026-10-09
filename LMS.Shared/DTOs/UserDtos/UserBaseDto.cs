@@ -12,7 +12,7 @@ namespace LMS.Shared.DTOs.UserDtos
         public string? PhoneNumber { get; set; }
         public string Role { get; set; } =null!;
         public int? CourseId { get; set; }
-        public string? Course { get; set; }
+        public string? CourseName { get; set; }
 
     }
 }
