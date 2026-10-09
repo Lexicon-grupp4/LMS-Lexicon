@@ -40,7 +40,7 @@ public class CourseController(IServiceManager serviceManager) : ControllerBase
         return Ok(course);
     }
 
-    [HttpPost("new")]
+    [HttpPost]
     [SwaggerOperation(
         Summary = "New course",
         Description = "New course desc")]
