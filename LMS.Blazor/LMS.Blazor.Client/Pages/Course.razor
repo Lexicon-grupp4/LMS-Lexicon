@@ -1,12 +1,19 @@
 ﻿@page "/course"
 @using LMS.Blazor.Client.Components
 
-<PageTitle>Min kurs</PageTitle>
+@using LMS.Blazor.Client.Services.ApiProxy
+@using LMS.Shared.DTOs.CourseDtos
+
+@inject IApiProxyClient ApiProxyClient
+
+<PageTitle>Kurser</PageTitle>
 
 <div class="course-page">
 
-    <PageHeader Title="Min kurs"
-                Description="Här ser du information om din kurs och de moduler som ingår." />
+    <div class="course-header">
+        <h1>Min kurs</h1>
+        <p>Här ser du information om din kurs och de moduler som ingår.</p>
+    </div>
 
     <section class="course-card">
         <h2>Lexicon LTU</h2>
