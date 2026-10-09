@@ -10,21 +10,6 @@
 
 <div class="course-page">
 
-    @if (courses is null)
-    {
-        <p>Loading...</p>
-    }
-    else
-    {
-        <ul>
-            @foreach (var c in courses)
-            {
-                <li>@c.Name (@c.Id) - @c.Description (@c.StartDate - @c.EndDate)</li>
-            }
-        </ul>
-    }
-
-<!--
     <div class="course-header">
         <h1>Min kurs</h1>
         <p>Här ser du information om din kurs och de moduler som ingår.</p>
@@ -68,26 +53,6 @@
             </div>
             <span>Kommande</span>
         </div>
-    </section>-->
+    </section>
 
 </div>
-
-@code {
-    private CourseDto[]? courses;
-    private readonly CancellationTokenSource componentCancellation = new();
-
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            await Task.Delay(1000); // TODO: remove simulated delay
-            courses = await ApiProxyClient.GetAsync<CourseDto[]>(
-                "course",
-                componentCancellation.Token);
-        } 
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
-    }
-}

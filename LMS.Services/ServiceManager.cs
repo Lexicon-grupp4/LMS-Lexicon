@@ -7,7 +7,7 @@ public class ServiceManager : IServiceManager
     private readonly Lazy<IAuthService> _authService;
     private readonly Lazy<IUserService> _userService;
     private readonly Lazy<INotificationService> _notificationService;
-    private readonly CourseService _courseService;
+    private readonly ICourseService _courseService;
 
     public IAuthService AuthService => _authService.Value;
     public IUserService UserService => _userService.Value;
@@ -18,7 +18,7 @@ public class ServiceManager : IServiceManager
         Lazy<IAuthService> authService,
         Lazy<IUserService> userService,
         Lazy<INotificationService> notificationService,
-        CourseService courseService)
+        ICourseService courseService)
     {
         _authService = authService;
         _userService = userService;
