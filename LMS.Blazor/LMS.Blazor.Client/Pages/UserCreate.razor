@@ -1,6 +1,7 @@
 ﻿@page "/users/create"
 
 @using LMS.Shared.DTOs.UserDtos
+@using LMS.Shared.DTOs.CourseDtos
 @using LMS.Blazor.Client.Services.ApiProxy
 @using Microsoft.AspNetCore.Authorization
 
@@ -13,6 +14,14 @@
 
 <h3>Add User</h3>
 
+@if (isLoadingCourses)
+{
+    <div class="text-center mb-3">
+        <span class="spinner-border spinner-border-sm"></span>
+        Loading courses...
+    </div>
+}
+
 @if (!string.IsNullOrWhiteSpace(errorMessage))
 {
     <div class="alert alert-danger">
@@ -20,70 +29,59 @@
     </div>
 }
 
-<EditForm Model="model"
-          OnValidSubmit="CreateUser">
-
+<EditForm Model="model" OnValidSubmit="CreateUser">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
     <div class="mb-3">
-        <label class="form-label">
-            First Name
-        </label>
-
+        <label class="form-label">First Name</label>
         <InputText class="form-control"
                    @bind-Value="model.FirstName" />
     </div>
 
     <div class="mb-3">
-        <label class="form-label">
-            Last Name
-        </label>
-
+        <label class="form-label">Last Name</label>
         <InputText class="form-control"
                    @bind-Value="model.LastName" />
     </div>
 
     <div class="mb-3">
-        <label class="form-label">
-            Email
-        </label>
-
+        <label class="form-label">Email</label>
         <InputText class="form-control"
                    type="email"
                    @bind-Value="model.Email" />
     </div>
 
     <div class="mb-3">
-        <label class="form-label">
-            Role
-        </label>
-
+        <label class="form-label">Role</label>
         <InputSelect class="form-select"
                      @bind-Value="model.Role">
-
-            <option value="">
-                -- Select role --
-            </option>
-
-            <option value="Student">
-                Student
-            </option>
-
-            <option value="Teacher">
-                Teacher
-            </option>
-
+            <option value="">-- Select role --</option>
+            <option value="Student">Student</option>
+            <option value="Teacher">Teacher</option>
         </InputSelect>
     </div>
 
     <div class="mb-3">
-        <label class="form-label">
-            Course ID
-        </label>
+        <label class="form-label">Course (Optional)</label>
 
-        <InputNumber class="form-control"
-                     @bind-Value="model.CourseId" />
+        <InputSelect class="form-select"
+                     @bind-Value="model.CourseId"
+                     disabled="@isLoadingCourses">
+
+            <option value="">-- Select course --</option>
+
+            @foreach (var course in courses)
+            {
+                <option value="@course.Id">
+                    @course.Name
+                </option>
+            }
+        </InputSelect>
+
+        <div class="form-text">
+            Select a course to assign to the user, or leave it unassigned.
+        </div>
     </div>
 
     <div class="alert alert-info">
@@ -98,9 +96,7 @@
         @if (isSaving)
         {
             <span>
-                <span class="spinner-border spinner-border-sm me-1">
-                </span>
-
+                <span class="spinner-border spinner-border-sm me-1"></span>
                 Creating...
             </span>
         }
@@ -111,27 +107,57 @@
                 Create User
             </span>
         }
-
     </button>
 
     <button type="button"
             class="btn btn-secondary ms-2"
             @onclick="Cancel"
             disabled="@isSaving">
-
         Cancel
-
     </button>
-
 </EditForm>
 
-@code
-{
+@code {
     private CreateUserDto model = new();
 
+    private List<CourseDto> courses = new();
+
     private bool isSaving;
+    private bool isLoadingCourses = true;
 
     private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCourses();
+    }
+
+    private async Task LoadCourses()
+    {
+        isLoadingCourses = true;
+
+        try
+        {
+            var result = await ApiProxyClient
+                .GetAsync<List<CourseDto>>("course");
+
+            courses = result ?? new List<CourseDto>();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            NavigationManager.NavigateTo(
+                "/Account/Login",
+                forceLoad: true);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Failed to load courses: {ex.Message}";
+        }
+        finally
+        {
+            isLoadingCourses = false;
+        }
+    }
 
     private async Task CreateUser()
     {
@@ -140,30 +166,17 @@
 
         try
         {
-            var result =
-                await ApiProxyClient.PostAsync<
-                    CreateUserDto,
-                    CreateUserResponseDto>(
-                    "users",
-                    model);
+            var result = await ApiProxyClient.PostAsync<
+                CreateUserDto,
+                CreateUserResponseDto>(
+                "users",
+                model);
 
             if (result is null)
             {
-                errorMessage =
-                    "The user could not be created.";
-
+                errorMessage = "The user could not be created.";
                 return;
             }
-
-            /*
-             * DEVELOPMENT FLOW
-             *
-             * We don't have email yet.
-             *
-             * The API returned the password setup token,
-             * so we create the setup URL and navigate directly
-             * to the Set Password page.
-             */
 
             var setupUrl =
                 $"/users/set-password" +

@@ -3,7 +3,7 @@
 @using LMS.Blazor.Client.Services.ApiProxy
 @using LMS.Shared.DTOs.UserDtos
 @using Microsoft.AspNetCore.Authorization
-
+@using LMS.Shared.DTOs.CourseDtos;
 @attribute [Authorize(Roles = "Teacher")]
 
 @inject IApiProxyClient ApiProxyClient
@@ -88,14 +88,14 @@ else
             <InputSelect class="form-select"
                          @bind-Value="model.CourseId">
 
-                <option value="">-- No course assigned --</option>
+                <option value="">-- Select course --</option>
 
-                @* @foreach (var course in courses)
+                @foreach (var course in courses)
                 {
                     <option value="@course.Id">
                         @course.Name
                     </option>
-                } *@
+                }
 
             </InputSelect>
 
@@ -140,7 +140,7 @@ else
 
     private UpdateUserDto model = new();
 
-    // private List<CourseDto> courses = new();
+    private List<CourseDto> courses = new();
 
     private bool isLoading = true;
     private bool isSaving;
@@ -161,7 +161,7 @@ else
 
         try
         {
-            // await LoadCourses();
+            await LoadCourses();
 
             var user = await ApiProxyClient
                 .GetAsync<UserDto>($"users/{Id}");
@@ -200,7 +200,7 @@ else
     private async Task LoadCourses()
     {
         var result = await ApiProxyClient
-            .GetAsync<List<CourseDto>>("courses");
+            .GetAsync<List<CourseDto>>("course");
 
         courses = result ?? new List<CourseDto>();
     }

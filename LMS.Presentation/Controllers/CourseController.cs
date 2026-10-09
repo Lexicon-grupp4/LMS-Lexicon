@@ -8,7 +8,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace LMS.Presentation.Controllers;
 
 [Route("api/course")]
-[AllowAnonymous]
+[Authorize]
 [ApiController]
 [Consumes("application/json")]
 [Produces("application/json")]
