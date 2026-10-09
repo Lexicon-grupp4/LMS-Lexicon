@@ -11,7 +11,8 @@ namespace Service.Contracts
         Task<PagedResponse<UserDto>> GetUsersAsync(QueryParameters query, bool trackChanges = false);
         Task<UserDto> GetUserAsync(string id, bool includeCourse = false, bool trackChanges = false);
         Task<UserDto> UpdateUserAsync(string id, UpdateUserDto dto);
-        Task<UserDto> CreateUserAsync(CreateUserDto dto);
+        Task<CreateUserResponseDto> CreateUserAsync( CreateUserDto dto);       
         Task DeleteUserAsync(string id);
+        Task SetPasswordAsync(SetPasswordDto dto);
     }
 }

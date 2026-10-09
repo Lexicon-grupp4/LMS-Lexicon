@@ -25,16 +25,14 @@ namespace LMS.Services
             _userManager = userManager;
         }
 
-        public async Task<UserDto> CreateUserAsync(
-            CreateUserDto dto)
+        public async Task<CreateUserResponseDto> CreateUserAsync(
+    CreateUserDto dto)
         {
             ValidateRole(dto.Role);
 
             var user = _mapper.Map<ApplicationUser>(dto);
 
-            var result = await _userManager.CreateAsync(
-                user,
-                dto.Password!);
+            var result = await _userManager.CreateAsync(user);
 
             if (!result.Succeeded)
             {
@@ -44,22 +42,56 @@ namespace LMS.Services
             var roleResult =
                 await _userManager.AddToRoleAsync(
                     user,
-                    dto.Role);
+                    dto.Role!);
 
             if (!roleResult.Succeeded)
             {
-                // Remove user if role assignment failed
                 await _userManager.DeleteAsync(user);
 
                 ThrowIdentityErrors(roleResult);
             }
+
+            var token =
+                await _userManager.GeneratePasswordResetTokenAsync(user);
 
             var userDto =
                 _mapper.Map<UserDto>(user);
 
             userDto.Role = dto.Role;
 
-            return userDto;
+            return new CreateUserResponseDto
+            {
+                User = userDto,
+                PasswordSetupToken = token
+            };
+        }
+        public async Task SetPasswordAsync(SetPasswordDto dto)
+        {
+            if (dto.Password != dto.ConfirmPassword)
+            {
+                throw new ArgumentException(
+                    "Passwords do not match.");
+            }
+
+            var user =
+                await _userManager.FindByIdAsync(dto.UserId);
+
+            if (user is null)
+            {
+                throw new KeyNotFoundException(
+                    "User not found.");
+            }
+
+            var result =
+                await _userManager.ResetPasswordAsync(
+                    user,
+                    dto.Token,
+                    dto.Password);
+
+            if (!result.Succeeded)
+            {
+                ThrowIdentityErrors(result);
+            }
         }
 
         public async Task DeleteUserAsync(string id)
