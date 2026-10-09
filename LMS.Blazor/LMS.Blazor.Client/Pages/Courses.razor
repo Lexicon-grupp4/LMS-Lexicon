@@ -1,0 +1,53 @@
+﻿@page "/courses"
+@using LMS.Blazor.Client.Components
+
+@using LMS.Blazor.Client.Services.ApiProxy
+@using LMS.Shared.DTOs.CourseDtos
+
+@inject IApiProxyClient ApiProxyClient
+
+<PageTitle>Kurser</PageTitle>
+
+<div class="courses-page">
+
+    @if (courses is null)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+        <table>
+            @foreach (var c in courses)
+            {
+                <tr>
+                    <td>@c.Name</td> 
+                    <td>@c.Id</td>
+                    <td>@c.Description</td>
+                    <td>@c.StartDate</td>
+                    <td>@c.EndDate</td>
+                </tr>
+            }
+        </table>
+    }
+
+</div>
+
+@code {
+    private CourseDto[]? courses;
+    private readonly CancellationTokenSource componentCancellation = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await Task.Delay(1000); // TODO: remove simulated delay
+            courses = await ApiProxyClient.GetAsync<CourseDto[]>(
+                "course",
+                componentCancellation.Token);
+        } 
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+}

@@ -1,6 +1,12 @@
 ﻿@page "/course"
+@using LMS.Blazor.Client.Components
 
-<PageTitle>Min kurs</PageTitle>
+@using LMS.Blazor.Client.Services.ApiProxy
+@using LMS.Shared.DTOs.CourseDtos
+
+@inject IApiProxyClient ApiProxyClient
+
+<PageTitle>Kurser</PageTitle>
 
 <div class="course-page">
 
