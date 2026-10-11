@@ -5,7 +5,11 @@ using LMS.Shared.DTOs.UserDtos;
 using LMS.Shared.Enum;
 using LMS.Shared.Paging;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Service.Contracts;
+using System.Text;
+using Microsoft.AspNetCore.WebUtilities;
+
 
 namespace LMS.Services
 {
@@ -13,16 +17,22 @@ namespace LMS.Services
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
+        private readonly IEmailService _emailService;
+        private readonly IConfiguration _configuration;
         private readonly UserManager<ApplicationUser> _userManager;
 
         public UserService(
             IUnitOfWork uow,
             IMapper mapper,
+            IEmailService emailService,
+            IConfiguration configuration,
             UserManager<ApplicationUser> userManager)
         {
             _uow = uow;
             _mapper = mapper;
             _userManager = userManager;
+            _emailService = emailService;
+            _configuration = configuration;
         }
 
         public async Task<CreateUserResponseDto> CreateUserAsync(
@@ -50,9 +60,10 @@ namespace LMS.Services
 
                 ThrowIdentityErrors(roleResult);
             }
+            await SendSetPasswordEmailAsync(user);
 
-            var token =
-                await _userManager.GeneratePasswordResetTokenAsync(user);
+            //var token =
+            //    await _userManager.GeneratePasswordResetTokenAsync(user);
 
             var userDto =
                 _mapper.Map<UserDto>(user);
@@ -61,20 +72,29 @@ namespace LMS.Services
 
             return new CreateUserResponseDto
             {
-                User = userDto,
-                PasswordSetupToken = token
+                User = new UserDto
+                {
+                    Id = user.Id,
+                    Email = user.Email!
+                }
             };
         }
         public async Task SetPasswordAsync(SetPasswordDto dto)
         {
+            if (string.IsNullOrWhiteSpace(dto.UserId) ||
+                string.IsNullOrWhiteSpace(dto.Token))
+            {
+                throw new ArgumentException(
+                    "The password setup link is invalid.");
+            }
+
             if (dto.Password != dto.ConfirmPassword)
             {
                 throw new ArgumentException(
                     "Passwords do not match.");
             }
 
-            var user =
-                await _userManager.FindByIdAsync(dto.UserId);
+            var user = await _userManager.FindByIdAsync(dto.UserId);
 
             if (user is null)
             {
@@ -82,18 +102,29 @@ namespace LMS.Services
                     "User not found.");
             }
 
-            var result =
-                await _userManager.ResetPasswordAsync(
-                    user,
-                    dto.Token,
-                    dto.Password);
+            string decodedToken;
+
+            try
+            {
+                decodedToken = Encoding.UTF8.GetString(
+                    WebEncoders.Base64UrlDecode(dto.Token));
+            }
+            catch (FormatException)
+            {
+                throw new ArgumentException(
+                    "The password setup link is invalid or expired.");
+            }
+
+            var result = await _userManager.ResetPasswordAsync(
+                user,
+                decodedToken,
+                dto.Password);
 
             if (!result.Succeeded)
             {
                 ThrowIdentityErrors(result);
             }
         }
-
         public async Task DeleteUserAsync(string id)
         {
             var user =
@@ -238,6 +269,50 @@ namespace LMS.Services
 
             return userDto;
         }
+        private async Task SendSetPasswordEmailAsync(
+    ApplicationUser user)
+        {
+            if (string.IsNullOrWhiteSpace(user.Email))
+            {
+                throw new InvalidOperationException(
+                    "The user does not have an email address.");
+            }
+
+            var token =
+                await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            // Convert the Identity token to URL-safe Base64.
+            var encodedToken = WebEncoders.Base64UrlEncode(
+                Encoding.UTF8.GetBytes(token));
+
+            var clientUrl = _configuration[
+                "AppUrls:BlazorClient"];
+
+            if (string.IsNullOrWhiteSpace(clientUrl))
+            {
+                throw new InvalidOperationException(
+                    "The Blazor Client URL is not configured.");
+            }
+
+            var link =
+                $"{clientUrl.TrimEnd('/')}/users/set-password" +
+                $"?userId={Uri.EscapeDataString(user.Id)}" +
+                $"&token={Uri.EscapeDataString(encodedToken)}";
+
+            var html = $"""
+        <h2>Welcome to LMS</h2>
+        <p>Your LMS account has been created.</p>
+        <p>Use the link below to set your password:</p>
+        <p><a href="{link}">Set your password</a></p>
+        <p>If you did not expect this email, you can ignore it.</p>
+        """;
+
+            await _emailService.SendEmailAsync(
+                user.Email,
+                "Set your LMS password",
+                html);
+        }
+
 
         private static void ValidateRole(string? role)
         {

@@ -3,6 +3,7 @@ using LMS.API.Services;
 using LMS.Infrastructure.Data;
 using LMS.Presentation;
 using LMS.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -22,6 +23,11 @@ internal class Program
             opt.Filters.Add(new ProducesAttribute("application/json"));
         })
         .AddApplicationPart(typeof(AssemblyReference).Assembly);
+        builder.Services.Configure<
+        DataProtectionTokenProviderOptions>(options =>
+        {
+        options.TokenLifespan = TimeSpan.FromHours(2);
+        });
 
         builder.Services.AddHostedService<DataSeedService>();
        
@@ -29,7 +35,7 @@ internal class Program
       
         builder.Services.ConfigureSwagger();
         builder.Services.AddRepositories();
-        builder.Services.AddServiceLayer();
+        builder.Services.AddServiceLayer(builder.Configuration);
         builder.Services.ConfigureAuthentication(builder.Configuration);
         builder.Services.ConfigureIdentity();
         builder.Services.ConfigurePolicys();

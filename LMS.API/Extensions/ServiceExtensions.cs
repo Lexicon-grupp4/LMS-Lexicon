@@ -1,5 +1,7 @@
 ﻿using Domain.Contracts;
+using Domain.Models.ReadModels;
 using LMS.Infrastructure.Repositories;
+using LMS.Infrastructure.Services;
 using LMS.Services;
 using Service.Contracts;
 
@@ -15,8 +17,12 @@ public static class ServiceExtensions
         services.AddScoped<INotificationRepository, NotificationRepository>();
     }
 
-    public static void AddServiceLayer(this IServiceCollection services)
+    public static void AddServiceLayer(this IServiceCollection services, IConfiguration configuration)
     {
+        services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
+        services.AddTransient<IEmailService,SmtpEmailService>();
+            
+            
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IServiceManager, ServiceManager>();
 
