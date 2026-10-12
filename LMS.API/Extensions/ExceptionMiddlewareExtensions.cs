@@ -21,6 +21,7 @@ public static class ExceptionMiddlewareExtensions
                     var (statusCode, title) = exception switch
                     {
                         NotFoundException ex => (StatusCodes.Status404NotFound, ex.Title),
+                        UserAlreadyExistsException ex =>(StatusCodes.Status409Conflict, ex.Title),
                         TokenValidationException ex => (StatusCodes.Status401Unauthorized, "Unauthorized"),
                         _ => (StatusCodes.Status500InternalServerError, "Internal Server Error")
                     };
