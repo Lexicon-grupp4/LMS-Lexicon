@@ -26,7 +26,7 @@ public class CourseService : ICourseService
             )).ToListAsync();
     }
 
-    public async Task<IEnumerable<CourseDto>> GetCourseAsync(int id)
+    public async Task<CourseDto?> GetCourseAsync(int id)
     {
         return await _context.Courses.Where(c => c.Id == id).Select(c => new CourseDto(
             c.Id,
@@ -35,7 +35,7 @@ public class CourseService : ICourseService
             c.Description,
             c.StartDate,
             c.EndDate
-            )).ToListAsync();
+            )).FirstOrDefaultAsync();
     }
 
     public async Task<CourseDto> NewCourseAsync(NewCourseDto course)

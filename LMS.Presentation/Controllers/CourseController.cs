@@ -28,7 +28,7 @@ public class CourseController(IServiceManager serviceManager) : ControllerBase
         return Ok(courses);
     }
 
-    [HttpGet("id")]
+    [HttpGet("{id:int}")]
     [SwaggerOperation(
         Summary = "Course",
         Description = "Course desc")]

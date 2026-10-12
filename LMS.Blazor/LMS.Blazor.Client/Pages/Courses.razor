@@ -20,7 +20,11 @@
             @foreach (var c in courses)
             {
                 <tr>
-                    <td>@c.Name</td> 
+                    <td>
+                        <NavLink class="course-link" href="@($"/t-course/{c.Id}")">
+                            @c.Name
+                        </NavLink>
+                    </td>
                     <td>@c.Id</td>
                     <td>@c.Description</td>
                     <td>@c.StartDate</td>
@@ -40,7 +44,7 @@
     {
         try
         {
-            await Task.Delay(1000); // TODO: remove simulated delay
+            await Task.Delay(500); // TODO: remove simulated delay
             courses = await ApiProxyClient.GetAsync<CourseDto[]>(
                 "course",
                 componentCancellation.Token);
