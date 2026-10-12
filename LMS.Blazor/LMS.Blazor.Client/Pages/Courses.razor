@@ -1,6 +1,5 @@
 ﻿@page "/courses"
 @using LMS.Blazor.Client.Components
-
 @using LMS.Blazor.Client.Services.ApiProxy
 @using LMS.Shared.DTOs.CourseDtos
 
@@ -9,31 +8,42 @@
 <PageTitle>Kurser</PageTitle>
 
 <div class="courses-page">
-
     @if (courses is null)
     {
         <p>Loading...</p>
     }
     else
     {
-        <table>
-            @foreach (var c in courses)
-            {
-                <tr>
-                    <td>
-                        <NavLink class="course-link" href="@($"/t-course/{c.Id}")">
-                            @c.Name
-                        </NavLink>
-                    </td>
-                    <td>@c.Id</td>
-                    <td>@c.Description</td>
-                    <td>@c.StartDate</td>
-                    <td>@c.EndDate</td>
-                </tr>
-            }
-        </table>
+        <div class="table - responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Kurs</th>
+                        <th>Id</th>
+                        <th>Description</th>
+                        <th>Start date</th>
+                        <th>End date</th>
+                    </tr>
+                </thead>
+                @foreach (var c in courses)
+                {
+                    <tbody>
+                        <tr>
+                            <td>
+                                <NavLink  class="btn btn-sm btn-primary course-link" href="@($"/t-course/{c.Id}")">
+                                    @c.Name
+                                </NavLink>
+                            </td>
+                            <td>@c.Id</td>
+                            <td>@c.Description</td>
+                            <td>@c.StartDate</td>
+                            <td>@c.EndDate</td>
+                        </tr>
+                    </tbody>
+                }
+            </table>
+        </div>
     }
-
 </div>
 
 @code {
@@ -44,11 +54,11 @@
     {
         try
         {
-            await Task.Delay(500); // TODO: remove simulated delay
+            await Task.Delay(300); // TODO: remove simulated delay
             courses = await ApiProxyClient.GetAsync<CourseDto[]>(
                 "course",
                 componentCancellation.Token);
-        } 
+        }
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
