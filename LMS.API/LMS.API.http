@@ -1,6 +1,135 @@
-@LMS.API_HostAddress = http://localhost:5237
+@LMS.API_HostAddress = http://localhost:5279
+@NotificationId = 1
 
-GET {{LMS.API_HostAddress}}/weatherforecast/
+### Root (404, only checks that the API answers)
+GET {{LMS.API_HostAddress}}/
 Accept: application/json
 
-###
+########################################
+# Auth
+########################################
+
+### Auth Login as demo user
+# @name login
+POST {{LMS.API_HostAddress}}/api/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "DemoUser@Lms.com",
+  "password": "Dev!qNVT3lFip31a"
+}
+
+> {%
+  if (response.status === 200) {
+    client.global.set("token", response.body.accessToken);
+    client.global.set("refreshToken", response.body.refreshToken);
+    client.global.set("accessTokenExpiresAtUtc", response.body.accessTokenExpiresAtUtc);
+    client.global.set("refreshTokenExpiresAtUtc", response.body.refreshTokenExpiresAtUtc);
+  }
+%}
+
+### Auth Get authenticated user
+GET {{LMS.API_HostAddress}}/api/auth/me
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### Auth Verify access token
+GET {{LMS.API_HostAddress}}/api/demo-auth
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### Auth Call without access token (401)
+GET {{LMS.API_HostAddress}}/api/demo-auth
+Accept: application/json
+
+### Token Refresh
+POST {{LMS.API_HostAddress}}/api/token/refresh
+Content-Type: application/json
+Accept: application/json
+
+{
+  "accessToken": "{{token}}",
+  "refreshToken": "{{refreshToken}}",
+  "accessTokenExpiresAtUtc": "{{accessTokenExpiresAtUtc}}",
+  "refreshTokenExpiresAtUtc": "{{refreshTokenExpiresAtUtc}}"
+}
+
+> {%
+  if (response.status === 200) {
+    client.global.set("token", response.body.accessToken);
+    client.global.set("refreshToken", response.body.refreshToken);
+    client.global.set("accessTokenExpiresAtUtc", response.body.accessTokenExpiresAtUtc);
+    client.global.set("refreshTokenExpiresAtUtc", response.body.refreshTokenExpiresAtUtc);
+  }
+%}
+
+########################################
+# Courses
+########################################
+
+### Courses Get all courses
+GET {{LMS.API_HostAddress}}/api/course
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### Courses Create course
+POST {{LMS.API_HostAddress}}/api/course
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Lexicon LTU",
+  "code": "LTU26",
+  "description": "Full-stack utbildning med fokus på .NET, databaser och frontend.",
+  "startDate": "2026-09-01T00:00:00",
+  "endDate": "2027-05-31T00:00:00"
+}
+
+########################################
+# Notifications
+########################################
+
+### Notifications Get notifications
+GET {{LMS.API_HostAddress}}/api/notifications
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### Notifications Mark as read (404 until notifications are seeded)
+PATCH {{LMS.API_HostAddress}}/api/notifications/{{NotificationId}}/read
+Accept: application/json
+Authorization: Bearer {{token}}
+
+########################################
+# Users (Teacher only)
+########################################
+
+### Users Get users as demo user (403)
+GET {{LMS.API_HostAddress}}/api/users
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### Users Login as teacher FINNS INTE ENS I SEDDDATA
+# @name teacherLogin
+POST {{LMS.API_HostAddress}}/api/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "Teacher@Lms.com",
+  "password": "Dev!qNVT3lFip31a"
+}
+
+> {%
+  if (response.status === 200) {
+    client.global.set("teacherToken", response.body.accessToken);
+  }
+%}
+
+### Users Get users
+GET {{LMS.API_HostAddress}}/api/users
+Accept: application/json
+Authorization: Bearer {{teacherToken}}
+
+# SAKNAS att testa endpoints for users GET, PUT, DELETE, POST
