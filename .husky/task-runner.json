@@ -1,0 +1,11 @@
+{
+  "tasks": [
+    {
+      "name": "format-staged",
+      "group": "pre-commit",
+      "command": "dotnet",
+      "args": ["format", "whitespace", "LMS.slnx", "--include", "${staged}"],
+      "include": ["**/*.cs"]
+    }
+  ]
+}

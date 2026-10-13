@@ -1,0 +1,44 @@
+# Top-most EditorConfig file
+root = true
+
+# All files
+[*]
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Project and config files
+[*.{csproj,props,targets,slnx,json,yml,yaml}]
+indent_size = 2
+
+# Markdown uses trailing spaces for line breaks
+[*.md]
+trim_trailing_whitespace = false
+
+# C# files
+[*.cs]
+# Usings
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = false
+
+# Braces and new lines (Allman style, the .NET default)
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_else = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+
+# Indentation
+csharp_indent_case_contents = true
+csharp_indent_switch_labels = true
+
+# Spacing
+csharp_space_after_keywords_in_control_flow_statements = true
+csharp_space_after_comma = true
+csharp_space_around_binary_operators = before_and_after
+
+# Style preferences, shown as hints only
+csharp_style_namespace_declarations = file_scoped:suggestion
+csharp_style_var_for_built_in_types = true:suggestion
+csharp_style_var_when_type_is_apparent = true:suggestion
+csharp_prefer_braces = true:suggestion
