@@ -267,7 +267,19 @@ Håll högst 2–3 PRs samtidigt i Ready for review. Prioritera review när kön
 
 
 ## Kom igång
+Det behövs framför allt för US06 Dokument, US07 studentdelning och US09 inlämningar. US06 kräver validering av tillåtna filtyper och maximal filstorlek, och samma filregler ska återanvändas i US07. Lexicon LMS med UserStories US09 kräver också att filtyp och filstorlek valideras.
 
+## Filstrategi
+
+- Filer lagras på serversidan och metadata sparas i databasen.
+- Tillåtna filtyper: PDF, DOCX, PPTX, XLSX, TXT, JPG/JPEG och PNG.
+- Maximal filstorlek: 10 MB per fil.
+- Filtyp och filstorlek valideras server-side.
+- Vi kommer att ha server-side-validering för säkerhet och prestanda, samt client-side-validering för användarfeedback och för att undvika onödiga requests till servern.
+- Nedladdning sker genom API/BFF/YARP med behörighetskontroll.
+- Samma filregler återanvänds för dokumentdelning och inlämningar.
+
+  ## Kom igång
 _Fylls i när templaten finns: krav (.NET 10 SDK), secrets, databas och hur API och Blazor startas._
 
 ## Deploy

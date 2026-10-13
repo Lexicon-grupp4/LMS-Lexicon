@@ -1,0 +1,76 @@
+﻿.participants-page {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.participants-header {
+    margin-bottom: 2rem;
+}
+
+    .participants-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+    }
+
+    .participants-header p {
+        color: #6b7280;
+        margin: 0;
+    }
+
+.participants-card {
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.participant-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+    .participant-row:last-child {
+        border-bottom: none;
+    }
+
+.participant-avatar {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    border-radius: 50%;
+    background-color: #eef4ff;
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.participant-info h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 0.2rem;
+}
+
+.participant-info p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 640px) {
+    .participant-row {
+        padding: 1rem;
+    }
+
+    .participant-info p {
+        overflow-wrap: anywhere;
+    }
+}

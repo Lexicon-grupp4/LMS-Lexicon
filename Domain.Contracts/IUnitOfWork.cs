@@ -2,6 +2,6 @@
 
 public interface IUnitOfWork
 {
-    //IUserRepository UserRepsoitory { get; }
-    //Task<int> CompleteAsync();
+    IUserRepository UserRepsoitory { get; }
+    Task<int> CompleteAsync();
 }
