@@ -2,6 +2,7 @@ using LMS.Blazor.Client.Helper;
 using LMS.Blazor.Client.Services.ApiProxy;
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 public sealed class ApiProxyClient(HttpClient httpClient)
     : IApiProxyClient
@@ -13,7 +14,7 @@ public sealed class ApiProxyClient(HttpClient httpClient)
         CancellationToken cancellationToken = default)
     {
         var proxyUri = GetProxyUri(endpoint);
-
+        var errorMessage = "";
         using var request = new HttpRequestMessage(method, proxyUri)
         {
             Content = content
@@ -36,11 +37,14 @@ public sealed class ApiProxyClient(HttpClient httpClient)
         // Read the API error code before throwing.
         if (!response.IsSuccessStatusCode)
         {
-            var errorCode = await ApiErrorHelper.ReadErrorCodeAsync(response);
+            errorMessage= response.Content != null
+                ? await response.Content.ReadAsStringAsync(cancellationToken)
+                : "The API returned an error without a message.";
+            var error = JsonSerializer.Deserialize<ApiError>(errorMessage);
 
             if (response.StatusCode == HttpStatusCode.Unauthorized) { throw new UnauthorizedAccessException("The Blazor session is no longer valid."); }
 
-            throw new ApiException(response.StatusCode, errorCode);
+            throw new ApiException(response.StatusCode, error.ToString());
         }
 
         if (response.StatusCode == HttpStatusCode.NoContent ||

@@ -141,14 +141,11 @@ else
         }
         catch (ApiException ex)
         {
-            errorMessage = ErrorMessageService.GetFriendlyErrorMessage(
-                ex.StatusCode,
-                ex.ErrorCode);
+            errorMessage = ex.Message;
         }
         catch (HttpRequestException ex)
         {
-            errorMessage = ErrorMessageService.GetFriendlyErrorMessage(
-                ex.StatusCode);
+            errorMessage = ex.Message;
         }
         catch (Exception)
         {
@@ -184,14 +181,7 @@ else
         }
         catch (ApiException ex)
         {
-            errorMessage = ErrorMessageService.GetFriendlyErrorMessage(
-                ex.StatusCode,
-                ex.ErrorCode);
-        }
-        catch (HttpRequestException ex)
-        {
-            errorMessage = ErrorMessageService.GetFriendlyErrorMessage(
-                ex.StatusCode);
+            errorMessage = ex.Message;
         }
         catch (Exception)
         {
