@@ -91,7 +91,7 @@ namespace LMS.Services
             }
         }
 
-        public async Task DeleteUserAsync(string id)
+        public async Task DeleteUserAsync(string id,string currentUserId)
         {
             var user = await _userManager.FindByIdAsync(id);
 
@@ -99,6 +99,12 @@ namespace LMS.Services
             {
                 throw new NotFoundException(
                     $"User with ID '{id}' not found.");
+            }
+
+            if (user.Id == currentUserId)
+            {
+                throw new CannotDeleteOwnAccountException(
+                    "You cannot delete your own account. Please contact an administrator.");
             }
 
             var result = await _userManager.DeleteAsync(user);
@@ -273,20 +279,16 @@ namespace LMS.Services
             }
         }
 
-        private async Task ValidateEmailAsync(
-            string? email,
-            string? excludeUserId = null)
+        private async Task ValidateEmailAsync( string? email, string? excludeUserId = null)
         {
             if (string.IsNullOrWhiteSpace(email))
             {
-                throw new ArgumentException(
-                    "Email is required.");
+                throw new ArgumentException("Email is required.");
             }
 
             if (!IsValidEmail(email))
             {
-                throw new ArgumentException(
-                    "Invalid email format.");
+                throw new ArgumentException("Invalid email format.");
             }
 
             var existingUser =
