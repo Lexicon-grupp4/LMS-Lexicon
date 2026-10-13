@@ -1,5 +1,4 @@
-﻿using Domain.Models.Exceptions;
-using LMS.Shared.DTOs.UserDtos;
+﻿using LMS.Shared.DTOs.UserDtos;
 using LMS.Shared.Paging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;

@@ -1,11 +1,10 @@
 using LMS.Blazor.Client.Helper;
-using LMS.Blazor.Client.Services.ApiProxy;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
+namespace LMS.Blazor.Client.Services.ApiProxy;
 
-public sealed class ApiProxyClient(HttpClient httpClient)
-    : IApiProxyClient
+public sealed class ApiProxyClient(HttpClient httpClient)  : IApiProxyClient 
 {
     public async Task<TResponse?> SendAsync<TResponse>(
         HttpMethod method,
