@@ -4,6 +4,7 @@
 @using LMS.Shared.DTOs.CourseDtos
 
 @inject IApiProxyClient ApiProxyClient
+@inject IJSRuntime JS
 
 <PageTitle>Kurser</PageTitle>
 
@@ -30,7 +31,7 @@
                     <tbody>
                         <tr>
                             <td>
-                                <NavLink  class="btn btn-sm btn-primary course-link" href="@($"/t-course/{c.Id}")">
+                                <NavLink class="btn btn-sm btn-primary" href="@($"/t-course/{c.Id}")">
                                     @c.Name
                                 </NavLink>
                             </td>
@@ -38,6 +39,13 @@
                             <td>@c.Description</td>
                             <td>@c.StartDate</td>
                             <td>@c.EndDate</td>
+                            <td>
+                                <button class="btn btn-sm btn-danger ms-2"
+                                        disabled="@deletingIds.Contains(c.Id)"
+                                        @onclick="() => DeleteCourseAsync(c.Id)">
+                                    @(deletingIds.Contains(c.Id) ? "Deleting..." : "Delete")
+                                </button>
+                            </td>
                         </tr>
                     </tbody>
                 }
@@ -49,8 +57,14 @@
 @code {
     private CourseDto[]? courses;
     private readonly CancellationTokenSource componentCancellation = new();
+    private readonly HashSet<int> deletingIds = new();
 
     protected override async Task OnInitializedAsync()
+    {
+        await LoadCoursesAsync();
+    }
+
+    private async Task LoadCoursesAsync()
     {
         try
         {
@@ -62,6 +76,32 @@
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
+        }
+    }
+
+    private async Task DeleteCourseAsync(int id)
+    {
+        var confirmed = await JS.InvokeAsync<bool>("confirm", $"Delete course #{id}?");
+        if (!confirmed) return;
+
+        deletingIds.Add(id);
+        StateHasChanged();
+        try
+        {
+            await ApiProxyClient.DeleteAsync($"course/{id}");
+            // either re-load:
+            await LoadCoursesAsync();
+            // or do optimistic update:
+            // courses = courses?.Where(c => c.Id != id).ToArray();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            deletingIds.Remove(id);
+            StateHasChanged();
         }
     }
 }

@@ -9,52 +9,39 @@
 <PageTitle>Kurser</PageTitle>
 
 <div class="course-page">
-
-    <div class="course-header">
-        <h1>Min kurs</h1>
-        <p>Här ser du information om din kurs och de moduler som ingår.</p>
-    </div>
-
-    <section class="course-card">
-        <h2>Lexicon LTU</h2>
-        <p>
-            Full-stack utbildning med fokus på .NET, databaser och frontend.
-        </p>
-
-        <div class="course-dates">
-            <span>Start: 2026-09-01</span>
-            <span>Slut: 2027-05-31</span>
-        </div>
-    </section>
-
-    <section class="modules-section">
-        <h2>Moduler</h2>
-
-        <div class="module-card">
-            <div>
-                <h3>HTML & CSS</h3>
-                <p>Grundläggande webbdesign och responsiv layout.</p>
+    @if (course is null)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+        <section class="course-card">
+            <div class="course-header">
+                <h2>@course.Name (@course.Code)</h2>
             </div>
-            <span>Avslutad</span>
-        </div>
-
-        <div class="module-card">
-            <div>
-                <h3>Javascript</h3>
-                <p>Javascript, DOM och moderna webbapplikationer.</p>
+            <p>@course.Description ... [regigera knapp]</p>
+            <div class="course-dates">
+                <span>@course.StartDate.ToShortDateString()</span> - <span>@course.EndDate.ToShortDateString()</span>
             </div>
-            <span>Pågående</span>
+        </section>
+        <p>tabs...</p>
+        <div>
+            <h3>Kursframsteg</h3>
+            <p>x% genomfört i genomsnitt</p>
+            <p>progress bar...</p>
+            <p>Moduler</p>
+            <p>HTML & CSS ... progress bar x%</p>
+            <p>Javascript ... progress bar x%</p>
+            <p>React ... progress bar x%</p>
         </div>
-
-        <div class="module-card">
-            <div>
-                <h3>.NET</h3>
-                <p>C#, ASP.NET Core och full-stack utveckling.</p>
-            </div>
-            <span>Kommande</span>
+        <div>
+            <p>Kursstatistik</p>
+            <div>Moduler</div>
+            <div>Aktiviteter</div>
+            <div>Studenter</div>
+            <div>Inlämningar</div>
         </div>
-    </section>
-
+    }
 </div>
 
 @code {
@@ -67,7 +54,7 @@
     {
         try
         {
-            await Task.Delay(500); // TODO: remove simulated delay
+            await Task.Delay(200); // TODO: remove simulated delay
             course = await ApiProxyClient.GetAsync<CourseDto>($"course/{id}");
         }
         catch (Exception ex)

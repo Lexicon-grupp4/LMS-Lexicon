@@ -7,9 +7,9 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace LMS.Presentation.Controllers;
 
-[Route("api/course")]
-[AllowAnonymous]
 [ApiController]
+[AllowAnonymous]
+[Route("api/course")]
 [Consumes("application/json")]
 [Produces("application/json")]
 public class CourseController(IServiceManager serviceManager) : ControllerBase
@@ -49,6 +49,30 @@ public class CourseController(IServiceManager serviceManager) : ControllerBase
     public async Task<ActionResult<CourseDto>> NewCourse(NewCourseDto course)
     {
         var ret = await _serviceManager.CourseService.NewCourseAsync(course);
+        return Ok(ret);
+    }
+
+    [HttpDelete("{id:int}")]
+    [SwaggerOperation(
+        Summary = "Delete course",
+        Description = "Delete course desc")]
+    [SwaggerResponse(StatusCodes.Status200OK, "successful", typeof(CourseDto))]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "unauthorized")]
+    public async Task<ActionResult<bool>> DeleteCourse(int id)
+    {
+        var ret = await _serviceManager.CourseService.DeleteCourseAsync(id);
+        return Ok(ret);
+    }
+
+    [HttpPatch]
+    [SwaggerOperation(
+        Summary = "Patch course",
+        Description = "Patch course desc")]
+    [SwaggerResponse(StatusCodes.Status200OK, "successful", typeof(CourseDto))]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "unauthorized")]
+    public async Task<ActionResult<CourseDto>> PatchCourse(PatchCourseDto course)
+    {
+        var ret = await _serviceManager.CourseService.PatchCourseAsync(course);
         return Ok(ret);
     }
 }
