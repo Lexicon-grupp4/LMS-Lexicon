@@ -103,7 +103,7 @@ namespace LMS.Services
 
             if (user.Id == currentUserId)
             {
-                throw new CannotDeleteOwnAccountException(
+                throw new DeleteOwnAccountException(
                     "You cannot delete your own account. Please contact an administrator.");
             }
 

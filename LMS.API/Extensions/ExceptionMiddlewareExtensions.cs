@@ -21,7 +21,7 @@ public static class ExceptionMiddlewareExtensions
                     var (statusCode, title) = exception switch
                     {
                         UserAlreadyExistsException ex => (StatusCodes.Status400BadRequest, ex.Title),
-                        CannotDeleteOwnAccountException ex => (StatusCodes.Status400BadRequest, ex.Title),
+                        DeleteOwnAccountException ex => (StatusCodes.Status400BadRequest, ex.Title),
                         NotFoundException ex => (StatusCodes.Status404NotFound, ex.Title),
                         TokenValidationException ex => (StatusCodes.Status401Unauthorized, "Unauthorized"),
                         _ => (StatusCodes.Status500InternalServerError, "Internal Server Error")
