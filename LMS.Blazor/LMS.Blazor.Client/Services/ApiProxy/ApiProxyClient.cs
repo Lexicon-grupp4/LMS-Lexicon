@@ -81,6 +81,14 @@ public sealed class ApiProxyClient(HttpClient httpClient)
             throw new UnauthorizedAccessException(
                 "The Blazor session is no longer valid.");
         }
+
+        if (response.StatusCode == HttpStatusCode.Forbidden)
+        {
+            throw new HttpRequestException(
+                "You do not have permission to access this resource.",
+                null,
+                HttpStatusCode.Forbidden);
+        }
     }
 
     private static bool RequiresAntiforgery(HttpMethod method) =>
