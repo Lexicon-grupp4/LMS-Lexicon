@@ -9,8 +9,10 @@ public static class ServiceExtensions
 {
     public static void AddRepositories(this IServiceCollection services)
     {
+        services.AddScoped<IModuleRepository, ModuleRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddLazy<IModuleRepository>();
         services.AddLazy<IUserRepository>();
         services.AddScoped<INotificationRepository, NotificationRepository>();
     }
