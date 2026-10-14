@@ -3,5 +3,6 @@
 public interface IUnitOfWork
 {
     IUserRepository UserRepsoitory { get; }
+    IModuleRepository ModuleRepository { get; }
     Task<int> CompleteAsync();
 }
