@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Security.Claims;
 
 namespace LMS.Presentation.Controllers;
 
@@ -38,6 +39,27 @@ public class CourseController(IServiceManager serviceManager) : ControllerBase
     {
         var course = await _serviceManager.CourseService.GetCourseAsync(id);
         return Ok(course);
+    }
+
+    [HttpGet]
+    [SwaggerOperation(
+        Summary = "Course",
+        Description = "A students course")]
+    [SwaggerResponse(StatusCodes.Status200OK, "successful", typeof(CourseDto))]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "unauthorized")]
+    public async Task<ActionResult<CourseDto>> GetCourse()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrWhiteSpace(userId))
+            return Unauthorized();
+
+        var user = await _serviceManager.UserService.GetUserAsync(userId);
+        if (user.Role == "Student" && user.CourseId.HasValue)
+        {
+            var course = await _serviceManager.CourseService.GetCourseAsync(user.CourseId.Value);
+            return Ok(course);
+        }
+        return Forbid();
     }
 
     [HttpPost]
