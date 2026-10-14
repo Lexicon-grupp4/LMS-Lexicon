@@ -54,7 +54,6 @@
     {
         try
         {
-            await Task.Delay(200); // TODO: remove simulated delay
             course = await ApiProxyClient.GetAsync<CourseDto>($"course/{id}");
         }
         catch (Exception ex)
