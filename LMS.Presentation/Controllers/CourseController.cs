@@ -11,7 +11,6 @@ namespace LMS.Presentation.Controllers;
 [Route("api/course")]
 [Authorize]
 [ApiController]
-[AllowAnonymous]
 [Route("api/course")]
 [Consumes("application/json")]
 [Produces("application/json")]
