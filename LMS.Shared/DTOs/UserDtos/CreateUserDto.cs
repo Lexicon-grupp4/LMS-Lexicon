@@ -6,7 +6,6 @@ namespace LMS.Shared.DTOs.UserDtos
 {
     public record CreateUserDto:UserBaseDto
     {
-        public string Password { get; set; } = null!;
 
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Domain.Contracts;
 using Domain.Models.Entities;
+using Domain.Models.Exceptions;
 using LMS.Shared.DTOs.UserDtos;
 using LMS.Shared.Enum;
 using LMS.Shared.Paging;
@@ -25,56 +26,88 @@ namespace LMS.Services
             _userManager = userManager;
         }
 
-        public async Task<UserDto> CreateUserAsync(
+        public async Task<CreateUserResponseDto> CreateUserAsync(
             CreateUserDto dto)
         {
+            ValidateName(dto.FirstName, dto.LastName);
             ValidateRole(dto.Role);
+            await ValidateEmailAsync(dto.Email);
 
             var user = _mapper.Map<ApplicationUser>(dto);
 
-            var result = await _userManager.CreateAsync(
-                user,
-                dto.Password!);
+            var result = await _userManager.CreateAsync(user);
 
             if (!result.Succeeded)
             {
                 ThrowIdentityErrors(result);
             }
 
-            var roleResult =
-                await _userManager.AddToRoleAsync(
-                    user,
-                    dto.Role);
+            var roleResult = await _userManager.AddToRoleAsync(
+                user,
+                dto.Role!);
 
             if (!roleResult.Succeeded)
             {
-                // Remove user if role assignment failed
                 await _userManager.DeleteAsync(user);
-
                 ThrowIdentityErrors(roleResult);
             }
 
-            var userDto =
-                _mapper.Map<UserDto>(user);
+            var token =
+                await _userManager.GeneratePasswordResetTokenAsync(user);
 
-            userDto.Role = dto.Role;
+            var userDto = _mapper.Map<UserDto>(user);
+            userDto.Role = dto.Role!;
 
-            return userDto;
+            return new CreateUserResponseDto
+            {
+                User = userDto,
+                PasswordSetupToken = token
+            };
         }
 
-        public async Task DeleteUserAsync(string id)
+        public async Task SetPasswordAsync(SetPasswordDto dto)
         {
-            var user =
-                await _userManager.FindByIdAsync(id);
+            if (dto.Password != dto.ConfirmPassword)
+            {
+                throw new ArgumentException(
+                    "Passwords do not match.");
+            }
+
+            var user = await _userManager.FindByIdAsync(dto.UserId);
 
             if (user == null)
             {
-                throw new Exception(
-                    $"{id} not found");
+                throw new NotFoundException("User not found.");
             }
 
-            var result =
-                await _userManager.DeleteAsync(user);
+            var result = await _userManager.ResetPasswordAsync(
+                user,
+                dto.Token,
+                dto.Password);
+
+            if (!result.Succeeded)
+            {
+                ThrowIdentityErrors(result);
+            }
+        }
+
+        public async Task DeleteUserAsync(string id,string currentUserId)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null)
+            {
+                throw new NotFoundException(
+                    $"User with ID '{id}' not found.");
+            }
+
+            if (user.Id == currentUserId)
+            {
+                throw new CannotDeleteOwnAccountException(
+                    "You cannot delete your own account. Please contact an administrator.");
+            }
+
+            var result = await _userManager.DeleteAsync(user);
 
             if (!result.Succeeded)
             {
@@ -87,37 +120,32 @@ namespace LMS.Services
             bool includeCourse = false,
             bool trackChanges = false)
         {
-            var user =
-                await _uow.UserRepsoitory.GetUserByIdAsync(
-                    id,
-                    includeCourse,
-                    trackChanges);
+            var user = await _uow.UserRepsoitory.GetUserByIdAsync(
+                id,
+                includeCourse,
+                trackChanges);
 
             if (user == null)
             {
-                throw new Exception(
-                    $"{id} not found");
+                throw new NotFoundException(
+                    $"User with ID '{id}' not found.");
             }
 
-            var userDto =
-                _mapper.Map<UserDto>(user);
+            var userDto = _mapper.Map<UserDto>(user);
 
-            var roles =
-                await _userManager.GetRolesAsync(user);
+            var roles = await _userManager.GetRolesAsync(user);
 
-            userDto.Role =
-                roles.FirstOrDefault() ?? string.Empty;
+            userDto.Role = roles.FirstOrDefault() ?? string.Empty;
 
             return userDto;
         }
 
         public async Task<PagedResponse<UserDto>> GetUsersAsync(
-     QueryParameters query,
-     bool trackChanges = false)
+            QueryParameters query,
+            bool trackChanges = false)
         {
-            var users =
-                await _uow.UserRepsoitory
-                    .GetAllUsersWithRolesAsync(query);
+            var users = await _uow.UserRepsoitory
+                .GetAllUsersWithRolesAsync(query);
 
             var userDtos = users.Items
                 .Select(x =>
@@ -139,33 +167,34 @@ namespace LMS.Services
             string id,
             UpdateUserDto dto)
         {
-            var user =
-                await _userManager.FindByIdAsync(id);
+            ValidateName(dto.FirstName, dto.LastName);
+
+            var user = await _userManager.FindByIdAsync(id);
 
             if (user == null)
             {
-                throw new Exception(
-                    $"{id} not found");
+                throw new NotFoundException(
+                    $"User with ID '{id}' not found.");
             }
 
-            // Validate role before changing anything
+            await ValidateEmailAsync(dto.Email, user.Id);
+
             if (!string.IsNullOrWhiteSpace(dto.Role))
             {
                 ValidateRole(dto.Role);
             }
 
-            // Update normal user properties
+            // Update user properties.
             _mapper.Map(dto, user);
 
-            var result =
-                await _userManager.UpdateAsync(user);
+            var result = await _userManager.UpdateAsync(user);
 
             if (!result.Succeeded)
             {
                 ThrowIdentityErrors(result);
             }
 
-            // Update role
+            // Update role only when a role was provided.
             if (!string.IsNullOrWhiteSpace(dto.Role))
             {
                 var currentRoles =
@@ -184,10 +213,9 @@ namespace LMS.Services
                     }
                 }
 
-                var addResult =
-                    await _userManager.AddToRoleAsync(
-                        user,
-                        dto.Role);
+                var addResult = await _userManager.AddToRoleAsync(
+                    user,
+                    dto.Role);
 
                 if (!addResult.Succeeded)
                 {
@@ -195,16 +223,25 @@ namespace LMS.Services
                 }
             }
 
-            var userDto =
-                _mapper.Map<UserDto>(user);
+            var userDto = _mapper.Map<UserDto>(user);
 
-            var roles =
-                await _userManager.GetRolesAsync(user);
+            var roles = await _userManager.GetRolesAsync(user);
 
-            userDto.Role =
-                roles.FirstOrDefault() ?? string.Empty;
+            userDto.Role = roles.FirstOrDefault() ?? string.Empty;
 
             return userDto;
+        }
+
+        private static void ValidateName(
+            string? firstName,
+            string? lastName)
+        {
+            if (string.IsNullOrWhiteSpace(firstName) ||
+                string.IsNullOrWhiteSpace(lastName))
+            {
+                throw new ArgumentException(
+                    "First and last name are required.");
+            }
         }
 
         private static void ValidateRole(string? role)
@@ -224,7 +261,45 @@ namespace LMS.Services
                 ", ",
                 result.Errors.Select(e => e.Description));
 
-            throw new Exception(errors);
+            throw new ArgumentException(errors);
+        }
+
+        private static bool IsValidEmail(string email)
+        {
+            try
+            {
+                var address =
+                    new System.Net.Mail.MailAddress(email);
+
+                return address.Address == email;
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
+        }
+
+        private async Task ValidateEmailAsync( string? email, string? excludeUserId = null)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                throw new ArgumentException("Email is required.");
+            }
+
+            if (!IsValidEmail(email))
+            {
+                throw new ArgumentException("Invalid email format.");
+            }
+
+            var existingUser =
+                await _userManager.FindByEmailAsync(email);
+
+            if (existingUser != null &&
+                existingUser.Id != excludeUserId)
+            {
+                throw new UserAlreadyExistsException(
+                    $"{email} is already taken.");
+            }
         }
     }
 }

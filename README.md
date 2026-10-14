@@ -200,6 +200,11 @@ erDiagram
 
 Skapa en stabil grund för LMS:et genom att verifiera templaten och GitHub-flödet samt bygga den grundläggande strukturen för användare och kurser.
 
+**Sprint Goal 2**
+
+Skapa en säker och tydlig kursupplevelse för studenten.
+
+
 ## Arbetsflöde
 
 1. Välj en sub-issue på boarden, tilldela dig själv och flytta den till **In progress**.
