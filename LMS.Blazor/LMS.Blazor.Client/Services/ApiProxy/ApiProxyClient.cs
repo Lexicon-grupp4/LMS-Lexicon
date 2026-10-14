@@ -1,9 +1,10 @@
+using LMS.Blazor.Client.Helper;
+using LMS.Blazor.Client.Services.ApiProxy;
 using System.Net;
 using System.Net.Http.Json;
 
-namespace LMS.Blazor.Client.Services.ApiProxy;
-
-public sealed class ApiProxyClient(HttpClient httpClient) : IApiProxyClient
+public sealed class ApiProxyClient(HttpClient httpClient)
+    : IApiProxyClient
 {
     public async Task<TResponse?> SendAsync<TResponse>(
         HttpMethod method,
@@ -12,6 +13,7 @@ public sealed class ApiProxyClient(HttpClient httpClient) : IApiProxyClient
         CancellationToken cancellationToken = default)
     {
         var proxyUri = GetProxyUri(endpoint);
+
         using var request = new HttpRequestMessage(method, proxyUri)
         {
             Content = content
@@ -19,14 +21,27 @@ public sealed class ApiProxyClient(HttpClient httpClient) : IApiProxyClient
 
         if (RequiresAntiforgery(method))
         {
-            var requestToken = await GetAntiforgeryTokenAsync(cancellationToken);
-            request.Headers.Add(AntiforgeryProtocol.HeaderName, requestToken);
+            var requestToken =
+                await GetAntiforgeryTokenAsync(cancellationToken);
+
+            request.Headers.Add(
+                AntiforgeryProtocol.HeaderName,
+                requestToken);
         }
 
-        using var response = await httpClient.SendAsync(request, cancellationToken);
+        using var response = await httpClient.SendAsync(
+            request,
+            cancellationToken);
 
-        EnsureAuthenticated(response);
-        response.EnsureSuccessStatusCode();
+        // Read the API error code before throwing.
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorCode = await ApiErrorHelper.ReadErrorCodeAsync(response);
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized) { throw new UnauthorizedAccessException("The Blazor session is no longer valid."); }
+
+            throw new ApiException(response.StatusCode, errorCode);
+        }
 
         if (response.StatusCode == HttpStatusCode.NoContent ||
             response.Content.Headers.ContentLength == 0)
@@ -34,7 +49,8 @@ public sealed class ApiProxyClient(HttpClient httpClient) : IApiProxyClient
             return default;
         }
 
-        return await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken);
+        return await response.Content
+            .ReadFromJsonAsync<TResponse>(cancellationToken);
     }
 
     private async Task<string> GetAntiforgeryTokenAsync(
@@ -48,7 +64,8 @@ public sealed class ApiProxyClient(HttpClient httpClient) : IApiProxyClient
         response.EnsureSuccessStatusCode();
 
         var token = await response.Content
-            .ReadFromJsonAsync<AntiforgeryTokenDto>(cancellationToken);
+            .ReadFromJsonAsync<AntiforgeryTokenDto>(
+                cancellationToken);
 
         return !string.IsNullOrWhiteSpace(token?.RequestToken)
             ? token.RequestToken
@@ -56,7 +73,8 @@ public sealed class ApiProxyClient(HttpClient httpClient) : IApiProxyClient
                 "The BFF returned an invalid antiforgery token response.");
     }
 
-    private static void EnsureAuthenticated(HttpResponseMessage response)
+    private static void EnsureAuthenticated(
+        HttpResponseMessage response)
     {
         if (response.StatusCode == HttpStatusCode.Unauthorized)
         {

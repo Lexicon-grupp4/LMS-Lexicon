@@ -1,9 +1,12 @@
 ﻿@page "/users/edit/{Id}"
 
+@using LMS.Blazor.Client.Helper
+@using LMS.Blazor.Client.Services
 @using LMS.Blazor.Client.Services.ApiProxy
+@using LMS.Shared.DTOs.CourseDtos
 @using LMS.Shared.DTOs.UserDtos
 @using Microsoft.AspNetCore.Authorization
-@using LMS.Shared.DTOs.CourseDtos;
+
 @attribute [Authorize(Roles = "Teacher")]
 
 @inject IApiProxyClient ApiProxyClient
@@ -21,10 +24,10 @@
         </div>
     </div>
 }
-else if (!string.IsNullOrWhiteSpace(errorMessage))
+else if (!string.IsNullOrWhiteSpace(errorMessage) && userNotLoaded)
 {
-    <div class="alert alert-danger">
-        @errorMessage
+    <div class="alert alert-danger" role="alert">
+        <strong>Error:</strong> @errorMessage
     </div>
 
     <button type="button"
@@ -35,6 +38,13 @@ else if (!string.IsNullOrWhiteSpace(errorMessage))
 }
 else
 {
+    @if (!string.IsNullOrWhiteSpace(errorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            <strong>Error:</strong> @errorMessage
+        </div>
+    }
+
     <EditForm Model="model" OnValidSubmit="UpdateUser">
 
         <DataAnnotationsValidator />
@@ -42,7 +52,7 @@ else
 
         @if (!string.IsNullOrWhiteSpace(successMessage))
         {
-            <div class="alert alert-success">
+            <div class="alert alert-success" role="alert">
                 @successMessage
             </div>
         }
@@ -112,7 +122,8 @@ else
                 @if (isSaving)
                 {
                     <span>
-                        <span class="spinner-border spinner-border-sm me-1"></span>
+                        <span class="spinner-border spinner-border-sm me-1"
+                              role="status"></span>
                         Saving...
                     </span>
                 }
@@ -144,6 +155,7 @@ else
 
     private bool isLoading = true;
     private bool isSaving;
+    private bool userNotLoaded;
 
     private string? errorMessage;
     private string? successMessage;
@@ -156,6 +168,7 @@ else
     private async Task LoadUser()
     {
         isLoading = true;
+        userNotLoaded = false;
         errorMessage = null;
         successMessage = null;
 
@@ -168,6 +181,7 @@ else
 
             if (user is null)
             {
+                userNotLoaded = true;
                 errorMessage = "User not found.";
                 return;
             }
@@ -187,9 +201,25 @@ else
                 "/Account/Login",
                 forceLoad: true);
         }
-        catch (Exception ex)
+        catch (ApiException ex)
         {
-            errorMessage = ex.Message;
+            userNotLoaded = true;
+
+            errorMessage = ErrorMessageService.GetFriendlyErrorMessage(
+                ex.StatusCode,
+                ex.ErrorCode);
+        }
+        catch (HttpRequestException ex)
+        {
+            userNotLoaded = true;
+
+            errorMessage = ErrorMessageService.GetFriendlyErrorMessage(
+                ex.StatusCode);
+        }
+        catch (Exception)
+        {
+            userNotLoaded = true;
+            errorMessage = "Unable to load the user. Please try again.";
         }
         finally
         {
@@ -207,6 +237,11 @@ else
 
     private async Task UpdateUser()
     {
+        if (isSaving)
+        {
+            return;
+        }
+
         isSaving = true;
         errorMessage = null;
         successMessage = null;
@@ -233,9 +268,20 @@ else
                 "/Account/Login",
                 forceLoad: true);
         }
-        catch (Exception ex)
+        catch (ApiException ex)
         {
-            errorMessage = ex.Message;
+            errorMessage = ErrorMessageService.GetFriendlyErrorMessage(
+                ex.StatusCode,
+                ex.ErrorCode);
+        }
+        catch (HttpRequestException ex)
+        {
+            errorMessage = ErrorMessageService.GetFriendlyErrorMessage(
+                ex.StatusCode);
+        }
+        catch (Exception)
+        {
+            errorMessage = "An unexpected error occurred while updating the user.";
         }
         finally
         {
