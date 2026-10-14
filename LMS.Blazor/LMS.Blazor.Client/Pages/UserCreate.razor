@@ -155,14 +155,7 @@
         }
         catch (ApiException ex)
         {
-            errorMessage = ErrorMessageService.GetFriendlyErrorMessage(
-                ex.StatusCode,
-                ex.ErrorCode);
-        }
-        catch (HttpRequestException ex)
-        {
-            errorMessage = ErrorMessageService.GetFriendlyErrorMessage(
-                ex.StatusCode);
+            errorMessage = ex.Message;
         }
         catch (Exception)
         {
@@ -213,15 +206,9 @@
         }
         catch (ApiException ex)
         {
-            errorMessage = ErrorMessageService.GetFriendlyErrorMessage(
-                ex.StatusCode,
-                ex.ErrorCode);
+            errorMessage = ex.Message;
         }
-        catch (HttpRequestException ex)
-        {
-            errorMessage = ErrorMessageService.GetFriendlyErrorMessage(
-                ex.StatusCode);
-        }
+     
         catch (Exception)
         {
             errorMessage = "An unexpected error occurred while creating the user.";
