@@ -1,8 +1,10 @@
 ﻿@page "/users/create"
 
-@using LMS.Shared.DTOs.UserDtos
-@using LMS.Shared.DTOs.CourseDtos
+@using LMS.Blazor.Client.Helper
+@using LMS.Blazor.Client.Services
 @using LMS.Blazor.Client.Services.ApiProxy
+@using LMS.Shared.DTOs.CourseDtos
+@using LMS.Shared.DTOs.UserDtos
 @using Microsoft.AspNetCore.Authorization
 
 @attribute [Authorize(Roles = "Teacher")]
@@ -24,8 +26,8 @@
 
 @if (!string.IsNullOrWhiteSpace(errorMessage))
 {
-    <div class="alert alert-danger">
-        @errorMessage
+    <div class="alert alert-danger" role="alert">
+        <strong>Error:</strong> @errorMessage
     </div>
 }
 
@@ -89,25 +91,27 @@
         after the account has been created.
     </div>
 
-    <button type="submit"
-            class="btn btn-primary"
-            disabled="@isSaving">
+   
+<button type="submit"
+        class="btn btn-primary"
+        disabled="@isSaving">
 
-        @if (isSaving)
-        {
-            <span>
-                <span class="spinner-border spinner-border-sm me-1"></span>
-                Creating...
-            </span>
-        }
-        else
-        {
-            <span>
-                <span class="bi bi-person-plus"></span>
-                Create User
-            </span>
-        }
-    </button>
+    @if (isSaving)
+    {
+        <span>
+            <span class="spinner-border spinner-border-sm me-1"
+                  role="status"></span>
+            Creating...
+        </span>
+    }
+    else
+    {
+        <span>
+            <span class="bi bi-person-plus"></span>
+            Create User
+        </span>
+    }
+</button>
 
     <button type="button"
             class="btn btn-secondary ms-2"
@@ -149,9 +153,20 @@
                 "/Account/Login",
                 forceLoad: true);
         }
-        catch (Exception ex)
+        catch (ApiException ex)
         {
-            errorMessage = $"Failed to load courses: {ex.Message}";
+            errorMessage = ErrorMessageService.GetFriendlyErrorMessage(
+                ex.StatusCode,
+                ex.ErrorCode);
+        }
+        catch (HttpRequestException ex)
+        {
+            errorMessage = ErrorMessageService.GetFriendlyErrorMessage(
+                ex.StatusCode);
+        }
+        catch (Exception)
+        {
+            errorMessage = "Failed to load courses. Please try again.";
         }
         finally
         {
@@ -161,6 +176,11 @@
 
     private async Task CreateUser()
     {
+        if (isSaving)
+        {
+            return;
+        }
+
         isSaving = true;
         errorMessage = null;
 
@@ -191,9 +211,20 @@
                 "/Account/Login",
                 forceLoad: true);
         }
-        catch (Exception ex)
+        catch (ApiException ex)
         {
-            errorMessage = ex.Message;
+            errorMessage = ErrorMessageService.GetFriendlyErrorMessage(
+                ex.StatusCode,
+                ex.ErrorCode);
+        }
+        catch (HttpRequestException ex)
+        {
+            errorMessage = ErrorMessageService.GetFriendlyErrorMessage(
+                ex.StatusCode);
+        }
+        catch (Exception)
+        {
+            errorMessage = "An unexpected error occurred while creating the user.";
         }
         finally
         {
