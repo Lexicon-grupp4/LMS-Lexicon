@@ -19,7 +19,7 @@
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th>Kurs</th>
+                        <th>Course</th>
                         <th>Id</th>
                         <th>Description</th>
                         <th>Start date</th>
@@ -39,6 +39,11 @@
                             <td>@c.Description</td>
                             <td>@c.StartDate</td>
                             <td>@c.EndDate</td>
+                            <td>
+                                <NavLink class="btn btn-sm btn-secondary ms-2" href="@($"/course/edit/{c.Id}")">
+                                    "Edit"
+                                </NavLink>
+                            </td>
                             <td>
                                 <button class="btn btn-sm btn-danger ms-2"
                                         disabled="@deletingIds.Contains(c.Id)"
@@ -68,7 +73,6 @@
     {
         try
         {
-            await Task.Delay(300); // TODO: remove simulated delay
             courses = await ApiProxyClient.GetAsync<CourseDto[]>(
                 "course",
                 componentCancellation.Token);
@@ -89,10 +93,7 @@
         try
         {
             await ApiProxyClient.DeleteAsync($"course/{id}");
-            // either re-load:
             await LoadCoursesAsync();
-            // or do optimistic update:
-            // courses = courses?.Where(c => c.Id != id).ToArray();
         }
         catch (Exception ex)
         {

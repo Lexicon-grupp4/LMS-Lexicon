@@ -41,26 +41,26 @@ public class CourseController(IServiceManager serviceManager) : ControllerBase
         return Ok(course);
     }
 
-    [HttpGet]
-    [SwaggerOperation(
-        Summary = "Course",
-        Description = "A students course")]
-    [SwaggerResponse(StatusCodes.Status200OK, "successful", typeof(CourseDto))]
-    [SwaggerResponse(StatusCodes.Status401Unauthorized, "unauthorized")]
-    public async Task<ActionResult<CourseDto>> GetCourse()
-    {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
-            return Unauthorized();
+    //[HttpGet]
+    //[SwaggerOperation(
+    //    Summary = "Course",
+    //    Description = "A students course")]
+    //[SwaggerResponse(StatusCodes.Status200OK, "successful", typeof(CourseDto))]
+    //[SwaggerResponse(StatusCodes.Status401Unauthorized, "unauthorized")]
+    //public async Task<ActionResult<CourseDto>> GetCourse()
+    //{
+    //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    //    if (string.IsNullOrWhiteSpace(userId))
+    //        return Unauthorized();
 
-        var user = await _serviceManager.UserService.GetUserAsync(userId);
-        if (user.Role == "Student" && user.CourseId.HasValue)
-        {
-            var course = await _serviceManager.CourseService.GetCourseAsync(user.CourseId.Value);
-            return Ok(course);
-        }
-        return Forbid();
-    }
+    //    //var user = await _serviceManager.UserService.GetUserAsync(userId);
+    //    //if (user.Role == "Student" && user.CourseId.HasValue)
+    //    //{
+    //    var course = await _serviceManager.CourseService.GetCourseAsync(5); //user.CourseId.Value);
+    //    return Ok(course);
+    //    //}
+    //    //return Forbid();
+    //}
 
     [HttpPost]
     [SwaggerOperation(
