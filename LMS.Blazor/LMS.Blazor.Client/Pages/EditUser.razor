@@ -230,7 +230,7 @@ else
     private async Task LoadCourses()
     {
         var result = await ApiProxyClient
-            .GetAsync<List<CourseDto>>("course");
+            .GetAsync<List<CourseDto>>("Courses");
 
         courses = result ?? new List<CourseDto>();
     }
