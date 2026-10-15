@@ -19,7 +19,7 @@ public class CourseController(IServiceManager serviceManager) : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = "Teacher")]
-    [SwaggerOperation(Summary = "Get all courses",Description = "Returns all courses for teachers")]
+    [SwaggerOperation(Summary = "Get all courses", Description = "Returns all courses for teachers")]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful", typeof(List<CourseDto>))]
     public async Task<ActionResult<List<CourseDto>>> GetCourses()
     {
@@ -28,48 +28,49 @@ public class CourseController(IServiceManager serviceManager) : ControllerBase
     }
 
     [HttpGet("{id:int}")]
+    [Authorize(Roles = "Teacher,Student")]
     [SwaggerOperation(Summary = "Course", Description = "Course desc")]
     [SwaggerResponse(StatusCodes.Status200OK, "successful", typeof(CourseDto))]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "unauthorized")]
+    [SwaggerResponse(StatusCodes.Status403Forbidden, "forbidden")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "not found")]
     public async Task<ActionResult<CourseDto>> GetCourse(int id)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        if (string.IsNullOrWhiteSpace(userId))
-            return Unauthorized();
-
-        var user = await _serviceManager.UserService.GetUserAsync(userId);
-
-        if (user.Role == "Student")
+        if (User.IsInRole("Student"))
         {
-            if (!user.CourseId.HasValue || user.CourseId.Value != id)
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrWhiteSpace(userId))
+                return Unauthorized();
+
+            var user = await _serviceManager.UserService.GetUserAsync(userId);
+            if (user.CourseId != id)
                 return Forbid();
         }
 
-        if (user.Role != "Student" && user.Role != "Teacher")
-            return Forbid();
-
         var course = await _serviceManager.CourseService.GetCourseAsync(id);
-        return Ok(course);
+        return course is null ? NotFound() : Ok(course);
+
     }
 
     [HttpGet("my-course")]
-    [SwaggerOperation(Summary = "Course", Description = "A students course")]
+    [Authorize(Roles = "Student")]
+    [SwaggerOperation(Summary = "My course", Description = "Returns the course of the logged-in student")]
     [SwaggerResponse(StatusCodes.Status200OK, "successful", typeof(CourseDto))]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "unauthorized")]
-    public async Task<ActionResult<CourseDto>> GetCourse()
+    [SwaggerResponse(StatusCodes.Status403Forbidden, "forbidden")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "not found")]
+    public async Task<ActionResult<CourseDto>> GetMyCourse()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrWhiteSpace(userId))
             return Unauthorized();
 
         var user = await _serviceManager.UserService.GetUserAsync(userId);
-        if (user.Role == "Student" && user.CourseId.HasValue)
-        {
-            var course = await _serviceManager.CourseService.GetCourseAsync(user.CourseId.Value);
-            return Ok(course);
-        }
-        return Forbid();
+        if (!user.CourseId.HasValue)
+            return NotFound();
+
+        var course = await _serviceManager.CourseService.GetCourseAsync(user.CourseId.Value);
+        return course is null ? NotFound() : Ok(course);
     }
 
     [HttpPost]
