@@ -1,13 +1,14 @@
-﻿using LMS.Shared.DTOs.CourseDtos;
+﻿using System.Security.Claims;
+using LMS.Shared.DTOs.CourseDtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using Swashbuckle.AspNetCore.Annotations;
-using System.Security.Claims;
+
 namespace LMS.Presentation.Controllers;
 
-[Route("api/course")]
+[Route("api/courses")]
 [Authorize]
 [ApiController]
 [Consumes("application/json")]
@@ -17,38 +18,17 @@ public class CourseController(IServiceManager serviceManager) : ControllerBase
     private readonly IServiceManager _serviceManager = serviceManager;
 
     [HttpGet]
-    [SwaggerOperation(
-        Summary = "Courses",
-        Description = "Courses desc")]
-    [SwaggerResponse(StatusCodes.Status200OK, "successful", typeof(CourseDto))]
-    [SwaggerResponse(StatusCodes.Status401Unauthorized, "unauthorized")]
-    public async Task<ActionResult<CourseDto>> GetCourses()
+    [Authorize(Roles = "Teacher")]
+    [SwaggerOperation(Summary = "Get all courses",Description = "Returns all courses for teachers")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Successful", typeof(List<CourseDto>))]
+    public async Task<ActionResult<List<CourseDto>>> GetCourses()
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrWhiteSpace(userId))
-            return Unauthorized();
-
-        var user = await _serviceManager.UserService.GetUserAsync(userId);
-
-        if (user.Role == "Teacher")
-        {
-            var courses = await _serviceManager.CourseService.GetCoursesAsync();
-            return Ok(courses);
-        }
-
-        if (user.Role == "Student" && user.CourseId.HasValue)
-        {
-            var course = await _serviceManager.CourseService.GetCourseAsync(user.CourseId.Value);
-            return Ok(course);
-        }
-
-        return Forbid();
+        var courses = await _serviceManager.CourseService.GetCoursesAsync();
+        return Ok(courses);
     }
 
-    [HttpGet("id")]
-    [SwaggerOperation(
-        Summary = "Course",
-        Description = "Course desc")]
+    [HttpGet("{id:int}")]
+    [SwaggerOperation(Summary = "Course", Description = "Course desc")]
     [SwaggerResponse(StatusCodes.Status200OK, "successful", typeof(CourseDto))]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "unauthorized")]
     public async Task<ActionResult<CourseDto>> GetCourse(int id)
@@ -73,11 +53,28 @@ public class CourseController(IServiceManager serviceManager) : ControllerBase
         return Ok(course);
     }
 
+    [HttpGet("my-course")]
+    [SwaggerOperation(Summary = "Course", Description = "A students course")]
+    [SwaggerResponse(StatusCodes.Status200OK, "successful", typeof(CourseDto))]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "unauthorized")]
+    public async Task<ActionResult<CourseDto>> GetCourse()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrWhiteSpace(userId))
+            return Unauthorized();
+
+        var user = await _serviceManager.UserService.GetUserAsync(userId);
+        if (user.Role == "Student" && user.CourseId.HasValue)
+        {
+            var course = await _serviceManager.CourseService.GetCourseAsync(user.CourseId.Value);
+            return Ok(course);
+        }
+        return Forbid();
+    }
+
     [HttpPost]
     [Authorize(Roles = "Teacher")]
-    [SwaggerOperation(
-        Summary = "New course",
-        Description = "New course desc")]
+    [SwaggerOperation(Summary = "New course", Description = "New course desc")]
     [SwaggerResponse(StatusCodes.Status200OK, "successful", typeof(CourseDto))]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "unauthorized")]
     public async Task<ActionResult<CourseDto>> NewCourse(NewCourseDto course)
@@ -85,5 +82,24 @@ public class CourseController(IServiceManager serviceManager) : ControllerBase
         var ret = await _serviceManager.CourseService.NewCourseAsync(course);
         return Ok(ret);
     }
-}
 
+    [HttpDelete("{id:int}")]
+    [SwaggerOperation(Summary = "Delete course", Description = "Delete course desc")]
+    [SwaggerResponse(StatusCodes.Status200OK, "successful", typeof(CourseDto))]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "unauthorized")]
+    public async Task<ActionResult<bool>> DeleteCourse(int id)
+    {
+        var ret = await _serviceManager.CourseService.DeleteCourseAsync(id);
+        return Ok(ret);
+    }
+
+    [HttpPatch]
+    [SwaggerOperation(Summary = "Patch course", Description = "Patch course desc")]
+    [SwaggerResponse(StatusCodes.Status200OK, "successful", typeof(CourseDto))]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "unauthorized")]
+    public async Task<ActionResult<CourseDto>> PatchCourse(PatchCourseDto course)
+    {
+        var ret = await _serviceManager.CourseService.PatchCourseAsync(course);
+        return Ok(ret);
+    }
+}

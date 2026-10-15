@@ -1,4 +1,5 @@
 ﻿using LMS.Infrastructure.Data;
+using LMS.Infrastructure.Migrations;
 using LMS.Shared.DTOs.CourseDtos;
 using Microsoft.EntityFrameworkCore;
 using Service.Contracts;
@@ -26,7 +27,7 @@ public class CourseService : ICourseService
             )).ToListAsync();
     }
 
-    public async Task<IEnumerable<CourseDto>> GetCourseAsync(int id)
+    public async Task<CourseDto?> GetCourseAsync(int id)
     {
         return await _context.Courses.Where(c => c.Id == id).Select(c => new CourseDto(
             c.Id,
@@ -35,7 +36,7 @@ public class CourseService : ICourseService
             c.Description,
             c.StartDate,
             c.EndDate
-            )).ToListAsync();
+            )).FirstOrDefaultAsync();
     }
 
     public async Task<CourseDto> NewCourseAsync(NewCourseDto course)
@@ -49,5 +50,44 @@ public class CourseService : ICourseService
         await _context.Courses.AddAsync(c);
         await _context.SaveChangesAsync();
         return new CourseDto(c.Id, c.Name, c.Code, c.Description, c.StartDate, c.EndDate);
+    }
+
+    public async Task<bool> DeleteCourseAsync(int id)
+    {
+        var entity = await _context.Courses.FindAsync(id);
+        if (entity is null)
+            throw new KeyNotFoundException($"Course with id {id} not found.");
+
+        _context.Remove(entity);
+
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
+
+    public async Task<CourseDto> PatchCourseAsync(PatchCourseDto course)
+    {
+        var entity = await _context.Courses.FindAsync(course.Id);
+        if (entity is null)
+            throw new KeyNotFoundException($"Course with id {course.Id} not found.");
+
+        if (!string.IsNullOrWhiteSpace(course.Name))
+            entity.Name = course.Name;
+
+        if (!string.IsNullOrWhiteSpace(course.Code))
+            entity.Code = course.Code;
+
+        if (course.Description is not null)
+            entity.Description = course.Description;
+
+        if (course.StartDate.HasValue)
+            entity.StartDate = course.StartDate.Value;
+
+        if (course.EndDate.HasValue)
+            entity.EndDate = course.EndDate.Value;
+
+        await _context.SaveChangesAsync();
+
+        return new CourseDto(entity.Id, entity.Name, entity.Code, entity.Description, entity.StartDate, entity.EndDate);
     }
 }
