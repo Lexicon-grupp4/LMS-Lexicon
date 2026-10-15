@@ -1,0 +1,17 @@
+﻿using LMS.Shared.Paging;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Text;
+
+namespace Service.Contracts
+{
+    public interface IModuleService
+    {
+        Task<ModuleDto?> GetByIdAsync(int id, bool trackChanges = false);
+        Task<IPagedList<ModuleDto>> GetAllAsync(QueryParameters parameters, bool trackChanges = false);
+        Task<IPagedList<ModuleDto>> GetByCourseIdAsync(int courseId, bool trackChanges = false);
+        Task<ModuleDto?> GetByIdWithCourseAsync(int moduleId, bool trackChanges = false);
+        Task<bool> HasOverlappingDatesAsync(int courseId, DateTime startDate, DateTime endDate, int? excludeModuleId = null);
+    }
+}
