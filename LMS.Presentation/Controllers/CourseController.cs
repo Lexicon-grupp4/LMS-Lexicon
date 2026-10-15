@@ -19,7 +19,7 @@ public class CourseController(IServiceManager serviceManager) : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = "Teacher")]
-    [SwaggerOperation(Summary = "Get all courses",Description = "Returns all courses for teachers")]
+    [SwaggerOperation(Summary = "Get all courses", Description = "Returns all courses for teachers")]
     [SwaggerResponse(StatusCodes.Status200OK, "Successful", typeof(List<CourseDto>))]
     public async Task<ActionResult<List<CourseDto>>> GetCourses()
     {
@@ -84,9 +84,11 @@ public class CourseController(IServiceManager serviceManager) : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize(Roles = "Teacher")]
     [SwaggerOperation(Summary = "Delete course", Description = "Delete course desc")]
     [SwaggerResponse(StatusCodes.Status200OK, "successful", typeof(CourseDto))]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "unauthorized")]
+    [SwaggerResponse(StatusCodes.Status403Forbidden, "forbidden")]
     public async Task<ActionResult<bool>> DeleteCourse(int id)
     {
         var ret = await _serviceManager.CourseService.DeleteCourseAsync(id);
@@ -94,9 +96,11 @@ public class CourseController(IServiceManager serviceManager) : ControllerBase
     }
 
     [HttpPatch]
+    [Authorize(Roles = "Teacher")]
     [SwaggerOperation(Summary = "Patch course", Description = "Patch course desc")]
     [SwaggerResponse(StatusCodes.Status200OK, "successful", typeof(CourseDto))]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "unauthorized")]
+    [SwaggerResponse(StatusCodes.Status403Forbidden, "forbidden")]
     public async Task<ActionResult<CourseDto>> PatchCourse(PatchCourseDto course)
     {
         var ret = await _serviceManager.CourseService.PatchCourseAsync(course);
