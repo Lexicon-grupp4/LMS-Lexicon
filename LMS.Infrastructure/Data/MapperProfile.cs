@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Domain.Models.Entities;
+using LMS.Shared.DTOs.Module;
 using LMS.Shared.DTOs.UserDtos;
 using System;
 using System.Collections.Generic;
@@ -48,6 +49,12 @@ namespace LMS.Infrastructure.Data
                     opt => opt.Ignore())
                 .ForMember(dest => dest.RefreshTokenExpireTime,
                     opt => opt.Ignore());
+
+            // Module mappings
+            CreateMap<Module, ModuleDto>();
+            CreateMap<Module, ModuleListDto>();
+            CreateMap<CreateModuleDto, Module>();
+            CreateMap<UpdateModuleDto, Module>();
         }
     }
 }
