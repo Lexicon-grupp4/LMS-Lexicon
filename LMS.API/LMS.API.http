@@ -69,12 +69,12 @@ Accept: application/json
 ########################################
 
 ### Courses Get all courses
-GET {{LMS.API_HostAddress}}/api/course
+GET {{LMS.API_HostAddress}}/api/courses
 Accept: application/json
 Authorization: Bearer {{token}}
 
 ### Courses Create course
-POST {{LMS.API_HostAddress}}/api/course
+POST {{LMS.API_HostAddress}}/api/courses
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{token}}
