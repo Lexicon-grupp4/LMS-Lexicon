@@ -41,7 +41,7 @@ public class CourseController(IServiceManager serviceManager) : ControllerBase
         return Ok(course);
     }
 
-    //[HttpGet]
+    //[HttpGet("my")]
     //[SwaggerOperation(
     //    Summary = "Course",
     //    Description = "A students course")]
