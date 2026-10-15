@@ -91,7 +91,7 @@ namespace LMS.Services
             }
         }
 
-        public async Task DeleteUserAsync(string id,string currentUserId)
+        public async Task DeleteUserAsync(string id, string currentUserId)
         {
             var user = await _userManager.FindByIdAsync(id);
 
@@ -279,7 +279,7 @@ namespace LMS.Services
             }
         }
 
-        private async Task ValidateEmailAsync( string? email, string? excludeUserId = null)
+        private async Task ValidateEmailAsync(string? email, string? excludeUserId = null)
         {
             if (string.IsNullOrWhiteSpace(email))
             {
@@ -301,5 +301,12 @@ namespace LMS.Services
                     $"{email} is already taken.");
             }
         }
+
+        public async Task<IEnumerable<CourseParticipantDto>> GetCourseParticipantsAsync(int courseId)
+        {
+            var users = await _uow.UserRepsoitory.GetUsersByCourseIdAsync(courseId);
+            return _mapper.Map<IEnumerable<CourseParticipantDto>>(users);
+        }
+
     }
 }
