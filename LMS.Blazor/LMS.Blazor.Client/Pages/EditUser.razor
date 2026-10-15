@@ -205,17 +205,9 @@ else
         {
             userNotLoaded = true;
 
-            errorMessage = ErrorMessageService.GetFriendlyErrorMessage(
-                ex.StatusCode,
-                ex.ErrorCode);
+            errorMessage = ex.Message;
         }
-        catch (HttpRequestException ex)
-        {
-            userNotLoaded = true;
-
-            errorMessage = ErrorMessageService.GetFriendlyErrorMessage(
-                ex.StatusCode);
-        }
+        
         catch (Exception)
         {
             userNotLoaded = true;
@@ -270,14 +262,11 @@ else
         }
         catch (ApiException ex)
         {
-            errorMessage = ErrorMessageService.GetFriendlyErrorMessage(
-                ex.StatusCode,
-                ex.ErrorCode);
+            errorMessage = ex.Message;
         }
         catch (HttpRequestException ex)
         {
-            errorMessage = ErrorMessageService.GetFriendlyErrorMessage(
-                ex.StatusCode);
+            errorMessage = ex.Message;
         }
         catch (Exception)
         {

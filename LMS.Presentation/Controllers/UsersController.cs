@@ -1,5 +1,4 @@
-﻿using Domain.Models.Exceptions;
-using LMS.Shared.DTOs.UserDtos;
+﻿using LMS.Shared.DTOs.UserDtos;
 using LMS.Shared.Paging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -58,10 +57,8 @@ namespace LMS.Presentation.Controllers
         // POST: api/users
         [HttpPost]
         [ProducesResponseType(typeof(CreateUserResponseDto), StatusCodes.Status201Created)]
-        [ProducesResponseType(typeof(ApiProblemDetails),StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails),StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails),StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(typeof(ApiProblemDetails),StatusCodes.Status409Conflict)]
         public async Task<ActionResult<CreateUserResponseDto>> CreateUser([FromBody] CreateUserDto dto)        
         {
             var result = await _userService.CreateUserAsync(dto);
@@ -73,11 +70,10 @@ namespace LMS.Presentation.Controllers
         // PUT: api/users/{id}
         [HttpPut("{id}")]
         [ProducesResponseType(typeof(UserDto),StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiProblemDetails),StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails),StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ProblemDetails),StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(typeof(ApiProblemDetails),StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(ApiProblemDetails),StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ProblemDetails),StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails),StatusCodes.Status409Conflict)]
         public async Task<ActionResult<UserDto>> UpdateUser(
             string id,
             [FromBody] UpdateUserDto dto)
@@ -108,7 +104,6 @@ namespace LMS.Presentation.Controllers
         }
         // POST: api/users/set-password
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
         [AllowAnonymous]
