@@ -1,0 +1,80 @@
+﻿@page "/course/create"
+@using LMS.Blazor.Client.Components
+@using LMS.Blazor.Client.Services.ApiProxy
+@using LMS.Shared.DTOs.CourseDtos
+
+@inject IApiProxyClient ApiProxyClient
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create course</PageTitle>
+
+<div class="course-page">
+    <EditForm Model="model" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label class="form-label">Name</label>
+            <InputText class="form-control" @bind-Value="model.Name" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Code</label>
+            <InputText class="form-control" @bind-Value="model.Code" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <InputTextArea class="form-control" @bind-Value="model.Description" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Start date</label>
+            <InputDate class="form-control" @bind-Value="model.StartDate" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">End date</label>
+            <InputDate class="form-control" @bind-Value="model.EndDate" />
+        </div>
+
+        <button type="submit" class="btn btn-primary" disabled="@isSubmitting">
+            @(isSubmitting ? "Creating..." : "Create")
+        </button>
+    </EditForm>
+</div>
+
+@code {
+    private NewCourseModel model = new();
+    private bool isSubmitting = false;
+
+    private async Task HandleValidSubmit()
+    {
+        isSubmitting = true;
+        try
+        {
+            var dto = new NewCourseDto(
+                model.Name,
+                model.Code,
+                model.Description,
+                model.StartDate,
+                model.EndDate);
+
+            await ApiProxyClient.PostAsync<NewCourseDto, CourseDto>("courses", dto);
+            NavigationManager.NavigateTo("/courses");
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+    private sealed class NewCourseModel
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Code { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public DateTime StartDate { get; set; } = DateTime.Today;
+        public DateTime EndDate { get; set; } = DateTime.Today.AddDays(1);
+    }
+}
