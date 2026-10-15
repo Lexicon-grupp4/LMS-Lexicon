@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using LMS.Shared.DTOs.CourseDtos;
+using LMS.Shared.DTOs.UserDtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -71,6 +72,28 @@ public class CourseController(IServiceManager serviceManager) : ControllerBase
 
         var course = await _serviceManager.CourseService.GetCourseAsync(user.CourseId.Value);
         return course is null ? NotFound() : Ok(course);
+    }
+
+    [HttpGet("my-course/participants")]
+    [Authorize(Roles = "Student")]
+    [SwaggerOperation(Summary = "My course participants", Description = "Returns theparticipants of the logged-in student's course")]
+    [SwaggerResponse(StatusCodes.Status200OK, "successful", typeof(IEnumerable<CourseParticipantDto>))]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "unauthorized")]
+    [SwaggerResponse(StatusCodes.Status403Forbidden, "forbidden")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "not found")]
+    public async Task<ActionResult<IEnumerable<CourseParticipantDto>>> GetMyCourseParticipants()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrWhiteSpace(userId))
+            return Unauthorized();
+
+        var user = await _serviceManager.UserService.GetUserAsync(userId);
+        if (!user.CourseId.HasValue)
+            return NotFound();
+
+        var participants = await
+        _serviceManager.UserService.GetCourseParticipantsAsync(user.CourseId.Value);
+        return Ok(participants);
     }
 
     [HttpPost]
