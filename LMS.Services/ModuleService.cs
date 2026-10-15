@@ -16,14 +16,12 @@ namespace LMS.Services
     {
         private readonly IUnitOfWork _uow;
         private readonly IMapper _mapper;
-
-        public ModuleService(
-            IUnitOfWork uow,
-            IMapper mapper,
-            UserManager<ApplicationUser> userManager)
+        private readonly CourseService _courseService;
+        public ModuleService(IUnitOfWork uow, IMapper mapper, CourseService courseService) 
         {
             _uow = uow;
             _mapper = mapper;
+            _courseService = courseService;
         }
 
         public async Task<PagedResponse<ModuleDto>?> GetAllAsync(QueryParameters parameters, bool trackChanges = false)
@@ -34,7 +32,14 @@ namespace LMS.Services
 
         public async Task<PagedResponse<ModuleDto>?> GetByCourseIdAsync(int courseId, bool trackChanges = false)
         {
-            // Todo: Check if the course exsists; 
+            // Todo: Check if the course exsists;
+            await CheckCourseExistsAsync(courseId);
+
+            var course = await _courseService.GetCourseAsync(courseId);
+            if (course is null)
+            {
+                throw new NotFoundException($"Course with id {courseId} not found.");
+            }
             var modules = await _uow.ModuleRepository.GetByCourseIdAsync(courseId, trackChanges);
             return modules != null ? _mapper.Map<PagedResponse<ModuleDto>>(modules) : null;
         }
@@ -65,23 +70,16 @@ namespace LMS.Services
 
         public async Task<bool> HasOverlappingDatesAsync(int courseId, DateTime startDate, DateTime endDate, int? excludeModuleId = null)
         {
-            //check if the course exists
-            //var course = await _uow.CourseRepository.GetByIdAsync(courseId, false);
-            //if (course is null)
-            //{
-            //    throw new NotFoundException($"Course with id {courseId} not found.");
-            //}
+            await CheckCourseExistsAsync(courseId);
+
 
             return await _uow.ModuleRepository.HasOverlappingDatesAsync(courseId, startDate, endDate, excludeModuleId);
         }
         public async Task<ModuleDto> CreateModuleAsync(CreateModuleDto createModuleDto)
         {
             // Check if the course exists
-            //var course = await _uow.CourseRepository.GetByIdAsync(createModuleDto.CourseId, false);
-            //if (course is null)
-            //{
-            //    throw new NotFoundException($"Course with id {createModuleDto.CourseId} not found.");
-            //}
+            await CheckCourseExistsAsync(createModuleDto.CourseId);
+
             // Check for overlapping dates
             var isOverlapping = await _uow.ModuleRepository.HasOverlappingDatesAsync(createModuleDto.CourseId, createModuleDto.StartDate, createModuleDto.EndDate);
             if (isOverlapping)
@@ -121,6 +119,14 @@ namespace LMS.Services
             }
             _uow.ModuleRepository.Delete(moduleEntity);
             await _uow.CompleteAsync();
+        }
+        private async Task CheckCourseExistsAsync(int courseId)
+        {
+            var course = await _courseService.GetCourseAsync(courseId);
+            if (course is null)
+            {
+                throw new NotFoundException($"Course with id {courseId} not found.");
+            }
         }
     }
 }
