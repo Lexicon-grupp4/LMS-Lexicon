@@ -13,8 +13,11 @@ namespace LMS.Infrastructure.Data
         public MapperProfile()
         {
             // ApplicationUser->UserDto
-        CreateMap<ApplicationUser, UserDto>()
-            .ForMember(dest => dest.Role, opt => opt.Ignore());
+            CreateMap<ApplicationUser, UserDto>()
+                .ForMember(dest => dest.Role, opt => opt.Ignore());
+
+            // ApplicationUser->CourseParticipantDto
+            CreateMap<ApplicationUser, CourseParticipantDto>();
 
             // UserDto -> ApplicationUser
             CreateMap<UserDto, ApplicationUser>()
@@ -48,6 +51,7 @@ namespace LMS.Infrastructure.Data
                     opt => opt.Ignore())
                 .ForMember(dest => dest.RefreshTokenExpireTime,
                     opt => opt.Ignore());
+
         }
     }
 }
