@@ -36,6 +36,18 @@ public static class ApiProxyClientExtensions
             cancellationToken);
 
 
+    public static Task<TResponse?> PatchAsync<TRequest, TResponse>(
+        this IApiProxyClient client,
+        string endpoint,
+        TRequest request,
+        CancellationToken cancellationToken = default) =>
+        client.SendAsync<TResponse>(
+            HttpMethod.Patch,
+            endpoint,
+            JsonContent.Create(request),
+            cancellationToken);
+
+
     public static async Task DeleteAsync(
         this IApiProxyClient client,
         string endpoint,
