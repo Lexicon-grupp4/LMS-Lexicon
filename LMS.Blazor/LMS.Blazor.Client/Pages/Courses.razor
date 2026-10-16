@@ -20,7 +20,7 @@
             @foreach (var c in courses)
             {
                 <tr>
-                    <td>@c.Name</td> 
+                    <td>@c.Name</td>
                     <td>@c.Id</td>
                     <td>@c.Description</td>
                     <td>@c.StartDate</td>
@@ -42,9 +42,9 @@
         {
             await Task.Delay(1000); // TODO: remove simulated delay
             courses = await ApiProxyClient.GetAsync<CourseDto[]>(
-                "course",
+                "courses",
                 componentCancellation.Token);
-        } 
+        }
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
