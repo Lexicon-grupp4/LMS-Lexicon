@@ -5,6 +5,7 @@
 @using LMS.Shared.DTOs.CourseDtos
 
 @inject IApiProxyClient ApiProxyClient
+@inject IJSRuntime JS
 
 <PageTitle>Kurser</PageTitle>
 
@@ -16,38 +17,83 @@
     }
     else
     {
-        <table>
-            @foreach (var c in courses)
-            {
-                <tr>
-                    <td>@c.Name</td>
-                    <td>@c.Id</td>
-                    <td>@c.Description</td>
-                    <td>@c.StartDate</td>
-                    <td>@c.EndDate</td>
-                </tr>
-            }
-        </table>
+        <p><NavLink href="/course/create" class="btn btn-sm btn-secondary ms-2">New course</NavLink></p>
+        <div class="table - responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Course</th>
+                        <th>Code</th>
+                        <th>Id</th>
+                        <th>Description</th>
+                        <th>Start date</th>
+                        <th>End date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in courses)
+                    {
+                        <tr>
+                            <td>
+                                <NavLink class="btn btn-sm btn-primary ms-2" href="@($"/t-course/{c.Id}")">
+                                    @c.Name
+                                </NavLink>
+                            </td>
+                            <td>@c.Code</td>
+                            <td>@c.Id</td>
+                            <td>@c.Description</td>
+                            <td>@c.StartDate.ToShortDateString()</td>
+                            <td>@c.EndDate.ToShortDateString()</td>
+                            <td>
+                                <NavLink class="btn btn-sm btn-secondary ms-2" href="@($"/course/edit/{c.Id}")">
+                                    Edit
+                                </NavLink>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-danger ms-2"
+                                        disabled="@deletingIds.Contains(c.Id)"
+                                        @onclick="() => DeleteCourseAsync(c.Id)">
+                                    @(deletingIds.Contains(c.Id) ? "Deleting..." : "Delete")
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     }
-
 </div>
 
 @code {
     private CourseDto[]? courses;
-    private readonly CancellationTokenSource componentCancellation = new();
+    private readonly HashSet<int> deletingIds = new();
 
     protected override async Task OnInitializedAsync()
     {
+        await LoadCoursesAsync();
+    }
+
+    private async Task LoadCoursesAsync()
+    {
+        courses = await ApiProxyClient.GetAsync<CourseDto[]>("courses");
+    }
+
+    private async Task DeleteCourseAsync(int id)
+    {
+        var confirmed = await JS.InvokeAsync<bool>("confirm", $"Delete course #{id}?");
+        if (!confirmed) return;
+
+        deletingIds.Add(id);
+        StateHasChanged();
         try
         {
-            await Task.Delay(1000); // TODO: remove simulated delay
-            courses = await ApiProxyClient.GetAsync<CourseDto[]>(
-                "courses",
-                componentCancellation.Token);
+            await ApiProxyClient.DeleteAsync($"course/{id}");
+            await LoadCoursesAsync();
         }
-        catch (Exception ex)
+        finally
         {
-            Console.WriteLine(ex.Message);
+            deletingIds.Remove(id);
+            StateHasChanged();
         }
     }
 }
