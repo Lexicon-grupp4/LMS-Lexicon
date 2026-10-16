@@ -34,6 +34,7 @@ internal class Program
         builder.Services.ConfigureIdentity();
         builder.Services.ConfigurePolicys();
         builder.Services.AddScoped<ICourseService, CourseService>();
+        builder.Services.AddScoped<IDashboardService, DashboardService>();
         var app = builder.Build();
 
         app.ConfigureExceptionHandler();
