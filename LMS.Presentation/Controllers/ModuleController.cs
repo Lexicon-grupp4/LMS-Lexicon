@@ -43,7 +43,6 @@ namespace LMS.Presentation.Controllers
 
         // GET: api/Module/{id}
         [HttpGet("{id:int}")]
-        [Authorize(Roles = "Teacher,Student")]
         [SwaggerOperation(
             Summary = "Get module by ID",
             Description = "Retrieves a module by its unique identifier.")]
@@ -84,6 +83,17 @@ namespace LMS.Presentation.Controllers
 
         // GET: api/Module/course/{courseId}
         [HttpGet("course/{courseId:int}")]
+        [SwaggerOperation(
+            Summary = "Get modules by course",
+            Description = "Retrieves modules belonging to a course in chronological order.")]
+        [ProducesResponseType(typeof(PagedResponse<ModuleDto>),
+            StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails),
+            StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails),
+            StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails),
+            StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetByCourseId(int courseId)
         {
             var modules = await _moduleService.GetByCourseIdAsync(courseId);
@@ -93,6 +103,17 @@ namespace LMS.Presentation.Controllers
 
         // GET: api/Module/{courseId}/overlapping-dates
         [HttpGet("{courseId:int}/overlapping-dates")]
+        [Authorize(Roles = "Teacher")]
+        [SwaggerOperation(
+            Summary = "Check overlapping module dates",
+            Description = "Checks whether the specified date range overlaps an existing module in a course.")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails),
+            StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails),
+            StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails),
+            StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> HasOverlappingDates(
             int courseId,
             [FromQuery] DateTime startDate,
@@ -108,6 +129,19 @@ namespace LMS.Presentation.Controllers
         // POST: api/Module
         [HttpPost]
         [Authorize(Roles = "Teacher")]
+        [SwaggerOperation(
+            Summary = "Create a module",
+            Description = "Creates a module after validating course dates and checking for overlaps.")]
+        [ProducesResponseType(typeof(ModuleDto),
+            StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(ProblemDetails),
+            StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails),
+            StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ProblemDetails),
+            StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails),
+            StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> Create([FromBody] CreateModuleDto createModuleDto)
         {
             var module = await _moduleService.CreateModuleAsync(createModuleDto);
@@ -118,6 +152,19 @@ namespace LMS.Presentation.Controllers
         // PUT: api/Module/{id}
         [HttpPut("{id:int}")]
         [Authorize(Roles = "Teacher")]
+        [SwaggerOperation(
+            Summary = "Update a module",
+            Description = "Updates a module after validating its dates and checking for overlaps.")]
+        [ProducesResponseType(typeof(ModuleDto),
+            StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ProblemDetails),
+            StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails),
+            StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ProblemDetails),
+            StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails),
+            StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> Update( int id,[FromBody] UpdateModuleDto updateModuleDto)
         {
             var module = await _moduleService.UpdateModuleAsync(id,updateModuleDto);
@@ -128,6 +175,16 @@ namespace LMS.Presentation.Controllers
         // DELETE: api/Module/{id}
         [HttpDelete("{id:int}")]
         [Authorize(Roles = "Teacher")]
+        [SwaggerOperation(
+            Summary = "Delete a module",
+            Description = "Deletes a module by its unique identifier.")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ProblemDetails),
+            StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ProblemDetails),
+            StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ProblemDetails),
+            StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> Delete(int id)
         {
             await _moduleService.DeleteModuleAsync(id);

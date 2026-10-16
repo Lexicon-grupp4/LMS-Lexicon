@@ -35,6 +35,7 @@ namespace LMS.Services
             await CheckCourseExistsAsync(courseId);
 
             var modules = await _uow.ModuleRepository.GetByCourseIdAsync(courseId, trackChanges);
+            
             return _mapper.Map<PagedResponse<ModuleDto>>(modules);
         }
 

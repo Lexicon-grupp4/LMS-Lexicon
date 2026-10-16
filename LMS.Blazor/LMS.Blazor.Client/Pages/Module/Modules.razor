@@ -1,0 +1,141 @@
+﻿@page "/courses/{CourseId:int}/modules"
+
+@using LMS.Shared.DTOs.Module
+@using LMS.Shared.Paging
+@using LMS.Blazor.Client.Services.ApiProxy
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize(Roles = "Teacher,Student")]
+
+@inject IApiProxyClient ApiProxyClient
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<PageTitle>Course Modules</PageTitle>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3>Course Modules</h3>
+        <p class="text-muted mb-0">Modules ordered by start date</p>
+    </div>
+
+    @if (isTeacher)
+    {
+        <a class="btn btn-primary"
+           href="@($"/modules/create/{CourseId}")">
+            <span class="bi bi-plus-circle"></span>
+            Add Module
+        </a>
+    }
+</div>
+
+@if (isLoading)
+{
+    <div class="text-center">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+}
+else if (!string.IsNullOrWhiteSpace(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+else if (modules.Count == 0)
+{
+    <div class="alert alert-info">
+        No modules have been created for this course yet.
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Module</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+
+                    @if (isTeacher)
+                    {
+                        <th>Actions</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var module in modules)
+                {
+                    <tr>
+                        <td>@module.Id</td>
+                        <td>@module.Name</td>
+                        <td>@module.StartDate.ToString("yyyy-MM-dd")</td>
+                        <td>@module.EndDate.ToString("yyyy-MM-dd")</td>
+
+                        @if (isTeacher)
+                        {
+                            <td>
+                                <a class="btn btn-sm btn-primary"
+                                   href="@($"/modules/edit/{module.Id}")">
+                                    <span class="bi bi-pencil"></span>
+                                    Edit
+                                </a>
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int CourseId { get; set; }
+
+    private List<ModuleDto> modules = [];
+    private bool isLoading = true;
+    private bool isTeacher;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState =
+            await AuthenticationStateProvider.GetAuthenticationStateAsync();
+
+        isTeacher = authState.User.IsInRole("Teacher");
+
+        await LoadModules();
+    }
+
+    private async Task LoadModules()
+    {
+        isLoading = true;
+        errorMessage = null;
+
+        try
+        {
+            var response =
+                await ApiProxyClient.GetAsync<PagedResponse<ModuleDto>>(
+                    $"Module/course/{CourseId}");
+
+            modules = response?.Items
+                .OrderBy(m => m.StartDate)
+                .ThenBy(m => m.Id)
+                .ToList() ?? [];
+        }
+        catch (UnauthorizedAccessException)
+        {
+            NavigationManager.NavigateTo(
+                "/Account/Login", forceLoad: true);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}

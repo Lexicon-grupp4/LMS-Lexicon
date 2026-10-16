@@ -1,0 +1,112 @@
+﻿@page "/modules/create/{CourseId:int}"
+
+@using LMS.Shared.DTOs.Module
+@using LMS.Blazor.Client.Services.ApiProxy
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize(Roles = "Teacher")]
+
+@inject IApiProxyClient ApiProxyClient
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create Module</PageTitle>
+
+<h3 class="mb-4">Create Module</h3>
+
+@if (!string.IsNullOrWhiteSpace(errorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        @errorMessage
+    </div>
+}
+
+<EditForm Model="module" OnValidSubmit="CreateModules">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="card">
+        <div class="card-body">
+            <div class="mb-3">
+                <label class="form-label">Course ID</label>
+                <input class="form-control"
+                       value="@CourseId"
+                       disabled />
+            </div>
+       <div class="mb-3">
+       <label class="form-label">Module Name</label>
+       <InputText class="form-control"
+               @bind-Value="module.Name"
+               placeholder="Enter module name" />
+      <ValidationMessage For="@(() => module.Name)" />
+      </div>
+
+            <div class="mb-3">
+                <label class="form-label">Start Date</label>
+                <InputDate class="form-control"
+                           @bind-Value="module.StartDate" />
+                <ValidationMessage For="@(() => module.StartDate)" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">End Date</label>
+                <InputDate class="form-control"
+                           @bind-Value="module.EndDate" />
+                <ValidationMessage For="@(() => module.EndDate)" />
+            </div>
+
+            <button type="submit"
+                    class="btn btn-primary"
+                    disabled="@isSaving">
+                @(isSaving ? "Creating..." : "Create Module")
+            </button>
+
+            <a class="btn btn-secondary ms-2"
+               href="@($"/courses/{CourseId}/modules")">
+                Cancel
+            </a>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int CourseId { get; set; }
+
+    private CreateModuleDto module = new();
+
+    private bool isSaving;
+    private string? errorMessage;
+
+    protected override void OnParametersSet()
+    {
+        module.CourseId = CourseId;
+    }
+
+    private async Task CreateModules()
+    {
+        isSaving = true;
+        errorMessage = null;
+
+        try
+        {
+            module.CourseId = CourseId;
+
+            var created = await ApiProxyClient.PostAsync<CreateModuleDto, ModuleDto>("Module", module);   
+            NavigationManager.NavigateTo(
+                $"/courses/{CourseId}/modules");
+        }
+        catch (UnauthorizedAccessException)
+        {
+            NavigationManager.NavigateTo(
+                "/Account/Login", forceLoad: true);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+}
