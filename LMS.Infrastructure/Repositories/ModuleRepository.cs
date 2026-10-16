@@ -29,26 +29,26 @@ namespace LMS.Infrastructure.Repositories
 
         public async Task<IPagedList<Module>> GetByCourseIdAsync(int courseId, QueryParameters parameters, bool trackChanges = false)
         {
-            IQueryable<Module> query = _context.Modules.Where(m => m.CourseId == courseId).OrderBy(m => m.StartDate).ThenBy(m=>m.Id);
+            IQueryable<Module> query = _context.Modules.Where(m => m.CourseId == courseId).OrderBy(m => m.StartDate);
 
             if (!trackChanges)
             {
                 query = query.AsNoTracking();
             }
 
-            return await query.OrderBy(m => m.StartDate).ToPagedListAsync(parameters);
+            return await query.ToPagedListAsync(parameters);
         }
 
         public async Task<IPagedList<Module>> GetByCourseIdAsync(int courseId, bool trackChanges = false)
         {
-            IQueryable<Module> query = _context.Modules.Where(m => m.CourseId == courseId);
+            IQueryable<Module> query = _context.Modules.Where(m => m.CourseId == courseId).OrderBy(m => m.StartDate);
    
             if (!trackChanges)
             {
                 query = query.AsNoTracking();
             }
 
-            return await query.OrderBy(m => m.StartDate).ToPagedListAsync(new QueryParameters());
+            return await query.ToPagedListAsync(new QueryParameters());
         }
 
         public async Task<Module?> GetByIdAsync(int id, bool trackChanges = false)
