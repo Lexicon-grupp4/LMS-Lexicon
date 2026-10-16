@@ -39,6 +39,14 @@
                placeholder="Enter module name" />
       <ValidationMessage For="@(() => module.Name)" />
       </div>
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                <InputTextArea class="form-control"
+                               @bind-Value="module.Description"
+                               placeholder="Enter module description"
+                               rows="4" />
+                <ValidationMessage For="@(() => module.Description)" />
+            </div>
 
             <div class="mb-3">
                 <label class="form-label">Start Date</label>
