@@ -13,20 +13,20 @@
 <div class="dashboard-page">
 
     <PageHeader Title="Dashboard"
-                Description="Här ser du veckans aktiviteter, kommande inlämningar och senaste information." />
+                Description="Here you can see this week's activities, upcoming assignments and latest information." />
 
     @if (dashboard is null)
     {
-        <p>Laddar dashboard...</p>
+        <p>Loading dashboard...</p>
     }
     else
     {
         <section class="dashboard-section">
-            <h2>Veckans aktiviteter</h2>
+            <h2>This week's activities</h2>
 
             @if (dashboard.UpcomingActivities.Count == 0)
             {
-                <p>Inga kommande aktiviteter.</p>
+                <p>No upcoming activities.</p>
             }
             else
             {
@@ -54,11 +54,11 @@
         <div class="dashboard-grid">
 
             <section class="dashboard-section">
-                <h2>Kommande inlämningar</h2>
+                <h2>Upcoming assignments</h2>
 
                 @if (dashboard.AssignmentsNeedingAttention.Count == 0)
                 {
-                    <p>Inga kommande inlämningar.</p>
+                    <p>No upcoming assignments.</p>
                 }
                 else
                 {
@@ -81,11 +81,11 @@
             </section>
 
             <section class="dashboard-section">
-                <h2>Senaste dokument</h2>
+                <h2>Recent documents</h2>
 
                 @if (dashboard.RecentDocuments.Count == 0)
                 {
-                    <p>Inga senaste dokument.</p>
+                    <p>No recent documents.</p>
                 }
                 else
                 {
@@ -109,11 +109,11 @@
         <div class="dashboard-grid">
 
             <section class="dashboard-section">
-                <h2>Senaste feedback</h2>
+                <h2>Recent feedback</h2>
 
                 @if (dashboard.RecentFeedback.Count == 0)
                 {
-                    <p>Ingen senaste feedback.</p>
+                    <p>No recent feedback.</p>
                 }
                 else
                 {
@@ -126,7 +126,7 @@
                                 <p>@feedback.Comment</p>
 
                                 <p>
-                                    Betyg: @feedback.Grade
+                                    Grade: @feedback.Grade
                                 </p>
 
                                 <small>
@@ -139,11 +139,11 @@
             </section>
 
             <section class="dashboard-section">
-                <h2>Senaste notifieringar</h2>
+                <h2>Recent notifications</h2>
 
                 @if (dashboard.RecentNotifications.Count == 0)
                 {
-                    <p>Inga senaste notifieringar.</p>
+                    <p>No recent notifications.</p>
                 }
                 else
                 {
@@ -152,7 +152,7 @@
                         <div class="activity-card">
                             <div>
                                 <strong>
-                                    @(notification.IsRead ? "Läst" : "Ny")
+                                    @(notification.IsRead ? "Read" : "New")
                                 </strong>
 
                                 <p>@notification.Message</p>
