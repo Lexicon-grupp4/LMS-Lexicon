@@ -29,7 +29,7 @@ namespace LMS.Infrastructure.Repositories
 
         public async Task<IPagedList<Module>> GetByCourseIdAsync(int courseId, QueryParameters parameters, bool trackChanges = false)
         {
-            IQueryable<Module> query = _context.Modules.Where(m => m.CourseId == courseId);
+            IQueryable<Module> query = _context.Modules.Where(m => m.CourseId == courseId).OrderBy(m => m.StartDate).ThenBy(m=>m.Id);
 
             if (!trackChanges)
             {

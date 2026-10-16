@@ -8,6 +8,8 @@ namespace LMS.Shared.DTOs.Module
     public record UpdateModuleDto
     {
         [Required]
+        public int CourseId { get; set; }
+        [Required]
         [MaxLength(200)]
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
