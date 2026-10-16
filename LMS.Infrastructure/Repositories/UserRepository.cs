@@ -14,7 +14,7 @@ namespace LMS.Infrastructure.Repositories
     {
         private readonly ApplicationDbContext _context;
 
-        public UserRepository(ApplicationDbContext context):base(context)
+        public UserRepository(ApplicationDbContext context) : base(context)
         {
             _context = context;
         }
@@ -90,6 +90,14 @@ namespace LMS.Infrastructure.Repositories
 
             return await query.ToPagedListAsync(parameters);
         }
+
+        public async Task<IEnumerable<ApplicationUser>> GetUsersByCourseIdAsync(int courseId, bool trackChanges = false) =>
+            await FindByCondition(u =>
+                    u.CourseId == courseId, trackChanges)
+            .OrderBy(u => u.FirstName)
+            .ThenBy(u => u.LastName)
+            .ToListAsync();
+
     }
 
 }
