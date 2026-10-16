@@ -17,7 +17,10 @@ namespace LMS.Infrastructure.Data
         {
             // ApplicationUser->UserDto
             CreateMap<ApplicationUser, UserDto>()
-            .ForMember(dest => dest.Role, opt => opt.Ignore());
+                .ForMember(dest => dest.Role, opt => opt.Ignore());
+
+            // ApplicationUser->CourseParticipantDto
+            CreateMap<ApplicationUser, CourseParticipantDto>();
 
             // UserDto -> ApplicationUser
             CreateMap<UserDto, ApplicationUser>()

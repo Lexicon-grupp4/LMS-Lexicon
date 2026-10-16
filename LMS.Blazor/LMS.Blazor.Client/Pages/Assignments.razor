@@ -1,12 +1,12 @@
 ﻿@page "/assignments"
 @using LMS.Blazor.Client.Components
 
-<PageTitle>Inlämningar</PageTitle>
+<PageTitle>Assignments</PageTitle>
 
 <div class="assignments-page">
 
-    <PageHeader Title="Inlämningar"
-                Description="Här ser du dina inlämningsuppgifter och deras status." />
+    <PageHeader Title="Assignments"
+                Description="Here you can see your assignments and their status." />
 
     @if (isLoading)
     {
@@ -15,48 +15,48 @@
     else if (hasError)
     {
         <ContentState Type="error"
-                      Message="Kunde inte hämta inlämningarna." />
+                      Message="Could not load the assignments." />
     }
     else if (!hasAssignments)
     {
         <ContentState Type="empty"
-                      Message="Det finns inga inlämningar att visa." />
+                      Message="There are no assignments to display." />
     }
     else
     {
         <div class="assignment-card">
             <div>
-                <span class="assignment-status pending">Ej inlämnad</span>
-                <h2>React application</h2>
+                <span class="assignment-status pending">Not Submitted</span>
+                <h2>React Application</h2>
                 <p>Deadline: 2026-10-10</p>
             </div>
 
             <button class="assignment-button">
-                Lämna in
+                Submit
             </button>
         </div>
 
         <div class="assignment-card">
             <div>
-                <span class="assignment-status submitted">Inlämnad</span>
-                <h2>Databasdesign</h2>
+                <span class="assignment-status submitted">Submitted</span>
+                <h2>Database Design</h2>
                 <p>Deadline: 2026-10-15</p>
             </div>
 
             <button class="assignment-button secondary">
-                Visa inlämning
+                View Submission
             </button>
         </div>
 
         <div class="assignment-card">
             <div>
-                <span class="assignment-status late">Försenad</span>
+                <span class="assignment-status late">Overdue</span>
                 <h2>ASP.NET Core Exercise</h2>
                 <p>Deadline: 2026-10-05</p>
             </div>
 
             <button class="assignment-button">
-                Lämna in
+                Submit
             </button>
         </div>
     }

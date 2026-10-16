@@ -1,5 +1,6 @@
 @LMS.API_HostAddress = http://localhost:5279
 @NotificationId = 1
+@CourseId = 1
 
 ### Root (404, only checks that the API answers)
 GET {{LMS.API_HostAddress}}/
@@ -69,12 +70,12 @@ Accept: application/json
 ########################################
 
 ### Courses Get all courses
-GET {{LMS.API_HostAddress}}/api/course
+GET {{LMS.API_HostAddress}}/api/courses
 Accept: application/json
 Authorization: Bearer {{token}}
 
 ### Courses Create course
-POST {{LMS.API_HostAddress}}/api/course
+POST {{LMS.API_HostAddress}}/api/courses
 Content-Type: application/json
 Accept: application/json
 Authorization: Bearer {{token}}
@@ -86,6 +87,48 @@ Authorization: Bearer {{token}}
   "startDate": "2026-09-01T00:00:00",
   "endDate": "2027-05-31T00:00:00"
 }
+
+### Courses Get course by id (Teacher, or Student in that course)
+GET {{LMS.API_HostAddress}}/api/courses/{{CourseId}}
+Accept: application/json
+Authorization: Bearer {{teacherToken}}
+
+### Courses Get my course (Student only, 403 for demo user)
+GET {{LMS.API_HostAddress}}/api/courses/my-course
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### Courses Patch course (Teacher only, only sent fields are updated)
+PATCH {{LMS.API_HostAddress}}/api/courses
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{teacherToken}}
+
+{
+  "id": {{CourseId}},
+  "description": "Uppdaterad beskrivning."
+}
+
+### Courses Patch course as demo user (403)
+PATCH {{LMS.API_HostAddress}}/api/courses
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "id": {{CourseId}},
+  "name": "Should not be allowed"
+}
+
+### Courses Delete course as demo user (403)
+DELETE {{LMS.API_HostAddress}}/api/courses/{{CourseId}}
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### Courses Delete course (Teacher only)
+DELETE {{LMS.API_HostAddress}}/api/courses/{{CourseId}}
+Accept: application/json
+Authorization: Bearer {{teacherToken}}
 
 ########################################
 # Notifications
