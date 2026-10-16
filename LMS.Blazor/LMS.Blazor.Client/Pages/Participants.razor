@@ -1,5 +1,12 @@
 ﻿@page "/participants"
 @using LMS.Blazor.Client.Components
+@using LMS.Blazor.Client.Services.ApiProxy
+@using LMS.Shared.DTOs.UserDtos
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize(Roles = "Student")]
+
+@inject IApiProxyClient ApiProxyClient
 
 <PageTitle>Participants</PageTitle>
 
@@ -8,40 +15,66 @@
     <PageHeader Title="Participants"
                 Description="Here you can see the participants in your course." />
 
-    <div class="participants-card">
+    @if (isLoading)
+    {
+        <ContentState Type="loading" />
+    }
+    else if (hasError)
+    {
+        <ContentState Type="error"
+                      Message="Could not load the participants." />
+    }
+    else if (participants.Count == 0)
+    {
+        <ContentState Type="empty"
+                      Message="There are no participants to display." />
+    }
+    else
+    {
+        <div class="participants-card">
 
-        <div class="participant-row">
-            <div class="participant-avatar">AK</div>
-            <div class="participant-info">
-                <h2>Anna Karlsson</h2>
-                <p>anna.karlsson@example.com</p>
-            </div>
+            @foreach (var participant in participants)
+            {
+                <div class="participant-row">
+                    <div class="participant-avatar">@GetInitials(participant)</div>
+                    <div class="participant-info">
+                        <h2>@participant.FirstName @participant.LastName</h2>
+                        <p>@participant.Email</p>
+                    </div>
+                </div>
+            }
+
         </div>
-
-        <div class="participant-row">
-            <div class="participant-avatar">MJ</div>
-            <div class="participant-info">
-                <h2>Mohamed Jama</h2>
-                <p>mohamed.jama@example.com</p>
-            </div>
-        </div>
-
-        <div class="participant-row">
-            <div class="participant-avatar">SL</div>
-            <div class="participant-info">
-                <h2>Sara Lind</h2>
-                <p>sara.lind@example.com</p>
-            </div>
-        </div>
-
-        <div class="participant-row">
-            <div class="participant-avatar">JD</div>
-            <div class="participant-info">
-                <h2>Johan Dahl</h2>
-                <p>johan.dahl@example.com</p>
-            </div>
-        </div>
-
-    </div>
+    }
 
 </div>
+
+@code {
+    private List<CourseParticipantDto> participants = [];
+    private bool isLoading = true;
+    private bool hasError = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var result = await ApiProxyClient.GetAsync<List<CourseParticipantDto>>(
+                "courses/my-course/participants");
+
+            participants = result ?? [];
+        }
+        catch (Exception)
+        {
+            // Also covers 404 when the student has no course.
+            hasError = true;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private static string GetInitials(CourseParticipantDto participant) =>
+        $"{participant.FirstName.FirstOrDefault()}{participant.LastName.FirstOrDefault()}"
+            .ToUpper();
+}
