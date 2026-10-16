@@ -30,6 +30,57 @@ Accept: application/json
   }
 %}
 
+### Auth Login as teacher
+# @name teacherLogin
+POST {{LMS.API_HostAddress}}/api/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "Teacher@Lms.com",
+  "password": "Dev!qNVT3lFip31a"
+}
+
+> {%
+  if (response.status === 200) {
+    client.global.set("teacherToken", response.body.accessToken);
+  }
+%}
+
+### Auth Login as student (course A)
+# @name studentLogin
+POST {{LMS.API_HostAddress}}/api/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "Student@Lms.com",
+  "password": "Dev!qNVT3lFip31a"
+}
+
+> {%
+  if (response.status === 200) {
+    client.global.set("studentToken", response.body.accessToken);
+  }
+%}
+
+### Auth Login as student 2 (course B)
+# @name student2Login
+POST {{LMS.API_HostAddress}}/api/auth/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "Student2@Lms.com",
+  "password": "Dev!qNVT3lFip31a"
+}
+
+> {%
+  if (response.status === 200) {
+    client.global.set("student2Token", response.body.accessToken);
+  }
+%}
+
 ### Auth Get authenticated user
 GET {{LMS.API_HostAddress}}/api/auth/me
 Accept: application/json
@@ -69,10 +120,15 @@ Accept: application/json
 # Courses
 ########################################
 
-### Courses Get all courses
+### Courses Get all courses (Teacher only)
 GET {{LMS.API_HostAddress}}/api/courses
 Accept: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer {{teacherToken}}
+
+### Courses Get all courses as student (403)
+GET {{LMS.API_HostAddress}}/api/courses
+Accept: application/json
+Authorization: Bearer {{studentToken}}
 
 ### Courses Create course
 POST {{LMS.API_HostAddress}}/api/courses
@@ -93,10 +149,45 @@ GET {{LMS.API_HostAddress}}/api/courses/{{CourseId}}
 Accept: application/json
 Authorization: Bearer {{teacherToken}}
 
-### Courses Get my course (Student only, 403 for demo user)
+### Courses Get own course by id as student (200)
+GET {{LMS.API_HostAddress}}/api/courses/1
+Accept: application/json
+Authorization: Bearer {{studentToken}}
+
+### Courses Get other course by id as student (403)
+GET {{LMS.API_HostAddress}}/api/courses/2
+Accept: application/json
+Authorization: Bearer {{studentToken}}
+
+### Courses Get my course as student (course A)
+GET {{LMS.API_HostAddress}}/api/courses/my-course
+Accept: application/json
+Authorization: Bearer {{studentToken}}
+
+### Courses Get my course as student 2 (course B)
+GET {{LMS.API_HostAddress}}/api/courses/my-course
+Accept: application/json
+Authorization: Bearer {{student2Token}}
+
+### Courses Get my course as teacher (403, Student only)
+GET {{LMS.API_HostAddress}}/api/courses/my-course
+Accept: application/json
+Authorization: Bearer {{teacherToken}}
+
+### Courses Get my course as demo user (403)
 GET {{LMS.API_HostAddress}}/api/courses/my-course
 Accept: application/json
 Authorization: Bearer {{token}}
+
+### Courses Get my course participants as student (course A)
+GET {{LMS.API_HostAddress}}/api/courses/my-course/participants
+Accept: application/json
+Authorization: Bearer {{studentToken}}
+
+### Courses Get my course participants as teacher (403, Student only)
+GET {{LMS.API_HostAddress}}/api/courses/my-course/participants
+Accept: application/json
+Authorization: Bearer {{teacherToken}}
 
 ### Courses Patch course (Teacher only, only sent fields are updated)
 PATCH {{LMS.API_HostAddress}}/api/courses
@@ -152,23 +243,6 @@ Authorization: Bearer {{token}}
 GET {{LMS.API_HostAddress}}/api/users
 Accept: application/json
 Authorization: Bearer {{token}}
-
-### Users Login as teacher FINNS INTE ENS I SEDDDATA
-# @name teacherLogin
-POST {{LMS.API_HostAddress}}/api/auth/login
-Content-Type: application/json
-Accept: application/json
-
-{
-  "email": "Teacher@Lms.com",
-  "password": "Dev!qNVT3lFip31a"
-}
-
-> {%
-  if (response.status === 200) {
-    client.global.set("teacherToken", response.body.accessToken);
-  }
-%}
 
 ### Users Get users
 GET {{LMS.API_HostAddress}}/api/users
