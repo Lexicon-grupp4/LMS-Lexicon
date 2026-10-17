@@ -1,55 +1,117 @@
 ﻿@page "/course"
+@using System.Net
 @using LMS.Blazor.Client.Components
+@using LMS.Blazor.Client.Helper
 @using LMS.Blazor.Client.Services.ApiProxy
 @using LMS.Shared.DTOs.CourseDtos
+@using LMS.Shared.DTOs.Module
+@using LMS.Shared.Paging
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize(Roles = "Student")]
 
 @inject IApiProxyClient ApiProxyClient
 
 <PageTitle>Course</PageTitle>
 
 <div class="course-page">
-    <div class="course-header">
-        <h1>My Course</h1>
-        <p>Here you can see information about your course and the modules included.</p>
-    </div>
 
-    <section class="course-card">
-        <h2>Lexicon LTU</h2>
-        <p>
-            Full-stack education focused on .NET, databases, and frontend development.
-        </p>
+    <PageHeader Title="My Course"
+                Description="Here you can see information about your course and the modules included." />
 
-        <div class="course-dates">
-            <span>Start: 2026-09-01</span>
-            <span>End: 2027-05-31</span>
-        </div>
-    </section>
+    @if (isLoading)
+    {
+        <ContentState Type="loading" />
+    }
+    else if (hasError)
+    {
+        <ContentState Type="error"
+                      Message="Could not load your course." />
+    }
+    else if (course is null)
+    {
+        <ContentState Type="empty"
+                      Message="You are not assigned to a course yet." />
+    }
+    else
+    {
+        <section class="course-card">
+            <h2>@course.Name</h2>
+            <p>@course.Description</p>
 
-    <section class="modules-section">
-        <h2>Modules</h2>
-
-        <div class="module-card">
-            <div>
-                <h3>HTML & CSS</h3>
-                <p>Basic web design and responsive layout.</p>
+            <div class="course-dates">
+                <span>Start: @course.StartDate.ToString("yyyy-MM-dd")</span>
+                <span>End: @course.EndDate.ToString("yyyy-MM-dd")</span>
             </div>
-            <span>Completed</span>
-        </div>
+        </section>
 
-        <div class="module-card">
-            <div>
-                <h3>JavaScript</h3>
-                <p>JavaScript, DOM, and modern web applications.</p>
-            </div>
-            <span>Ongoing</span>
-        </div>
+        <section class="modules-section">
+            <h2>Modules</h2>
 
-        <div class="module-card">
-            <div>
-                <h3>.NET</h3>
-                <p>C#, ASP.NET Core, and full-stack development.</p>
-            </div>
-            <span>Upcoming</span>
-        </div>
-    </section>
+            @if (modules.Count == 0)
+            {
+                <ContentState Type="empty"
+                              Message="There are no modules in this course yet." />
+            }
+            else
+            {
+                @foreach (var module in modules)
+                {
+                    <div class="module-card">
+                        <div>
+                            <h3>@module.Name</h3>
+                            <p>@module.Description</p>
+                        </div>
+                        <span>@GetStatus(module)</span>
+                    </div>
+                }
+            }
+        </section>
+    }
 </div>
+
+@code {
+    private CourseDto? course;
+    private List<ModuleDto> modules = [];
+    private bool isLoading = true;
+    private bool hasError = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            course = await ApiProxyClient.GetAsync<CourseDto>("courses/my-course");
+
+            if (course is not null)
+            {
+                var result = await ApiProxyClient.GetAsync<PagedResponse<ModuleDto>>(
+                    $"Module/course/{course.Id}");
+
+                modules = result?.Items.OrderBy(m => m.StartDate).ToList() ?? [];
+            }
+        }
+        catch (ApiException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+        {
+            // The student has no course yet.
+            course = null;
+        }
+        catch (Exception)
+        {
+            hasError = true;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private static string GetStatus(ModuleDto module)
+    {
+        var today = DateTime.Today;
+
+        if (module.EndDate < today)
+            return "Completed";
+
+        return module.StartDate <= today ? "Ongoing" : "Upcoming";
+    }
+}

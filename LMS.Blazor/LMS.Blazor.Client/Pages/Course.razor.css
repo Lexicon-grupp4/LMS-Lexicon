@@ -3,22 +3,6 @@
     margin: 0 auto;
 }
 
-.course-header {
-    margin-bottom: 2rem;
-}
-
-    .course-header h1 {
-        font-size: 2rem;
-        font-weight: 700;
-        color: #1f2937;
-        margin-bottom: 0.5rem;
-    }
-
-    .course-header p {
-        color: #6b7280;
-        margin: 0;
-    }
-
 .course-card,
 .module-card {
     background: #ffffff;
