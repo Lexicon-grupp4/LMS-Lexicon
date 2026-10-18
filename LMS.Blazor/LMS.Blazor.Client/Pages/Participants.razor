@@ -15,6 +15,7 @@
     <PageHeader Title="Participants"
                 Description="Here you can see the participants in your course." />
 
+    <!-- TEACHERS -->
     <section class="participant-group">
 
         <div class="participant-group-heading">
@@ -50,6 +51,8 @@
 
     </section>
 
+
+    <!-- STUDENTS -->
     <section class="participant-group">
 
         <div class="participant-group-heading">
@@ -61,23 +64,81 @@
 
             <li class="participant-row">
 
-            @foreach (var participant in participants)
-            {
-                <div class="participant-row">
-                    <div class="participant-avatar">@GetInitials(participant)</div>
-                    <div class="participant-info">
-                        <h2>@participant.FirstName @participant.LastName</h2>
-                        <p>@participant.Email</p>
-                    </div>
+                <div class="participant-avatar student">
+                    MJ
                 </div>
-            }
 
-        </div>
-    }
+                <div class="participant-content">
+
+                    <div class="participant-name-row">
+                        <h3>Mohamed Jama</h3>
+                        <span class="current-user-badge">You</span>
+                    </div>
+
+                    <a href="mailto:mohamed.jama@example.com"
+                       class="participant-email">
+                        <span class="mail-icon">✉</span>
+                        mohamed.jama@example.com
+                    </a>
+
+                </div>
+
+            </li>
+
+
+            <li class="participant-row">
+
+                <div class="participant-avatar student">
+                    SL
+                </div>
+
+                <div class="participant-content">
+
+                    <div class="participant-name-row">
+                        <h3>Sara Lind</h3>
+                    </div>
+
+                    <a href="mailto:sara.lind@example.com"
+                       class="participant-email">
+                        <span class="mail-icon">✉</span>
+                        sara.lind@example.com
+                    </a>
+
+                </div>
+
+            </li>
+
+
+            <li class="participant-row">
+
+                <div class="participant-avatar student">
+                    JD
+                </div>
+
+                <div class="participant-content">
+
+                    <div class="participant-name-row">
+                        <h3>Johan Dahl</h3>
+                    </div>
+
+                    <a href="mailto:johan.dahl@example.com"
+                       class="participant-email">
+                        <span class="mail-icon">✉</span>
+                        johan.dahl@example.com
+                    </a>
+
+                </div>
+
+            </li>
+
+        </ul>
+
+    </section>
 
 </div>
 
 @code {
+
     private List<CourseParticipantDto> participants = [];
     private bool isLoading = true;
     private bool hasError = false;
@@ -93,7 +154,6 @@
         }
         catch (Exception)
         {
-            // Also covers 404 when the student has no course.
             hasError = true;
         }
         finally
