@@ -5,51 +5,211 @@
 
 @inject IApiProxyClient ApiProxyClient
 
-<PageTitle>Course</PageTitle>
+<PageTitle>My Course</PageTitle>
 
 <div class="course-page">
-    <div class="course-header">
+
+    <header class="course-header">
         <h1>My Course</h1>
-        <p>Here you can see information about your course and the modules included.</p>
-    </div>
-
-    <section class="course-card">
-        <h2>Lexicon LTU</h2>
         <p>
-            Full-stack education focused on .NET, databases, and frontend development.
+            Here you can see information about your course and the modules included.
         </p>
+    </header>
 
-        <div class="course-dates">
-            <span>Start: 2026-09-01</span>
-            <span>End: 2027-05-31</span>
+    <section class="course-overview">
+        <div>
+            <span class="course-label">YOUR COURSE</span>
+            <h2>Lexicon LTU</h2>
+            <p>
+                Full-stack education focused on .NET, databases, and frontend development.
+            </p>
+        </div>
+
+        <div class="course-period">
+            <div>
+                <span>Start date</span>
+                <strong>01 Sep 2026</strong>
+            </div>
+
+            <div>
+                <span>End date</span>
+                <strong>31 May 2027</strong>
+            </div>
         </div>
     </section>
 
     <section class="modules-section">
-        <h2>Modules</h2>
 
-        <div class="module-card">
+        <div class="modules-heading">
             <div>
-                <h3>HTML & CSS</h3>
-                <p>Basic web design and responsive layout.</p>
+                <h2>Modules</h2>
+                <p>Follow your course progress and view activities for each module.</p>
             </div>
-            <span>Completed</span>
+
+            <span class="module-count">3 modules</span>
         </div>
 
-        <div class="module-card">
-            <div>
-                <h3>JavaScript</h3>
-                <p>JavaScript, DOM, and modern web applications.</p>
-            </div>
-            <span>Ongoing</span>
-        </div>
+        <!-- MODULE 1 -->
 
-        <div class="module-card">
-            <div>
-                <h3>.NET</h3>
-                <p>C#, ASP.NET Core, and full-stack development.</p>
-            </div>
-            <span>Upcoming</span>
-        </div>
+        <article class="module-card completed">
+
+            <button class="module-toggle"
+                    type="button"
+                    @onclick="() => ToggleModule(1)">
+
+                <span class="module-status-icon completed-icon">✓</span>
+
+                <span class="module-title">
+                    <small>Module 1 · Sep – Oct</small>
+                    <strong>HTML & CSS</strong>
+                </span>
+
+                <span class="module-status-text completed-text">
+                    Completed
+                </span>
+
+                <span class="module-chevron @(openModule == 1 ? "open" : "")">
+                    ⌄
+                </span>
+
+            </button>
+
+            @if (openModule == 1)
+            {
+                <div class="module-content">
+
+                    <p>
+                        Basic web design, semantic HTML, CSS and responsive layouts.
+                    </p>
+
+                    <div class="activity-row">
+                        <span class="activity-badge">Lesson</span>
+                        <strong>HTML fundamentals</strong>
+                        <span>08 Sep · 09:00</span>
+                    </div>
+
+                    <div class="activity-row">
+                        <span class="activity-badge assignment">
+                            Assignment
+                        </span>
+                        <strong>Responsive website</strong>
+                        <span>30 Sep · 23:59</span>
+                    </div>
+
+                </div>
+            }
+
+        </article>
+
+        <!-- MODULE 2 -->
+
+        <article class="module-card ongoing">
+
+            <button class="module-toggle"
+                    type="button"
+                    @onclick="() => ToggleModule(2)">
+
+                <span class="module-status-icon ongoing-icon">
+                    <span></span>
+                </span>
+
+                <span class="module-title">
+                    <small>Module 2 · Oct – Nov</small>
+                    <strong>JavaScript</strong>
+                </span>
+
+                <span class="module-status-pill">
+                    In progress
+                </span>
+
+                <span class="module-chevron @(openModule == 2 ? "open" : "")">
+                    ⌄
+                </span>
+
+            </button>
+
+            @if (openModule == 2)
+            {
+                <div class="module-content">
+
+                    <p>
+                        JavaScript, DOM manipulation and modern web applications.
+                    </p>
+
+                    <div class="activity-row">
+                        <span class="activity-badge">Exercise</span>
+                        <strong>JavaScript fundamentals</strong>
+                        <span>15 Oct · 10:00</span>
+                    </div>
+
+                    <div class="activity-row">
+                        <span class="activity-badge assignment">
+                            Assignment
+                        </span>
+                        <strong>DOM application</strong>
+                        <span>31 Oct · 23:59</span>
+                    </div>
+
+                </div>
+            }
+
+        </article>
+
+        <!-- MODULE 3 -->
+
+        <article class="module-card upcoming">
+
+            <button class="module-toggle"
+                    type="button"
+                    @onclick="() => ToggleModule(3)">
+
+                <span class="module-status-icon upcoming-icon"></span>
+
+                <span class="module-title">
+                    <small>Module 3 · Nov – Jan</small>
+                    <strong>.NET</strong>
+                </span>
+
+                <span class="module-status-text">
+                    Upcoming
+                </span>
+
+                <span class="module-chevron @(openModule == 3 ? "open" : "")">
+                    ⌄
+                </span>
+
+            </button>
+
+            @if (openModule == 3)
+            {
+                <div class="module-content">
+
+                    <p>
+                        C#, ASP.NET Core and full-stack application development.
+                    </p>
+
+                    <div class="activity-row">
+                        <span class="activity-badge">Lesson</span>
+                        <strong>Introduction to C#</strong>
+                        <span>10 Nov · 09:00</span>
+                    </div>
+
+                </div>
+            }
+
+        </article>
+
     </section>
+
 </div>
+
+@code {
+    private int? openModule = 2;
+
+    private void ToggleModule(int moduleId)
+    {
+        openModule = openModule == moduleId
+            ? null
+            : moduleId;
+    }
+}

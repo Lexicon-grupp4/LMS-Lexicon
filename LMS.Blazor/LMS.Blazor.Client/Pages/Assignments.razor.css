@@ -22,77 +22,120 @@
 .assignment-card {
     background: #ffffff;
     border: 1px solid #e5e7eb;
-    border-radius: 10px;
-    padding: 1.25rem;
+    border-radius: 14px;
+    padding: 1.4rem 1.5rem;
     margin-bottom: 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
-    .assignment-card h2 {
-        font-size: 1.1rem;
-        margin: 0.5rem 0 0.25rem;
-        color: #111827;
+    .assignment-card:hover {
+        border-color: #d1d5db;
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.07);
+        transform: translateY(-1px);
     }
 
-    .assignment-card p {
-        margin: 0;
-        color: #6b7280;
-        font-size: 0.9rem;
-    }
+.assignment-content {
+    min-width: 0;
+}
+
+.assignment-card h2 {
+    font-size: 1.1rem;
+    font-weight: 650;
+    margin: 0.65rem 0 0.3rem;
+    color: #111827;
+}
+
+.assignment-deadline {
+    margin: 0;
+    color: #6b7280;
+    font-size: 0.9rem;
+}
 
 .assignment-status {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
     font-size: 0.75rem;
-    padding: 0.25rem 0.6rem;
+    line-height: 1;
+    padding: 0.35rem 0.7rem;
     border-radius: 999px;
-    font-weight: 600;
+    white-space: nowrap;
 }
 
-    .assignment-status.pending {
-        background-color: #fef3c7;
-        color: #92400e;
+    /* To do */
+    .assignment-status.todo {
+        background-color: #e8f0eb;
+        color: #244a34;
+        font-weight: 600;
     }
 
-    .assignment-status.submitted {
-        background-color: #dcfce7;
-        color: #166534;
+    /* Awaiting feedback */
+    .assignment-status.awaiting {
+        background-color: #ffffff;
+        color: #6b7280;
+        border: 1px solid #d1d5db;
+        font-weight: 500;
     }
 
-    .assignment-status.late {
-        background-color: #fee2e2;
-        color: #991b1b;
+    /* Graded */
+    .assignment-status.graded {
+        background-color: #e8f5ec;
+        color: #287a46;
+        font-weight: 600;
+    }
+
+    /* Overdue */
+    .assignment-status.overdue {
+        background-color: #fef2f2;
+        color: #b42318;
+        font-weight: 600;
     }
 
 .assignment-button {
     border: none;
-    background-color: #2563eb;
-    color: white;
-    padding: 0.65rem 1rem;
-    border-radius: 8px;
+    background-color: #274f38;
+    color: #ffffff;
+    padding: 0.7rem 1.1rem;
+    border-radius: 9px;
     font-size: 0.9rem;
+    font-weight: 600;
     cursor: pointer;
     white-space: nowrap;
+    transition: background-color 0.2s ease, transform 0.15s ease;
 }
 
     .assignment-button:hover {
-        background-color: #1d4ed8;
+        background-color: #1f402e;
+        transform: translateY(-1px);
     }
 
     .assignment-button.secondary {
-        background-color: #f3f4f6;
+        background-color: #ffffff;
         color: #374151;
+        border: 1px solid #d1d5db;
     }
 
         .assignment-button.secondary:hover {
-            background-color: #e5e7eb;
+            background-color: #f8faf9;
+            border-color: #b8c2bc;
         }
 
 @media (max-width: 768px) {
+    .assignments-page {
+        max-width: 100%;
+    }
+
     .assignment-card {
         flex-direction: column;
         align-items: flex-start;
+        padding: 1.2rem;
+    }
+
+    .assignment-button {
+        width: 100%;
     }
 }
