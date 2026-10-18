@@ -23,6 +23,7 @@ internal class DataSeedService : IHostedService
 
     private const string DemoRole = "Demo";
     private const string DefaultUserEmail = "DemoUser@Lms.com";
+    private const string TeacherEmail = SeedData.TeacherEmail;
 
     public DataSeedService(
         IServiceProvider serviceProvider,
@@ -47,7 +48,16 @@ internal class DataSeedService : IHostedService
             scope.ServiceProvider.GetRequiredService<ApplicationDbContext>()
             ?? throw new ArgumentNullException();
 
-        if (await context.Users.AnyAsync(cancellationToken) &&
+        // Start with: dotnet run --project LMS.API -- --reseed=true
+        // Creates the schema from the current model, not from migrations.
+        if (configuration.GetValue<bool>("reseed"))
+        {
+            logger.LogWarning("Reseed: dropping and recreating the database");
+            await context.Database.EnsureDeletedAsync(cancellationToken);
+            await context.Database.EnsureCreatedAsync(cancellationToken);
+        }
+
+        if (await context.Users.AnyAsync(u => u.Email == TeacherEmail, cancellationToken) &&
             await context.Roles.CountAsync(cancellationToken) >= 3)
             return;
 
@@ -67,6 +77,7 @@ internal class DataSeedService : IHostedService
         {
             await CreateRolesAsync([DemoRole, "Student", "Teacher"]);
             await CreateDefaultUserAsync();
+            await CreateCoursesAndUsersAsync(context);
 
             logger.LogInformation("Seed complete");
         }
@@ -122,6 +133,53 @@ internal class DataSeedService : IHostedService
         };
 
         await CreateUserAsync(user, DemoRole);
+    }
+
+    private async Task CreateCoursesAndUsersAsync(ApplicationDbContext context)
+    {
+        if (await userManager.FindByEmailAsync(TeacherEmail) is not null)
+            return;
+
+        var courses = SeedData.Courses();
+        context.Courses.AddRange(courses);
+        await context.SaveChangesAsync();
+
+        var teachers = new List<ApplicationUser>();
+        foreach (var (email, firstName, lastName) in SeedData.Teachers)
+        {
+            var teacher = new ApplicationUser
+            {
+                Email = email,
+                UserName = email,
+                FirstName = firstName,
+                LastName = lastName
+            };
+            await CreateUserAsync(teacher, "Teacher");
+            teachers.Add(teacher);
+        }
+
+        var students = new List<ApplicationUser>();
+        foreach (var (email, firstName, lastName, courseCode) in SeedData.Students)
+        {
+            var student = new ApplicationUser
+            {
+                Email = email,
+                UserName = email,
+                FirstName = firstName,
+                LastName = lastName,
+                CourseId = courses.Single(c => c.Code == courseCode).Id
+            };
+            await CreateUserAsync(student, "Student");
+            students.Add(student);
+        }
+
+        var actionTypes = SeedData.ActionTypes();
+        context.AddRange(actionTypes);
+        context.Activities.AddRange(SeedData.Activities(courses, actionTypes));
+        context.Documents.AddRange(SeedData.Documents(courses, teachers[0].Id));
+        context.Notifications.AddRange(SeedData.Notifications(students));
+        context.Feedbacks.AddRange(SeedData.SubmissionsWithFeedback(students, teachers[0].Id));
+        await context.SaveChangesAsync();
     }
 
     private async Task CreateUserAsync(

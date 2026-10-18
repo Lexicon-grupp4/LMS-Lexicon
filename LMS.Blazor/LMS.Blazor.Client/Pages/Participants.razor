@@ -1,5 +1,12 @@
 ﻿@page "/participants"
 @using LMS.Blazor.Client.Components
+@using LMS.Blazor.Client.Services.ApiProxy
+@using LMS.Shared.DTOs.UserDtos
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize(Roles = "Student")]
+
+@inject IApiProxyClient ApiProxyClient
 
 <PageTitle>Participants</PageTitle>
 
@@ -54,76 +61,48 @@
 
             <li class="participant-row">
 
-                <div class="participant-avatar student">
-                    MJ
-                </div>
-
-                <div class="participant-content">
-
-                    <div class="participant-name-row">
-                        <h3>Mohamed Jama</h3>
-
-                        <span class="current-user-badge">
-                            You
-                        </span>
+            @foreach (var participant in participants)
+            {
+                <div class="participant-row">
+                    <div class="participant-avatar">@GetInitials(participant)</div>
+                    <div class="participant-info">
+                        <h2>@participant.FirstName @participant.LastName</h2>
+                        <p>@participant.Email</p>
                     </div>
-
-                    <a href="mailto:mohamed.jama@example.com"
-                       class="participant-email">
-                        <span class="mail-icon">✉</span>
-                        mohamed.jama@example.com
-                    </a>
-
                 </div>
+            }
 
-            </li>
-
-            <li class="participant-row">
-
-                <div class="participant-avatar student">
-                    SL
-                </div>
-
-                <div class="participant-content">
-
-                    <div class="participant-name-row">
-                        <h3>Sara Lind</h3>
-                    </div>
-
-                    <a href="mailto:sara.lind@example.com"
-                       class="participant-email">
-                        <span class="mail-icon">✉</span>
-                        sara.lind@example.com
-                    </a>
-
-                </div>
-
-            </li>
-
-            <li class="participant-row">
-
-                <div class="participant-avatar student">
-                    JD
-                </div>
-
-                <div class="participant-content">
-
-                    <div class="participant-name-row">
-                        <h3>Johan Dahl</h3>
-                    </div>
-
-                    <a href="mailto:johan.dahl@example.com"
-                       class="participant-email">
-                        <span class="mail-icon">✉</span>
-                        johan.dahl@example.com
-                    </a>
-
-                </div>
-
-            </li>
-
-        </ul>
-
-    </section>
+        </div>
+    }
 
 </div>
+
+@code {
+    private List<CourseParticipantDto> participants = [];
+    private bool isLoading = true;
+    private bool hasError = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var result = await ApiProxyClient.GetAsync<List<CourseParticipantDto>>(
+                "courses/my-course/participants");
+
+            participants = result ?? [];
+        }
+        catch (Exception)
+        {
+            // Also covers 404 when the student has no course.
+            hasError = true;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private static string GetInitials(CourseParticipantDto participant) =>
+        $"{participant.FirstName.FirstOrDefault()}{participant.LastName.FirstOrDefault()}"
+            .ToUpper();
+}
