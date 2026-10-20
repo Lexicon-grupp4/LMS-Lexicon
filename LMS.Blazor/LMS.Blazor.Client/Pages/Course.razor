@@ -12,106 +12,202 @@
 
 @inject IApiProxyClient ApiProxyClient
 
-<PageTitle>Course</PageTitle>
+<PageTitle>My Course</PageTitle>
 
 <div class="course-page">
 
-    <PageHeader Title="My Course"
-                Description="Here you can see information about your course and the modules included." />
+    <!-- HEADER -->
+    <header class="course-header">
+        <h1>My Course</h1>
+        <p>
+            Here you can see information about your course
+            and the modules included.
+        </p>
+    </header>
 
-    @if (isLoading)
-    {
-        <ContentState Type="loading" />
-    }
-    else if (hasError)
-    {
-        <ContentState Type="error"
-                      Message="Could not load your course." />
-    }
-    else if (course is null)
-    {
-        <ContentState Type="empty"
-                      Message="You are not assigned to a course yet." />
-    }
-    else
-    {
-        <section class="course-card">
-            <h2>@course.Name</h2>
-            <p>@course.Description</p>
+    <!-- COURSE OVERVIEW -->
+    <section class="course-overview">
 
-            <div class="course-dates">
-                <span>Start: @course.StartDate.ToString("yyyy-MM-dd")</span>
-                <span>End: @course.EndDate.ToString("yyyy-MM-dd")</span>
+        <div>
+            <span class="course-label">MY COURSE</span>
+
+            <h2>Lexicon LTU</h2>
+
+            <p>
+                Full-stack education focused on .NET,
+                databases, and frontend development.
+            </p>
+        </div>
+
+        <div class="course-period">
+
+            <div>
+                <span>Start date</span>
+                <strong>2026-09-01</strong>
             </div>
-        </section>
 
-        <section class="modules-section">
-            <h2>Modules</h2>
+            <div>
+                <span>End date</span>
+                <strong>2027-05-31</strong>
+            </div>
 
-            @if (modules.Count == 0)
-            {
-                <ContentState Type="empty"
-                              Message="There are no modules in this course yet." />
-            }
-            else
-            {
-                @foreach (var module in modules)
-                {
-                    <div class="module-card">
-                        <div>
-                            <h3>@module.Name</h3>
-                            <p>@module.Description</p>
-                        </div>
-                        <span>@GetStatus(module)</span>
-                    </div>
-                }
-            }
-        </section>
-    }
+        </div>
+
+    </section>
+
+    <!-- MODULES -->
+    <section class="modules-section"
+             aria-labelledby="modules-heading">
+
+        <div class="modules-heading">
+
+            <div>
+                <h2 id="modules-heading">Modules</h2>
+                <p>Explore the modules in your course.</p>
+            </div>
+
+            <span class="module-count">3 modules</span>
+
+        </div>
+
+        <!-- MODULE 1 -->
+        <div class="module-card">
+
+            <button type="button"
+                    class="module-toggle"
+                    aria-expanded="@(openModule == 1)"
+                    aria-controls="module-panel-1"
+                    @onclick="() => ToggleModule(1)">
+
+                <span class="module-status-icon completed-icon"
+                      aria-hidden="true">
+                    ✓
+                </span>
+
+                <span class="module-title">
+                    <small>Module 1</small>
+                    <strong>HTML &amp; CSS</strong>
+                </span>
+
+                <span class="module-status-text completed-text">
+                    Completed
+                </span>
+
+                <span class="module-chevron @(openModule == 1 ? "open" : "")"
+                      aria-hidden="true">
+                    ⌄
+                </span>
+
+            </button>
+
+            <div id="module-panel-1"
+                 class="module-content"
+                 hidden="@(openModule != 1)">
+
+                <p>
+                    Basic web design and responsive layout.
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- MODULE 2 -->
+        <div class="module-card ongoing">
+
+            <button type="button"
+                    class="module-toggle"
+                    aria-expanded="@(openModule == 2)"
+                    aria-controls="module-panel-2"
+                    @onclick="() => ToggleModule(2)">
+
+                <span class="module-status-icon ongoing-icon"
+                      aria-hidden="true">
+                    <span></span>
+                </span>
+
+                <span class="module-title">
+                    <small>Module 2</small>
+                    <strong>JavaScript</strong>
+                </span>
+
+                <span class="module-status-pill">
+                    In progress
+                </span>
+
+                <span class="module-chevron @(openModule == 2 ? "open" : "")"
+                      aria-hidden="true">
+                    ⌄
+                </span>
+
+            </button>
+
+            <div id="module-panel-2"
+                 class="module-content"
+                 hidden="@(openModule != 2)">
+
+                <p>
+                    JavaScript, DOM, and modern web applications.
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- MODULE 3 -->
+        <div class="module-card">
+
+            <button type="button"
+                    class="module-toggle"
+                    aria-expanded="@(openModule == 3)"
+                    aria-controls="module-panel-3"
+                    @onclick="() => ToggleModule(3)">
+
+                <span class="module-status-icon upcoming-icon"
+                      aria-hidden="true">
+                </span>
+
+                <span class="module-title">
+                    <small>Module 3</small>
+                    <strong>.NET</strong>
+                </span>
+
+                <span class="module-status-text">
+                    Upcoming
+                </span>
+
+                <span class="module-chevron @(openModule == 3 ? "open" : "")"
+                      aria-hidden="true">
+                    ⌄
+                </span>
+
+            </button>
+
+            <div id="module-panel-3"
+                 class="module-content"
+                 hidden="@(openModule != 3)">
+
+                <p>
+                    C#, ASP.NET Core, and full-stack development.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
 </div>
 
 @code {
-    private CourseDto? course;
-    private List<ModuleDto> modules = [];
-    private bool isLoading = true;
-    private bool hasError = false;
 
-    protected override async Task OnInitializedAsync()
+    private int? openModule = 2;
+
+    private void ToggleModule(int moduleId)
     {
-        try
-        {
-            course = await ApiProxyClient.GetAsync<CourseDto>("courses/my-course");
-
-            if (course is not null)
-            {
-                var result = await ApiProxyClient.GetAsync<PagedResponse<ModuleDto>>(
-                    $"Module/course/{course.Id}");
-
-                modules = result?.Items.OrderBy(m => m.StartDate).ToList() ?? [];
-            }
-        }
-        catch (ApiException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
-        {
-            // The student has no course yet.
-            course = null;
-        }
-        catch (Exception)
-        {
-            hasError = true;
-        }
-        finally
-        {
-            isLoading = false;
-        }
+        openModule = openModule == moduleId
+            ? null
+            : moduleId;
     }
 
-    private static string GetStatus(ModuleDto module)
-    {
-        var today = DateTime.Today;
-
-        if (module.EndDate < today)
-            return "Completed";
-
-        return module.StartDate <= today ? "Ongoing" : "Upcoming";
-    }
 }

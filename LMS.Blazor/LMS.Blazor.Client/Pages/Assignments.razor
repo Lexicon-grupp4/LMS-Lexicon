@@ -25,39 +25,83 @@
     else
     {
         <div class="assignment-card">
-            <div>
-                <span class="assignment-status pending">Not Submitted</span>
+
+            <div class="assignment-content">
+                <span class="assignment-status todo">
+                    To do
+                </span>
+
                 <h2>React Application</h2>
-                <p>Deadline: 2026-10-10</p>
+
+                <p class="assignment-deadline">
+                    Deadline: 10 Oct 2026
+                </p>
             </div>
 
             <button class="assignment-button">
                 Submit
             </button>
+
         </div>
 
         <div class="assignment-card">
-            <div>
-                <span class="assignment-status submitted">Submitted</span>
+
+            <div class="assignment-content">
+                <span class="assignment-status awaiting">
+                    Awaiting feedback
+                </span>
+
                 <h2>Database Design</h2>
-                <p>Deadline: 2026-10-15</p>
+
+                <p class="assignment-deadline">
+                    Deadline: 15 Oct 2026
+                </p>
             </div>
 
             <button class="assignment-button secondary">
-                View Submission
+                View submission
             </button>
+
         </div>
 
         <div class="assignment-card">
-            <div>
-                <span class="assignment-status late">Overdue</span>
+
+            <div class="assignment-content">
+                <span class="assignment-status graded">
+                    Graded
+                </span>
+
+                <h2>API Integration</h2>
+
+                <p class="assignment-deadline">
+                    Deadline: 12 Oct 2026
+                </p>
+            </div>
+
+            <button class="assignment-button secondary">
+                View feedback
+            </button>
+
+        </div>
+
+        <div class="assignment-card">
+
+            <div class="assignment-content">
+                <span class="assignment-status overdue">
+                    Overdue
+                </span>
+
                 <h2>ASP.NET Core Exercise</h2>
-                <p>Deadline: 2026-10-05</p>
+
+                <p class="assignment-deadline">
+                    Deadline: 05 Oct 2026
+                </p>
             </div>
 
             <button class="assignment-button">
                 Submit
             </button>
+
         </div>
     }
 
