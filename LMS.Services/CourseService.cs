@@ -1,4 +1,6 @@
-﻿using LMS.Infrastructure.Data;
+﻿using Domain.Models.Entities;
+using Domain.Models.Exceptions;
+using LMS.Infrastructure.Data;
 using LMS.Infrastructure.Migrations;
 using LMS.Shared.DTOs.CourseDtos;
 using Microsoft.EntityFrameworkCore;
@@ -47,6 +49,7 @@ public class CourseService : ICourseService
         c.Description = course.Description;
         c.StartDate = course.StartDate;
         c.EndDate = course.EndDate;
+        ValidateCourse(c);
         await _context.Courses.AddAsync(c);
         await _context.SaveChangesAsync();
         return new CourseDto(c.Id, c.Name, c.Code, c.Description, c.StartDate, c.EndDate);
@@ -86,8 +89,18 @@ public class CourseService : ICourseService
         if (course.EndDate.HasValue)
             entity.EndDate = course.EndDate.Value;
 
+        ValidateCourse(entity);
+
         await _context.SaveChangesAsync();
 
         return new CourseDto(entity.Id, entity.Name, entity.Code, entity.Description, entity.StartDate, entity.EndDate);
+    }
+
+    private static void ValidateCourse(Course course)
+    {
+        if (string.IsNullOrWhiteSpace(course.Name))
+            throw new CourseNameRequiredException("Name is required");
+        if (course.StartDate > course.EndDate)
+            throw new CourseInvalidDatesException("Invalid dates. Startdate must not be after Enddate");
     }
 }
