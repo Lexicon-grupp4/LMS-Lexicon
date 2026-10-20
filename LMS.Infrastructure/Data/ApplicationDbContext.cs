@@ -13,6 +13,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Activity> Activities => Set<Activity>();
 
     public DbSet<Document> Documents => Set<Document>();
+    public DbSet<StoredFile> StoredFiles => Set<StoredFile>();
 
     public DbSet<FeedBack> Feedbacks => Set<FeedBack>();
 
