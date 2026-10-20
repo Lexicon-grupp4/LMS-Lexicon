@@ -73,7 +73,10 @@ namespace LMS.Infrastructure.Data
                     opt.MapFrom(src => src.TotalCount));
 
             // Activity -> ActivityDto
-            CreateMap<Activity, ActivityDto>();
+            CreateMap<Activity, ActivityDto>()
+                .ForMember(
+                    dest => dest.ActionTypeName,
+                    opt => opt.MapFrom(src => src.ActionType.Name));
 
             // CreateActivityDto -> Activity
             CreateMap<CreateActivityDto, Activity>();
