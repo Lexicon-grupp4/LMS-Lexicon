@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Domain.Models.Entities;
 using LMS.Infrastructure.Paging;
+using LMS.Shared.DTOs.Activity;
 using LMS.Shared.DTOs.Module;
 using LMS.Shared.DTOs.UserDtos;
 using LMS.Shared.Paging;
@@ -62,6 +63,26 @@ namespace LMS.Infrastructure.Data
             CreateMap<UpdateModuleDto, Module>();
 
             CreateMap<PagedList<Module>, PagedResponse<ModuleDto>>()
+                .ForCtorParam("Items", opt =>
+                    opt.MapFrom(src => src.Items))
+                .ForCtorParam("PageNumber", opt =>
+                    opt.MapFrom(src => 1))
+                .ForCtorParam("PageSize", opt =>
+                    opt.MapFrom(src => src.Items.Count))
+                .ForCtorParam("TotalCount", opt =>
+                    opt.MapFrom(src => src.TotalCount));
+
+            // Activity -> ActivityDto
+            CreateMap<Activity, ActivityDto>();
+
+            // CreateActivityDto -> Activity
+            CreateMap<CreateActivityDto, Activity>();
+
+            // UpdateActivityDto -> Activity
+            CreateMap<UpdateActivityDto, Activity>();
+
+            // PagedList<Activity> -> PagedResponse<ActivityDto>
+            CreateMap<PagedList<Activity>, PagedResponse<ActivityDto>>()
                 .ForCtorParam("Items", opt =>
                     opt.MapFrom(src => src.Items))
                 .ForCtorParam("PageNumber", opt =>
