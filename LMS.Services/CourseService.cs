@@ -72,7 +72,7 @@ public class CourseService : ICourseService
     {
         var entity = await _context.Courses.FindAsync(course.Id);
         if (entity is null)
-            throw new KeyNotFoundException($"Course with id {course.Id} not found.");
+            throw new NotFoundException($"Course with id {course.Id} not found.");
 
         if (!string.IsNullOrWhiteSpace(course.Name))
             entity.Name = course.Name;

@@ -40,7 +40,10 @@
         {
             CourseDto? course = await ApiProxyClient.GetAsync<CourseDto>($"courses/{id}");
             if (course == null)
+            {
+                errorMessage = "Could not load the course";
                 return;
+            }
             model.Name = course.Name;
             model.Code = course.Code;
             model.Description = course.Description;
