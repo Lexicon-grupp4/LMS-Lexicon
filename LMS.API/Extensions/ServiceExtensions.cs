@@ -34,5 +34,8 @@ public static class ServiceExtensions
         services.AddLazy<INotificationService>();
         services.AddLazy<ICourseService>();
         services.AddLazy<IModuleService>();
+
+        services.AddScoped<IDocumentService, DocumentService>();
+        services.AddLazy<IDocumentService>();
     }
 }
