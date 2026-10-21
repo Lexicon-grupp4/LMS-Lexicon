@@ -11,6 +11,7 @@ public class DocumentRepository(ApplicationDbContext context) : RepositoryBase<D
     public async Task<Document?> GetByIdAsync(int id) =>
         await FindByCondition(d => d.Id == id)
         .Include(d => d.StoredFile)
+        .Include(d => d.Module)
         .FirstOrDefaultAsync();
 
     public async Task<IEnumerable<Document>> GetByCourseIdAsync(int courseId) =>

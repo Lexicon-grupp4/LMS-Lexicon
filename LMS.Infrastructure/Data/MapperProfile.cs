@@ -76,7 +76,8 @@ namespace LMS.Infrastructure.Data
                 .ForCtorParam("FileName", opt => opt.MapFrom(src => src.StoredFile.FileName))
                 .ForCtorParam("ContentType", opt => opt.MapFrom(src => src.StoredFile.ContentType))
                 .ForCtorParam("Size", opt => opt.MapFrom(src => src.StoredFile.Size))
-                .ForCtorParam("UploadedAt", opt => opt.MapFrom(src => src.UploadAt));
+                .ForCtorParam("UploadedAt", opt => opt.MapFrom(src => src.UploadAt))
+                .ForCtorParam("CourseId", opt => opt.MapFrom(src => src.CourseId ?? src.Module!.CourseId));
         }
     }
 }

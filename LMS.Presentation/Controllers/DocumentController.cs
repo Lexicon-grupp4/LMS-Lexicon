@@ -51,8 +51,7 @@ public class DocumentController(IServiceManager serviceManager) : ControllerBase
         if (document is null)
             return NotFound();
 
-        // TODO: documents linked only to a module have no CourseId (see notes)
-        if (document.CourseId is int courseId && !await CanAccessCourseAsync(courseId))
+        if (!await CanAccessCourseAsync(document.CourseId))
             return Forbid();
 
         var file = await _serviceManager.DocumentService.DownloadAsync(id);
@@ -96,10 +95,13 @@ public class DocumentController(IServiceManager serviceManager) : ControllerBase
     }
 
     // Teachers can access all courses, students only their own
-    private async Task<bool> CanAccessCourseAsync(int courseId)
+    private async Task<bool> CanAccessCourseAsync(int? courseId)
     {
         if (User.IsInRole("Teacher"))
             return true;
+
+        if (courseId is null)
+            return false;
 
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrWhiteSpace(userId))
