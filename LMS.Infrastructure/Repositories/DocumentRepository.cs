@@ -26,5 +26,7 @@ public class DocumentRepository(ApplicationDbContext context) : RepositoryBase<D
         .Include(d => d.StoredFile)
         .OrderByDescending(d => d.UploadAt)
         .ToListAsync();
+
+    public void DeleteStoredFile(StoredFile file) => context.StoredFiles.Remove(file);
 }
 
