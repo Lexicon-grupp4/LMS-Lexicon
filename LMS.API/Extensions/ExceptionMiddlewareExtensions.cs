@@ -21,6 +21,7 @@ public static class ExceptionMiddlewareExtensions
                     var (statusCode, title) = exception switch
                     {
                         ModuleOverlappingException ex => (StatusCodes.Status400BadRequest, ex.Message),
+                        InvalidFileException ex => (StatusCodes.Status400BadRequest, ex.Message),
                         InvalidModuleDateException ex => (StatusCodes.Status400BadRequest, ex.Message),
                         UserAlreadyExistsException ex => (StatusCodes.Status400BadRequest, ex.Title),
                         DeleteOwnAccountException ex => (StatusCodes.Status400BadRequest, ex.Title),

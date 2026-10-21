@@ -249,7 +249,7 @@ Content-Disposition: form-data; name="courseId"
   }
 %}
 
-### Documents Upload not allowed file type (should be 400, is 500 until InvalidFileException exists)
+### Documents Upload not allowed file type (400)
 POST {{LMS.API_HostAddress}}/api/documents
 Accept: application/json
 Authorization: Bearer {{teacherToken}}

@@ -99,13 +99,13 @@ public class DocumentService(IUnitOfWork uow, IMapper mapper, IConfiguration con
     private static void ValidateFile(UploadDocumentDto dto)
     {
         if (dto.Size <= 0)
-            throw new ArgumentException("The file is empty.");
+            throw new InvalidFileException("The file is empty.");
         if (dto.Size > MaxFileSize)
-            throw new ArgumentException($"The file is larger than {MaxFileSize} MB.");
+            throw new InvalidFileException($"The file is larger than {MaxFileSize} MB.");
 
         var extension = Path.GetExtension(dto.FileName).ToLowerInvariant();
         if (!AllowedExtensions.Contains(extension))
-            throw new ArgumentException($"File type '{extension}' is not allowed.");
+            throw new InvalidFileException($"File type '{extension}' is not allowed.");
     }
 
 
