@@ -84,7 +84,7 @@ internal static class SeedData
                 StoredFile = new StoredFile
                 {
                     FileName = $"{course.Code}-schedule.pdf",
-                    ContentType = "ApplicationUser/pdf",
+                    ContentType = "application/pdf",
                     StorageKey = $"uploads/seed/{course.Code}-schedule.pdf",
                 },
                 UploadAt = DateTime.Now.AddDays(-7),
@@ -99,7 +99,7 @@ internal static class SeedData
                     StoredFile = new StoredFile
                     {
                         FileName = $"{module.Name}-slides.pptx",
-                        ContentType = "ApplicationUser/pptx",
+                        ContentType = "application/vnd.openxmlformats-officedocument.presentationml.presentation",
                         StorageKey = $"uploads/seed/{course.Code}-{module.Id}-slides.pptx",
                     },
                     UploadAt = module.StartDate.AddDays(-1),
