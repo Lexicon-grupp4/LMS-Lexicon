@@ -26,5 +26,10 @@ namespace LMS.Services
 
             return _mapper.Map<PagedResponse<ActionTypeDto>>(actionTypes);
         }
+        public async Task<ActionTypeDto?> GetByActivityIdAsync(int activityId, bool trackChanges = false)
+        {
+            var actionType = await _uow.ActionTypeRepository.GetByActivityIdAsync(activityId, trackChanges);
+            return _mapper.Map<ActionTypeDto>(actionType);
+        }
     }
 }

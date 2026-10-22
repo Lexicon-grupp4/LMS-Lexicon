@@ -29,6 +29,10 @@ namespace LMS.Infrastructure.Repositories
 
             return await query.OrderBy(m => m.Name).ToPagedListAsync(parameters);
         }
-
+        public async Task<ActionType?> GetByActivityIdAsync(int activityId, bool trackChanges = false)
+        {
+            var activity = await _context.Activities.FindAsync(activityId);
+            return activity?.ActionType;
+        }
     }
 }

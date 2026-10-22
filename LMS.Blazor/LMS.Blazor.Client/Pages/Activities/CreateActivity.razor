@@ -2,6 +2,8 @@
 
 @using LMS.Shared.DTOs.Activity
 @using LMS.Shared.DTOs.Module
+@using LMS.Shared.DTOs.ActionType
+@using LMS.Shared.Paging
 @using LMS.Blazor.Client.Services.ApiProxy
 @using Microsoft.AspNetCore.Authorization
 
@@ -49,16 +51,20 @@ else
             <div class="card-body">
 
                 <div class="mb-3">
-                    <label class="form-label">Module ID</label>
-                    <input class="form-control"
-                           value="@ModuleId"
-                           disabled />
-                </div>
+                    <label class="form-label">Activity Type</label>
 
-                <div class="mb-3">
-                    <label class="form-label">Activity Type ID</label>
-                    <InputNumber class="form-control"
-                                 @bind-Value="activity.ActionTypeId" />
+                    <InputSelect class="form-select"
+                                 @bind-Value="activity.ActionTypeId">
+                        <option value="0">-- Select Activity Type --</option>
+
+                        @foreach (var actionType in actionTypes)
+                        {
+                            <option value="@actionType.Id">
+                                @actionType.Name
+                            </option>
+                        }
+                    </InputSelect>
+
                     <ValidationMessage
                         For="@(() => activity.ActionTypeId)" />
                 </div>
@@ -133,6 +139,7 @@ else
 
     private CreateActivityDto activity = new();
     private ModuleDto? module;
+    private List<ActionTypeDto> actionTypes = new();
 
     private bool isLoading = true;
     private bool isSaving;
@@ -145,23 +152,38 @@ else
             ModuleId = ModuleId
         };
 
-        await LoadModule();
+        await LoadData();
     }
 
-    private async Task LoadModule()
+    private async Task LoadData()
     {
         isLoading = true;
         errorMessage = null;
         module = null;
+        actionTypes = new();
 
         try
         {
+            // Load module information
             module = await ApiProxyClient.GetAsync<ModuleDto>(
                 $"Module/{ModuleId}");
 
             if (module is null)
             {
                 errorMessage = "Module not found.";
+                return;
+            }
+
+            // Load action types from the paginated API response
+            var response = await ApiProxyClient
+                .GetAsync<PagedResponse<ActionTypeDto>>("ActionType");
+
+            actionTypes = response?.Items?.ToList()
+                ?? new List<ActionTypeDto>();
+
+            if (actionTypes.Count == 0)
+            {
+                errorMessage = "No activity types are available.";
             }
         }
         catch (UnauthorizedAccessException)
@@ -186,6 +208,13 @@ else
             return;
 
         errorMessage = null;
+
+        if (activity.ActionTypeId <= 0 ||
+            !actionTypes.Any(x => x.Id == activity.ActionTypeId))
+        {
+            errorMessage = "Please select a valid activity type.";
+            return;
+        }
 
         if (activity.StartDate >= activity.EndDate)
         {

@@ -1,7 +1,9 @@
 ﻿@page "/activities/edit/{Id:int}"
 
-@using LMS.Shared.DTOs.Activity
 @using LMS.Blazor.Client.Services.ApiProxy
+@using LMS.Shared.DTOs.ActionType
+@using LMS.Shared.DTOs.Activity
+@using LMS.Shared.Paging
 @using Microsoft.AspNetCore.Authorization
 
 @attribute [Authorize(Roles = "Teacher")]
@@ -50,20 +52,17 @@ else
             <div class="card-body">
 
                 <div class="mb-3">
-                    <label class="form-label">Module ID</label>
-                    <input class="form-control"
-                           value="@activity.ModuleId"
-                           disabled />
-                </div>
-
-                <div class="mb-3">
                     <label class="form-label">Activity Type</label>
-                    <input class="form-control"
-                           value="@actionTypeName"
-                           disabled />
-                    <small class="text-muted">
-                        The current activity type cannot be changed here.
-                    </small>
+
+                    <InputSelect class="form-select"
+                                 @bind-Value="activity.ActionTypeId">
+                        @foreach (var actionType in actionTypes)
+                        {
+                            <option value="@actionType.Id">
+                                @actionType.Name
+                            </option>
+                        }
+                    </InputSelect>
                 </div>
 
                 <div class="mb-3">
@@ -120,6 +119,7 @@ else
     public int Id { get; set; }
 
     private UpdateActivityDto? activity;
+    private List<ActionTypeDto> actionTypes = new();
     private string? actionTypeName;
 
     private bool isLoading = true;
@@ -140,6 +140,13 @@ else
 
         try
         {
+         
+            var response = await ApiProxyClient
+            .GetAsync<PagedResponse<ActionTypeDto>>("ActionType");
+
+             actionTypes = response?.Items?.ToList()
+              ?? new List<ActionTypeDto>();
+
             var existing =
                 await ApiProxyClient.GetAsync<ActivityDto>(
                     $"Activity/{Id}");
