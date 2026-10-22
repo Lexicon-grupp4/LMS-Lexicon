@@ -1,0 +1,50 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using LMS.Blazor.Client.Models
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Forms
+
+<EditForm Model="Model" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label class="form-label">Name</label>
+        <InputText class="form-control" @bind-Value="Model.Name" />
+        <ValidationMessage For="() => Model.Name" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Code</label>
+        <InputText class="form-control" @bind-Value="Model.Code" />
+        <ValidationMessage For="() => Model.Code" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Description</label>
+        <InputTextArea class="form-control" @bind-Value="Model.Description" />
+        <ValidationMessage For="() => Model.Description" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Start date</label>
+        <InputDate class="form-control" @bind-Value="Model.StartDate" />
+        <ValidationMessage For="() => Model.StartDate" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">End date</label>
+        <InputDate class="form-control" @bind-Value="Model.EndDate" />
+        <ValidationMessage For="() => Model.EndDate" />
+    </div>
+
+    <button type="submit" class="btn btn-primary" disabled="@IsSubmitting">
+        @(IsSubmitting ? "Processing..." : SubmitButtonText)
+    </button>
+</EditForm>
+
+@code {
+    [Parameter] public CourseFormModel Model { get; set; } = new();
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+    [Parameter] public bool IsSubmitting { get; set; }
+    [Parameter] public string SubmitButtonText { get; set; } = "Submit";
+}
