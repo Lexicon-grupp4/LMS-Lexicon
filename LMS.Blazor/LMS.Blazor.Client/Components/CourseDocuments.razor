@@ -1,0 +1,147 @@
+@using LMS.Blazor.Client.Services.ApiProxy
+@using LMS.Shared.DTOs.DocumentDtos
+@inject IApiProxyClient ApiProxyClient
+
+<section class="course-documents">
+    <h3>Documents</h3>
+
+    @if (!string.IsNullOrWhiteSpace(errorMessage))
+    {
+        <div class="alert alert-danger" role="alert">@errorMessage</div>
+    }
+
+    <AuthorizeView Roles="Teacher">
+        <div class="mb-3">
+            <InputFile OnChange="UploadAsync" accept="@string.Join(",", AllowedExtensions)" disabled="@isUploading" />
+            @if (isUploading)
+            {
+                <span class="ms-2">Uploading...</span>
+            }
+        </div>
+    </AuthorizeView>
+
+    @if (documents is null)
+    {
+        <p>Loading...</p>
+    }
+    else if (documents.Length == 0)
+    {
+        <p>No documents yet.</p>
+    }
+    else
+    {
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>File</th>
+                    <th>Size</th>
+                    <th>Uploaded</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var d in documents)
+                {
+                    <tr>
+                        <td>
+                            <a href="@($"api/proxy/documents/{d.Id}/download")" download>@d.FileName</a>
+                        </td>
+                        <td>@(d.Size / 1024) KB</td>
+                        <td>@d.UploadedAt.ToShortDateString()</td>
+                        <td>
+                            <AuthorizeView Roles="Teacher">
+                                <button class="btn btn-sm btn-danger" @onclick="() => DeleteAsync(d.Id)">Delete</button>
+                            </AuthorizeView>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</section>
+
+@code {
+    [Parameter, EditorRequired] public int CourseId { get; set; }
+
+    private const long MaxFileSize = 10 * 1024 * 1024;
+    private static readonly string[] AllowedExtensions =
+        [".pdf", ".docx", ".pptx", ".xlsx", ".txt", ".jpg", ".jpeg", ".png"];
+
+    private DocumentDto[]? documents;
+    private string errorMessage = string.Empty;
+    private bool isUploading;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await LoadDocumentsAsync();
+    }
+
+    private async Task LoadDocumentsAsync()
+    {
+        try
+        {
+            documents = await ApiProxyClient.GetAsync<DocumentDto[]>($"documents/course/{CourseId}") ?? [];
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Could not load documents: " + ex.Message;
+        }
+    }
+
+    private async Task UploadAsync(InputFileChangeEventArgs e)
+    {
+        errorMessage = string.Empty;
+        var file = e.File;
+
+        // Client-side check for quick feedback; the API validates again.
+        var extension = Path.GetExtension(file.Name).ToLowerInvariant();
+        if (!AllowedExtensions.Contains(extension))
+        {
+            errorMessage = $"File type {extension} is not allowed.";
+            return;
+        }
+        if (file.Size > MaxFileSize)
+        {
+            errorMessage = "File is larger than 10 MB.";
+            return;
+        }
+
+        isUploading = true;
+        try
+        {
+            var fileContent = new StreamContent(file.OpenReadStream(MaxFileSize));
+            fileContent.Headers.ContentType = new(file.ContentType);
+
+            var content = new MultipartFormDataContent
+            {
+                { fileContent, "file", file.Name },
+                { new StringContent(CourseId.ToString()), "courseId" }
+            };
+
+            await ApiProxyClient.SendAsync<DocumentDto>(HttpMethod.Post, "documents", content);
+            await LoadDocumentsAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Upload failed: " + ex.Message;
+        }
+        finally
+        {
+            isUploading = false;
+        }
+    }
+
+    private async Task DeleteAsync(int id)
+    {
+        try
+        {
+            await ApiProxyClient.DeleteAsync($"documents/{id}");
+            await LoadDocumentsAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Delete failed: " + ex.Message;
+        }
+    }
+
+}
