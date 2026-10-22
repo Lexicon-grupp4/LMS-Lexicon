@@ -12,11 +12,13 @@ public static class ServiceExtensions
         services.AddScoped<IModuleRepository, ModuleRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IActivityRepository, ActivityRepository>();
+        services.AddScoped<IActionTypeRepository, ActionTypeRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddLazy<IModuleRepository>();
         services.AddLazy<IUserRepository>();
         services.AddScoped<INotificationRepository, NotificationRepository>();
         services.AddLazy<IActivityRepository>();
+        services.AddLazy<IActionTypeRepository>();
     }
 
     public static void AddServiceLayer(this IServiceCollection services)
@@ -27,6 +29,7 @@ public static class ServiceExtensions
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IModuleService, ModuleService>();
         services.AddScoped<IActivityService, ActivityService>();
+        services.AddScoped<IActionTypeService, ActionTypeService>();
         services.AddLazy<IAuthService>();
         services.AddLazy<IUserService>();
         services.AddScoped<INotificationService, NotificationService>();
@@ -34,5 +37,6 @@ public static class ServiceExtensions
         services.AddLazy<ICourseService>();
         services.AddLazy<IModuleService>();
         services.AddLazy<IActivityService>();
+        services.AddLazy<IActionTypeService>();
     }
 }
