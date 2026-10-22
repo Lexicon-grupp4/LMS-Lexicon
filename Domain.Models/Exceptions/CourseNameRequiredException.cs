@@ -6,6 +6,8 @@ namespace Domain.Models.Exceptions
 {
     public class CourseNameRequiredException : Exception
     {
+        public string Title { get; } = "Invalid data";
+        
         public CourseNameRequiredException(string message) : base(message)
         {
         }
