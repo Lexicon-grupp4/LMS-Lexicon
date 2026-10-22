@@ -10,7 +10,12 @@
 <PageTitle>Courses</PageTitle>
 
 <div class="courses-page">
-
+    @if (!string.IsNullOrWhiteSpace(errorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @errorMessage
+        </div>
+    }
     @if (courses is null)
     {
         <p>Loading...</p>
@@ -24,7 +29,6 @@
                     <tr>
                         <th>Course</th>
                         <th>Code</th>
-                        <th>Id</th>
                         <th>Description</th>
                         <th>Start date</th>
                         <th>End date</th>
@@ -40,7 +44,6 @@
                                 </NavLink>
                             </td>
                             <td>@c.Code</td>
-                            <td>@c.Id</td>
                             <td>@c.Description</td>
                             <td>@c.StartDate.ToShortDateString()</td>
                             <td>@c.EndDate.ToShortDateString()</td>
@@ -67,6 +70,7 @@
 @code {
     private CourseDto[]? courses;
     private readonly HashSet<int> deletingIds = new();
+    private string errorMessage = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -80,15 +84,19 @@
 
     private async Task DeleteCourseAsync(int id)
     {
-        var confirmed = await JS.InvokeAsync<bool>("confirm", $"Delete course #{id}?");
+        var confirmed = await JS.InvokeAsync<bool>("confirm", "Delete course?");
         if (!confirmed) return;
 
         deletingIds.Add(id);
         StateHasChanged();
         try
         {
-            await ApiProxyClient.DeleteAsync($"course/{id}");
+            await ApiProxyClient.DeleteAsync($"courses/{id}");
             await LoadCoursesAsync();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Failed to delete course: " + ex.Message;
         }
         finally
         {
