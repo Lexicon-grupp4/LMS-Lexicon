@@ -11,7 +11,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Module> Modules => Set<Module>();
 
     public DbSet<Activity> Activities => Set<Activity>();
-
+    public DbSet<ActionType> ActionTypes => Set<ActionType>();
     public DbSet<Document> Documents => Set<Document>();
     public DbSet<StoredFile> StoredFiles => Set<StoredFile>();
 
