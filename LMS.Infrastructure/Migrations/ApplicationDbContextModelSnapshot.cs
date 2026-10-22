@@ -17,7 +17,7 @@ namespace LMS.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.12")
+                .HasAnnotation("ProductVersion", "10.0.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -203,15 +203,10 @@ namespace LMS.Infrastructure.Migrations
                     b.Property<int?>("CourseId")
                         .HasColumnType("int");
 
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FilePath")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("ModuleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StoredFileId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UploadAt")
@@ -228,6 +223,8 @@ namespace LMS.Infrastructure.Migrations
                     b.HasIndex("CourseId");
 
                     b.HasIndex("ModuleId");
+
+                    b.HasIndex("StoredFileId");
 
                     b.HasIndex("UploadedById");
 
@@ -332,6 +329,40 @@ namespace LMS.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Notifications");
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.StoredFile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("StorageKey")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StorageKey")
+                        .IsUnique();
+
+                    b.ToTable("StoredFiles");
                 });
 
             modelBuilder.Entity("Domain.Models.Entities.Submission", b =>
@@ -541,6 +572,12 @@ namespace LMS.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("ModuleId");
 
+                    b.HasOne("Domain.Models.Entities.StoredFile", "StoredFile")
+                        .WithMany()
+                        .HasForeignKey("StoredFileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Domain.Models.Entities.ApplicationUser", "UploadedBy")
                         .WithMany()
                         .HasForeignKey("UploadedById")
@@ -552,6 +589,8 @@ namespace LMS.Infrastructure.Migrations
                     b.Navigation("Course");
 
                     b.Navigation("Module");
+
+                    b.Navigation("StoredFile");
 
                     b.Navigation("UploadedBy");
                 });
