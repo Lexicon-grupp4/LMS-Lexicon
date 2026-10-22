@@ -12,8 +12,13 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LMS.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
+<<<<<<<< HEAD:LMS.Infrastructure/Migrations/20261020141601_added-activities.Designer.cs
     [Migration("20261020141601_added-activities")]
     partial class addedactivities
+========
+    [Migration("20261020113243_AddStorageFile")]
+    partial class AddStorageFile
+>>>>>>>> development:LMS.Infrastructure/Migrations/20261020113243_AddStorageFile.Designer.cs
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,21 +55,33 @@ namespace LMS.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+<<<<<<<< HEAD:LMS.Infrastructure/Migrations/20261020141601_added-activities.Designer.cs
                     b.Property<int>("ActionTypeId")
+========
+                    b.Property<int?>("ActionTypeId")
+>>>>>>>> development:LMS.Infrastructure/Migrations/20261020113243_AddStorageFile.Designer.cs
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .IsRequired()
+<<<<<<<< HEAD:LMS.Infrastructure/Migrations/20261020141601_added-activities.Designer.cs
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
+========
+                        .HasColumnType("nvarchar(max)");
+>>>>>>>> development:LMS.Infrastructure/Migrations/20261020113243_AddStorageFile.Designer.cs
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
+<<<<<<<< HEAD:LMS.Infrastructure/Migrations/20261020141601_added-activities.Designer.cs
                     b.Property<int>("ModuleId")
                         .HasColumnType("int");
 
                     b.Property<int?>("ModuleId1")
+========
+                    b.Property<int?>("ModuleId")
+>>>>>>>> development:LMS.Infrastructure/Migrations/20261020113243_AddStorageFile.Designer.cs
                         .HasColumnType("int");
 
                     b.Property<DateTime>("StartDate")
@@ -72,13 +89,18 @@ namespace LMS.Infrastructure.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
+<<<<<<<< HEAD:LMS.Infrastructure/Migrations/20261020141601_added-activities.Designer.cs
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+========
+                        .HasColumnType("nvarchar(max)");
+>>>>>>>> development:LMS.Infrastructure/Migrations/20261020113243_AddStorageFile.Designer.cs
 
                     b.HasKey("Id");
 
                     b.HasIndex("ActionTypeId");
 
+<<<<<<<< HEAD:LMS.Infrastructure/Migrations/20261020141601_added-activities.Designer.cs
                     b.HasIndex("ModuleId1");
 
                     b.HasIndex("ModuleId", "StartDate");
@@ -87,6 +109,11 @@ namespace LMS.Infrastructure.Migrations
                         {
                             t.HasCheckConstraint("CK_Activity_Dates", "[StartDate] < [EndDate]");
                         });
+========
+                    b.HasIndex("ModuleId");
+
+                    b.ToTable("Activities");
+>>>>>>>> development:LMS.Infrastructure/Migrations/20261020113243_AddStorageFile.Designer.cs
                 });
 
             modelBuilder.Entity("Domain.Models.Entities.ApplicationUser", b =>
@@ -216,6 +243,7 @@ namespace LMS.Infrastructure.Migrations
                     b.Property<int?>("CourseId")
                         .HasColumnType("int");
 
+<<<<<<<< HEAD:LMS.Infrastructure/Migrations/20261020141601_added-activities.Designer.cs
                     b.Property<string>("FileName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -227,6 +255,14 @@ namespace LMS.Infrastructure.Migrations
                     b.Property<int?>("ModuleId")
                         .HasColumnType("int");
 
+========
+                    b.Property<int?>("ModuleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StoredFileId")
+                        .HasColumnType("int");
+
+>>>>>>>> development:LMS.Infrastructure/Migrations/20261020113243_AddStorageFile.Designer.cs
                     b.Property<DateTime>("UploadAt")
                         .HasColumnType("datetime2");
 
@@ -242,6 +278,11 @@ namespace LMS.Infrastructure.Migrations
 
                     b.HasIndex("ModuleId");
 
+<<<<<<<< HEAD:LMS.Infrastructure/Migrations/20261020141601_added-activities.Designer.cs
+========
+                    b.HasIndex("StoredFileId");
+
+>>>>>>>> development:LMS.Infrastructure/Migrations/20261020113243_AddStorageFile.Designer.cs
                     b.HasIndex("UploadedById");
 
                     b.ToTable("Documents");
@@ -347,6 +388,43 @@ namespace LMS.Infrastructure.Migrations
                     b.ToTable("Notifications");
                 });
 
+<<<<<<<< HEAD:LMS.Infrastructure/Migrations/20261020141601_added-activities.Designer.cs
+========
+            modelBuilder.Entity("Domain.Models.Entities.StoredFile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("StorageKey")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StorageKey")
+                        .IsUnique();
+
+                    b.ToTable("StoredFiles");
+                });
+
+>>>>>>>> development:LMS.Infrastructure/Migrations/20261020113243_AddStorageFile.Designer.cs
             modelBuilder.Entity("Domain.Models.Entities.Submission", b =>
                 {
                     b.Property<int>("Id")
@@ -520,6 +598,7 @@ namespace LMS.Infrastructure.Migrations
                 {
                     b.HasOne("Domain.Models.Entities.ActionType", "ActionType")
                         .WithMany("Activities")
+<<<<<<<< HEAD:LMS.Infrastructure/Migrations/20261020141601_added-activities.Designer.cs
                         .HasForeignKey("ActionTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -533,6 +612,13 @@ namespace LMS.Infrastructure.Migrations
                     b.HasOne("Domain.Models.Entities.Module", null)
                         .WithMany("Activities")
                         .HasForeignKey("ModuleId1");
+========
+                        .HasForeignKey("ActionTypeId");
+
+                    b.HasOne("Domain.Models.Entities.Module", "Module")
+                        .WithMany()
+                        .HasForeignKey("ModuleId");
+>>>>>>>> development:LMS.Infrastructure/Migrations/20261020113243_AddStorageFile.Designer.cs
 
                     b.Navigation("ActionType");
 
@@ -562,6 +648,15 @@ namespace LMS.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("ModuleId");
 
+<<<<<<<< HEAD:LMS.Infrastructure/Migrations/20261020141601_added-activities.Designer.cs
+========
+                    b.HasOne("Domain.Models.Entities.StoredFile", "StoredFile")
+                        .WithMany()
+                        .HasForeignKey("StoredFileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+>>>>>>>> development:LMS.Infrastructure/Migrations/20261020113243_AddStorageFile.Designer.cs
                     b.HasOne("Domain.Models.Entities.ApplicationUser", "UploadedBy")
                         .WithMany()
                         .HasForeignKey("UploadedById")
@@ -574,6 +669,11 @@ namespace LMS.Infrastructure.Migrations
 
                     b.Navigation("Module");
 
+<<<<<<<< HEAD:LMS.Infrastructure/Migrations/20261020141601_added-activities.Designer.cs
+========
+                    b.Navigation("StoredFile");
+
+>>>>>>>> development:LMS.Infrastructure/Migrations/20261020113243_AddStorageFile.Designer.cs
                     b.Navigation("UploadedBy");
                 });
 

@@ -3,6 +3,7 @@ using Domain.Models.Entities;
 using LMS.Infrastructure.Paging;
 using LMS.Shared.DTOs.ActionType;
 using LMS.Shared.DTOs.Activity;
+using LMS.Shared.DTOs.DocumentDtos;
 using LMS.Shared.DTOs.Module;
 using LMS.Shared.DTOs.UserDtos;
 using LMS.Shared.Paging;
@@ -109,6 +110,12 @@ namespace LMS.Infrastructure.Data
                 .ForCtorParam("TotalCount", opt =>
                     opt.MapFrom(src => src.TotalCount));
 
+            CreateMap<Document, DocumentDto>()
+                .ForCtorParam("FileName", opt => opt.MapFrom(src => src.StoredFile.FileName))
+                .ForCtorParam("ContentType", opt => opt.MapFrom(src => src.StoredFile.ContentType))
+                .ForCtorParam("Size", opt => opt.MapFrom(src => src.StoredFile.Size))
+                .ForCtorParam("UploadedAt", opt => opt.MapFrom(src => src.UploadAt))
+                .ForCtorParam("CourseId", opt => opt.MapFrom(src => src.CourseId ?? src.Module!.CourseId));
         }
     }
 }

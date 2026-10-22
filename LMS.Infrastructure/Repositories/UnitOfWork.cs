@@ -6,6 +6,10 @@ namespace LMS.Infrastructure.Repositories;
 public class UnitOfWork : IUnitOfWork
 {
     private readonly ApplicationDbContext _context;
+    private readonly Lazy<IUserRepository> _userRepsoitory;
+    private readonly Lazy<IModuleRepository> _moduleRepository;
+    private readonly Lazy<IDocumentRepository> _documentRepository;
+
     private Lazy<IUserRepository> _userRepsoitory;
     private Lazy<IModuleRepository> _moduleRepository;
     private Lazy<IActivityRepository> _activityRepository;
@@ -15,13 +19,18 @@ public class UnitOfWork : IUnitOfWork
     public IActivityRepository ActivityRepository => _activityRepository.Value;
     public IActionTypeRepository ActionTypeRepository => _actionTypeRepository.Value;
     public UnitOfWork(ApplicationDbContext context, Lazy<IUserRepository> userRepsoitory, Lazy<IModuleRepository> moduleRepository, Lazy<IActivityRepository> activityRepository, Lazy<IActionTypeRepository> actionTypeRepository)
-    {
+    public IDocumentRepository DocumentRepository => _documentRepository.Value;
 
+    public UnitOfWork(ApplicationDbContext context, Lazy<IUserRepository> userRepsoitory, Lazy<IModuleRepository> moduleRepository, Lazy<IDocumentRepository> documentRepository)
+    {
         _context = context;
         _userRepsoitory = userRepsoitory;
         _moduleRepository = moduleRepository;
         _activityRepository = activityRepository;
         _actionTypeRepository = actionTypeRepository;
     }
+        _documentRepository = documentRepository;
+    }
+
     public async Task<int> CompleteAsync() => await _context.SaveChangesAsync();
 }
