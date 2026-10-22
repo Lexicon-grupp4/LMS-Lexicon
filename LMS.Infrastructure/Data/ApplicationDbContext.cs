@@ -30,5 +30,13 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .WithMany()
             .HasForeignKey(f => f.UserId)
             .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<Submission>()
+            .HasOne(s => s.Activity)
+            .WithMany()
+            .HasForeignKey(s => s.ActivityId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.NoAction);
+
     }
 }
