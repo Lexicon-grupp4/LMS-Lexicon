@@ -1,5 +1,4 @@
-﻿
-@page "/courses"
+﻿@page "/courses"
 
 @using LMS.Blazor.Client.Components
 @using LMS.Blazor.Client.Services.ApiProxy
@@ -13,53 +12,99 @@
 <div class="courses-page">
     @if (!string.IsNullOrWhiteSpace(errorMessage))
     {
-        <div class="alert alert-danger" role="alert">
-            @errorMessage
+        <div class="alert alert-danger" role="alert">@errorMessage</div>
+    }
+    <!-- PAGE HEADER -->
+    <header class="courses-header">
+
+        <div class="courses-header-text">
+            <h1>Course Management</h1>
+            <p>
+                Manage your courses, update course information
+                and create new courses.
+            </p>
         </div>
-    }
-    @if (courses is null)
-    {
-        <p>Loading...</p>
-    }
-    else
-    {
-        <p><NavLink href="/course/create" class="btn btn-sm btn-secondary ms-2">New course</NavLink></p>
-        <div class="table - responsive">
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>Course</th>
-                        <th>Code</th>
-                        <th>Description</th>
-                        <th>Start date</th>
-                        <th>End date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var c in courses)
-                    {
+
+        <a href="/course/create" class="courses-create-button">
+            <span aria-hidden="true">+</span>
+            Create New Course
+        </a>
+
+    </header>
+
+    <!-- COURSES CONTENT -->
+    <section class="courses-card">
+
+        <div class="courses-card-header">
+
+            <div>
+                <h2>All Courses</h2>
+
+                @if (courses is not null)
+                {
+                    <p>
+                        @courses.Length courses available
+                    </p>
+                }
+                else
+                {
+                    <p>Loading courses...</p>
+                }
+            </div>
+
+            <span class="courses-header-icon" aria-hidden="true">
+                ▤
+            </span>
+
+        </div>
+
+        @if (courses is null)
+        {
+            <div class="courses-empty-state">
+
+                <span aria-hidden="true">◷</span>
+
+                <strong>Loading courses...</strong>
+
+                <p>Please wait while we load your courses.</p>
+
+            </div>
+        }
+        else if (courses.Length == 0)
+        {
+            <div class="courses-empty-state">
+
+                <span aria-hidden="true">▤</span>
+
+                <strong>No courses yet</strong>
+
+                <p>
+                    Create your first course to get started.
+                </p>
+
+                <a href="/course/create" class="courses-create-button">
+                    Create New Course
+                </a>
+
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive courses-table-wrapper">
+
+                <table class="courses-table">
+
+                    <thead>
                         <tr>
-                            <td>
-                                <NavLink class="btn btn-sm btn-primary ms-2" href="@($"/t-course/{c.Id}")">
-                                    @c.Name
-                                </NavLink>
-                            </td>
-                            <td>@c.Code</td>
-                            <td>@c.Description</td>
-                            <td>@c.StartDate.ToShortDateString()</td>
-                            <td>@c.EndDate.ToShortDateString()</td>
-                            <td>
-                                <NavLink class="btn btn-sm btn-secondary ms-2" href="@($"/course/edit/{c.Id}")">
-                                    Edit
-                                </NavLink>
-                            </td>
-                            <td>
-                                <button class="btn btn-sm btn-danger ms-2"
-                                        disabled="@deletingIds.Contains(c.Id)"
-                                        @onclick="() => DeleteCourseAsync(c.Id)">
-                                    @(deletingIds.Contains(c.Id) ? "Deleting..." : "Delete")
-                                </button>
-                            </td>
+                            <th>Course</th>
+                            <th>Code</th>
+                            <th>ID</th>
+                            <th>Description</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th class="courses-actions-heading">
+                                Actions
+                            </th>
                         </tr>
                     </thead>
 
@@ -71,11 +116,9 @@
 
                                 <!-- COURSE NAME -->
                                 <td>
-                                    <a class="courses-name-link"
-                                       href="@($"/t-course/{c.Id}")">
+                                    <a class="courses-name-link" href="@($"/t-course/{c.Id}")">
 
-                                        <span class="courses-name-icon"
-                                              aria-hidden="true">
+                                        <span class="courses-name-icon" aria-hidden="true">
                                             ▤
                                         </span>
 
@@ -116,16 +159,13 @@
                                     <div class="courses-actions">
 
                                         <!-- EDIT -->
-                                        <a class="courses-edit-button"
-                                           href="@($"/course/edit/{c.Id}")">
+                                        <a class="courses-edit-button" href="@($"/course/edit/{c.Id}")">
                                             Edit
                                         </a>
 
                                         <!-- DELETE -->
-                                        <button type="button"
-                                                class="courses-delete-button"
-                                                disabled="@deletingIds.Contains(c.Id)"
-                                                @onclick="() => DeleteCourseAsync(c.Id)">
+                                        <button type="button" class="courses-delete-button"
+                                                disabled="@deletingIds.Contains(c.Id)" @onclick="() => DeleteCourseAsync(c.Id)">
 
                                             @(deletingIds.Contains(c.Id)
                                                 ? "Deleting..."
@@ -168,15 +208,16 @@
     private async Task DeleteCourseAsync(int id)
     {
         var confirmed = await JS.InvokeAsync<bool>(
-            "confirm",
-            $"Delete course #{id}?");
-
+        "confirm",
+        $"Delete course #{id}?");
+                                                                                        
         if (!confirmed)
             return;
-
+                                                                                        
+        errorMessage = string.Empty;
         deletingIds.Add(id);
         StateHasChanged();
-
+                                                                                        
         try
         {
             await ApiProxyClient.DeleteAsync($"courses/{id}");
