@@ -11,8 +11,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Module> Modules => Set<Module>();
 
     public DbSet<Activity> Activities => Set<Activity>();
-
+    public DbSet<ActionType> ActionTypes => Set<ActionType>();
     public DbSet<Document> Documents => Set<Document>();
+    public DbSet<StoredFile> StoredFiles => Set<StoredFile>();
 
     public DbSet<FeedBack> Feedbacks => Set<FeedBack>();
 
@@ -23,10 +24,20 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.ApplyConfigurationsFromAssembly(
+            typeof(ApplicationDbContext).Assembly);
         modelBuilder.Entity<FeedBack>()
             .HasOne(f => f.User)
             .WithMany()
             .HasForeignKey(f => f.UserId)
             .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<Submission>()
+            .HasOne(s => s.Activity)
+            .WithMany()
+            .HasForeignKey(s => s.ActivityId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.NoAction);
+
     }
 }

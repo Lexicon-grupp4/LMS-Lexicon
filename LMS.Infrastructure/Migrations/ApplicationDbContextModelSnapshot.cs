@@ -17,7 +17,7 @@ namespace LMS.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.12")
+                .HasAnnotation("ProductVersion", "10.0.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -47,17 +47,21 @@ namespace LMS.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("ActionTypeId")
+                    b.Property<int>("ActionTypeId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("ModuleId")
+                    b.Property<int>("ModuleId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ModuleId1")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("StartDate")
@@ -65,15 +69,21 @@ namespace LMS.Infrastructure.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ActionTypeId");
 
-                    b.HasIndex("ModuleId");
+                    b.HasIndex("ModuleId1");
 
-                    b.ToTable("Activities");
+                    b.HasIndex("ModuleId", "StartDate");
+
+                    b.ToTable("Activities", t =>
+                        {
+                            t.HasCheckConstraint("CK_Activity_Dates", "[StartDate] < [EndDate]");
+                        });
                 });
 
             modelBuilder.Entity("Domain.Models.Entities.ApplicationUser", b =>
@@ -281,14 +291,16 @@ namespace LMS.Infrastructure.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
@@ -297,7 +309,10 @@ namespace LMS.Infrastructure.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("Modules");
+                    b.ToTable("Modules", t =>
+                        {
+                            t.HasCheckConstraint("CK_Module_Dates", "[StartDate] <= [EndDate]");
+                        });
                 });
 
             modelBuilder.Entity("Domain.Models.Entities.Notification", b =>
@@ -340,6 +355,9 @@ namespace LMS.Infrastructure.Migrations
                     b.Property<int>("AccountId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("ActivityId")
+                        .HasColumnType("int");
+
                     b.Property<string>("FileName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -359,6 +377,8 @@ namespace LMS.Infrastructure.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ActivityId");
 
                     b.HasIndex("UserId");
 
@@ -502,11 +522,19 @@ namespace LMS.Infrastructure.Migrations
                 {
                     b.HasOne("Domain.Models.Entities.ActionType", "ActionType")
                         .WithMany("Activities")
-                        .HasForeignKey("ActionTypeId");
+                        .HasForeignKey("ActionTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Domain.Models.Entities.Module", "Module")
                         .WithMany()
-                        .HasForeignKey("ModuleId");
+                        .HasForeignKey("ModuleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Models.Entities.Module", null)
+                        .WithMany("Activities")
+                        .HasForeignKey("ModuleId1");
 
                     b.Navigation("ActionType");
 
@@ -594,11 +622,18 @@ namespace LMS.Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Models.Entities.Submission", b =>
                 {
+                    b.HasOne("Domain.Models.Entities.Activity", "Activity")
+                        .WithMany()
+                        .HasForeignKey("ActivityId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("Domain.Models.Entities.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Activity");
 
                     b.Navigation("User");
                 });
@@ -664,6 +699,11 @@ namespace LMS.Infrastructure.Migrations
                     b.Navigation("ApplicationUsers");
 
                     b.Navigation("Modules");
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.Module", b =>
+                {
+                    b.Navigation("Activities");
                 });
 #pragma warning restore 612, 618
         }

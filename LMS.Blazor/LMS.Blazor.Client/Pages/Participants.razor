@@ -1,5 +1,16 @@
-﻿@page "/participants"
+﻿
+@page "/participants"
 @using LMS.Blazor.Client.Components
+@using LMS.Blazor.Client.Services.ApiProxy
+@using LMS.Shared.DTOs.UserDtos
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
+
+@attribute [Authorize(Roles = "Student")]
+
+@inject IApiProxyClient ApiProxyClient
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <PageTitle>Participants</PageTitle>
 
@@ -8,40 +19,275 @@
     <PageHeader Title="Participants"
                 Description="Here you can see the participants in your course." />
 
-    <div class="participants-card">
+    @* SAMPLE TEACHERS *@
+    <section class="participant-group">
 
-        <div class="participant-row">
-            <div class="participant-avatar">AK</div>
-            <div class="participant-info">
-                <h2>Anna Karlsson</h2>
-                <p>anna.karlsson@example.com</p>
-            </div>
+        <div class="participant-group-heading">
+            <h2>Teachers (sample)</h2>
+            <span>1</span>
         </div>
 
-        <div class="participant-row">
-            <div class="participant-avatar">MJ</div>
-            <div class="participant-info">
-                <h2>Mohamed Jama</h2>
-                <p>mohamed.jama@example.com</p>
-            </div>
+        <ul class="participants-card">
+
+            <li class="participant-row">
+
+                <div class="participant-avatar teacher">
+                    AK
+                </div>
+
+                <div class="participant-content">
+
+                    <div class="participant-name-row">
+                        <h3>Anna Karlsson</h3>
+                    </div>
+
+                    <a href="mailto:anna.karlsson@example.com"
+                       class="participant-email">
+                        <span class="mail-icon" aria-hidden="true">✉</span>
+                        anna.karlsson@example.com
+                    </a>
+
+                </div>
+
+            </li>
+
+        </ul>
+
+    </section>
+
+    @* SAMPLE STUDENTS *@
+    <section class="participant-group">
+
+        <div class="participant-group-heading">
+            <h2>Students (sample)</h2>
+            <span>3</span>
         </div>
 
-        <div class="participant-row">
-            <div class="participant-avatar">SL</div>
-            <div class="participant-info">
-                <h2>Sara Lind</h2>
-                <p>sara.lind@example.com</p>
-            </div>
+        <ul class="participants-card">
+
+            <li class="participant-row">
+
+                <div class="participant-avatar student">
+                    MJ
+                </div>
+
+                <div class="participant-content">
+
+                    <div class="participant-name-row">
+                        <h3>Mohamed Jama</h3>
+                    </div>
+
+                    <a href="mailto:mohamed.jama@example.com"
+                       class="participant-email">
+                        <span class="mail-icon" aria-hidden="true">✉</span>
+                        mohamed.jama@example.com
+                    </a>
+
+                </div>
+
+            </li>
+
+            <li class="participant-row">
+
+                <div class="participant-avatar student">
+                    SL
+                </div>
+
+                <div class="participant-content">
+
+                    <div class="participant-name-row">
+                        <h3>Sara Lind</h3>
+                    </div>
+
+                    <a href="mailto:sara.lind@example.com"
+                       class="participant-email">
+                        <span class="mail-icon" aria-hidden="true">✉</span>
+                        sara.lind@example.com
+                    </a>
+
+                </div>
+
+            </li>
+
+            <li class="participant-row">
+
+                <div class="participant-avatar student">
+                    JD
+                </div>
+
+                <div class="participant-content">
+
+                    <div class="participant-name-row">
+                        <h3>Johan Dahl</h3>
+                    </div>
+
+                    <a href="mailto:johan.dahl@example.com"
+                       class="participant-email">
+                        <span class="mail-icon" aria-hidden="true">✉</span>
+                        johan.dahl@example.com
+                    </a>
+
+                </div>
+
+            </li>
+
+        </ul>
+
+    </section>
+
+    @* DYNAMIC COURSE PARTICIPANTS *@
+    <section class="participant-group">
+
+        <div class="participant-group-heading">
+            <h2>Course participants</h2>
+            <span>@participants.Count</span>
         </div>
 
-        <div class="participant-row">
-            <div class="participant-avatar">JD</div>
-            <div class="participant-info">
-                <h2>Johan Dahl</h2>
-                <p>johan.dahl@example.com</p>
-            </div>
-        </div>
+        @if (isLoading)
+        {
+            <p>Loading participants...</p>
+        }
+        else if (hasError)
+        {
+            <p role="alert">
+                Unable to load participants. Please try again later.
+            </p>
+        }
+        else if (participants.Count == 0)
+        {
+            <p>No course participants found.</p>
+        }
+        else
+        {
+            <ul class="participants-card">
 
-    </div>
+                @foreach (var participant in participants)
+                {
+                    <li class="participant-row" @key="participant">
+
+                        <div class="participant-avatar student">
+                            @GetInitials(participant)
+                        </div>
+
+                        <div class="participant-content">
+
+                            <div class="participant-name-row">
+
+                                <h3>@GetDisplayName(participant)</h3>
+
+                                @if (IsCurrentUser(participant))
+                                {
+                                    <span class="current-user-badge">
+                                        You
+                                    </span>
+                                }
+
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(participant.Email))
+                            {
+                                <a href="@($"mailto:{participant.Email}")"
+                                   class="participant-email">
+
+                                    <span class="mail-icon"
+                                          aria-hidden="true">✉</span>
+
+                                    @participant.Email
+
+                                </a>
+                            }
+
+                        </div>
+
+                    </li>
+                }
+
+            </ul>
+        }
+
+    </section>
 
 </div>
+
+@code {
+
+    private List<CourseParticipantDto> participants = [];
+
+    private bool isLoading = true;
+    private bool hasError = false;
+
+    private string? currentUserEmail;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var authState = await AuthenticationStateProvider
+                .GetAuthenticationStateAsync();
+
+            currentUserEmail =
+                authState.User.FindFirst(ClaimTypes.Email)?.Value
+                ?? authState.User.Identity?.Name;
+
+            var result = await ApiProxyClient
+                .GetAsync<List<CourseParticipantDto>>(
+                    "courses/my-course/participants");
+
+            participants = result ?? [];
+        }
+        catch (Exception)
+        {
+            hasError = true;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private bool IsCurrentUser(CourseParticipantDto participant)
+    {
+        return !string.IsNullOrWhiteSpace(currentUserEmail)
+            && string.Equals(
+                participant.Email,
+                currentUserEmail,
+                StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string GetDisplayName(CourseParticipantDto participant)
+    {
+        var fullName =
+            $"{participant.FirstName?.Trim()} {participant.LastName?.Trim()}".Trim();
+
+        if (!string.IsNullOrWhiteSpace(fullName))
+        {
+            return fullName;
+        }
+
+        return !string.IsNullOrWhiteSpace(participant.Email)
+            ? participant.Email
+            : "Unnamed participant";
+    }
+
+    private static string GetInitials(CourseParticipantDto participant)
+    {
+        var first = string.IsNullOrWhiteSpace(participant.FirstName)
+            ? ""
+            : participant.FirstName.Trim()[..1];
+
+        var last = string.IsNullOrWhiteSpace(participant.LastName)
+            ? ""
+            : participant.LastName.Trim()[..1];
+
+        var initials = (first + last).ToUpperInvariant();
+
+        if (!string.IsNullOrEmpty(initials))
+        {
+            return initials;
+        }
+
+        return !string.IsNullOrWhiteSpace(participant.Email)
+            ? participant.Email.Trim()[..1].ToUpperInvariant()
+            : "?";
+    }
+}

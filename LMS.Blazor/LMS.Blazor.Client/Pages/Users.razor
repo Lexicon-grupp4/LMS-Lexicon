@@ -1,4 +1,5 @@
-﻿@page "/users"
+﻿
+@page "/users"
 
 @using LMS.Shared.DTOs.UserDtos
 @using LMS.Shared.Paging
@@ -12,145 +13,202 @@
 
 <PageTitle>User Management</PageTitle>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="users-page">
 
-    <h3>User Management</h3>
+    <!-- PAGE HEADER -->
+    <header class="users-header">
 
-    <a href="/users/create"
-       class="btn btn-primary">
+        <div class="users-header-text">
+            <h1>User Management</h1>
+            <p>
+                Manage users, update their information
+                and assign them to courses.
+            </p>
+        </div>
 
-        <span class="bi bi-person-plus"></span>
-        Add User
+        <a href="/users/create"
+           class="users-add-button">
+            <span aria-hidden="true">+</span>
+            Add User
+        </a>
 
-    </a>
+    </header>
+
+    <!-- MAIN CARD -->
+    <section class="users-card">
+
+        <div class="users-card-header">
+            <div>
+                <h2>All Users</h2>
+
+                @if (!isLoading && string.IsNullOrWhiteSpace(errorMessage))
+                {
+                    <p>@users.Count users on this page</p>
+                }
+                else
+                {
+                    <p>User overview</p>
+                }
+            </div>
+
+            <span class="users-header-icon"
+                  aria-hidden="true">
+                ♙
+            </span>
+        </div>
+
+        @if (isLoading)
+        {
+            <div class="users-empty-state">
+                <div class="spinner-border"
+                     role="status">
+                    <span class="visually-hidden">
+                        Loading...
+                    </span>
+                </div>
+
+                <strong>Loading users...</strong>
+                <p>Please wait while we load the user list.</p>
+            </div>
+        }
+        else if (!string.IsNullOrWhiteSpace(errorMessage))
+        {
+            <div class="users-error-message"
+                 role="alert">
+                @errorMessage
+            </div>
+        }
+        else if (users.Count == 0)
+        {
+            <div class="users-empty-state">
+                <span class="users-empty-icon"
+                      aria-hidden="true">
+                    ♙
+                </span>
+
+                <strong>No users found</strong>
+
+                <p>
+                    Users will appear here when they are added.
+                </p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive users-table-wrapper">
+
+                <table class="users-table">
+
+                    <thead>
+                        <tr>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Email</th>
+                            <th>Course</th>
+                            <th class="users-actions-heading">
+                                Actions
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var user in users)
+                        {
+                            <tr>
+
+                                <td>
+                                    <span class="users-first-name">
+                                        @user.FirstName
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="users-last-name">
+                                        @user.LastName
+                                    </span>
+                                </td>
+
+                                <td class="users-email">
+                                    @user.Email
+                                </td>
+
+                                <td>
+                                    @if (string.IsNullOrWhiteSpace(user.CourseName))
+                                    {
+                                        <span class="users-no-course">
+                                            No course
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="users-course-badge">
+                                            @user.CourseName
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    <div class="users-actions">
+
+                                        <!-- EDIT -->
+                                        <a href="@($"/users/edit/{user.Id}")"
+                                           class="users-edit-button">
+                                            Edit
+                                        </a>
+
+                                        <!-- DELETE -->
+                                        <a href="@($"/users/delete/{user.Id}")"
+                                           class="users-delete-button">
+                                            Delete
+                                        </a>
+
+                                    </div>
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <!-- PAGINATION -->
+            @if (pagedResponse is not null &&
+                 pagedResponse.TotalPages > 1)
+            {
+                <div class="users-pagination">
+
+                    <button type="button"
+                            class="users-pagination-button"
+                            disabled="@(!pagedResponse.HasPreviousPage)"
+                            @onclick="PreviousPage">
+                        ← Previous
+                    </button>
+
+                    <span class="users-page-number">
+                        Page @pagedResponse.PageNumber
+                        of @pagedResponse.TotalPages
+                    </span>
+
+                    <button type="button"
+                            class="users-pagination-button"
+                            disabled="@(!pagedResponse.HasNextPage)"
+                            @onclick="NextPage">
+                        Next →
+                    </button>
+
+                </div>
+            }
+        }
+
+    </section>
 
 </div>
 
-@if (isLoading)
-{
-    <div class="text-center">
-        <div class="spinner-border" role="status">
-            <span class="visually-hidden">
-                Loading...
-            </span>
-        </div>
-    </div>
-}
-else if (!string.IsNullOrWhiteSpace(errorMessage))
-{
-    <div class="alert alert-danger">
-        @errorMessage
-    </div>
-}
-else
-{
-    @if (users.Count == 0)
-    {
-        <div class="alert alert-info">
-            No users found.
-        </div>
-    }
-    else
-    {
-        <div class="table-responsive">
-
-            <table class="table table-striped table-hover">
-
-                <thead>
-                    <tr>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Email</th>
-                        <th>Course</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-
-                    @foreach (var user in users)
-                    {
-                        <tr>
-
-                            <td>
-                                @user.FirstName
-                            </td>
-
-                            <td>
-                                @user.LastName
-                            </td>
-                            <td>
-                                @user.Email
-                            </td>
-
-                            <td>
-                                @(user.CourseName == null ? "No course" : user.CourseName)
-                            </td>
-
-                            <td>
-
-                                <a class="btn btn-sm btn-primary"
-                                   href="@($"/users/edit/{user.Id}")">
-
-                                    <span class="bi bi-pencil"></span>
-                                    Edit
-
-                                </a>
-
-                                <a class="btn btn-sm btn-danger ms-2"
-                                   href="@($"/users/delete/{user.Id}")">
-
-                                    <span class="bi bi-trash"></span>
-                                    Delete
-
-                                </a>
-
-                            </td>
-
-                        </tr>
-                    }
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-        <!-- Pagination -->
-        @if (pagedResponse is not null && pagedResponse.TotalPages > 1)
-        {
-            <div class="d-flex justify-content-between align-items-center mt-3">
-
-                <button class="btn btn-outline-primary"
-                        disabled="@(!pagedResponse.HasPreviousPage)"
-                        @onclick="PreviousPage">
-
-                    <span class="bi bi-chevron-left"></span>
-                    Previous
-
-                </button>
-
-                <span>
-                    Page @pagedResponse.PageNumber
-                    of @pagedResponse.TotalPages
-                </span>
-
-                <button class="btn btn-outline-primary"
-                        disabled="@(!pagedResponse.HasNextPage)"
-                        @onclick="NextPage">
-
-                    Next
-                    <span class="bi bi-chevron-right"></span>
-
-                </button>
-
-            </div>
-        }
-    }
-}
-
-@code
-{
+@code {
     private List<UserDto> users = [];
 
     private PagedResponse<UserDto>? pagedResponse;
