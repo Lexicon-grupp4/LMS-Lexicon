@@ -81,8 +81,12 @@ internal static class SeedData
             documents.Add(new Document
             {
                 Course = course,
-                FileName = $"{course.Code}-schedule.pdf",
-                FilePath = $"uploads/seed/{course.Code}-schedule.pdf",
+                StoredFile = new StoredFile
+                {
+                    FileName = $"{course.Code}-schedule.pdf",
+                    ContentType = "application/pdf",
+                    StorageKey = $"uploads/seed/{course.Code}-schedule.pdf",
+                },
                 UploadAt = DateTime.Now.AddDays(-7),
                 UploadedById = teacherId
             });
@@ -92,8 +96,12 @@ internal static class SeedData
                 documents.Add(new Document
                 {
                     Module = module,
-                    FileName = $"{module.Name}-slides.pptx",
-                    FilePath = $"uploads/seed/{course.Code}-{module.Id}-slides.pptx",
+                    StoredFile = new StoredFile
+                    {
+                        FileName = $"{module.Name}-slides.pptx",
+                        ContentType = "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                        StorageKey = $"uploads/seed/{course.Code}-{module.Id}-slides.pptx",
+                    },
                     UploadAt = module.StartDate.AddDays(-1),
                     UploadedById = teacherId
                 });
@@ -150,14 +158,14 @@ internal static class SeedData
 
     private static Activity CreateActivity(
         Module module, ActionType type, string title, DateTime start, DateTime end) => new()
-    {
-        Module = module,
-        ActionType = type,
-        Title = title,
-        Description = $"{type.Name} in {module.Name}",
-        StartDate = start,
-        EndDate = end
-    };
+        {
+            Module = module,
+            ActionType = type,
+            Title = title,
+            Description = $"{type.Name} in {module.Name}",
+            StartDate = start,
+            EndDate = end
+        };
 
     // Each module is two weeks long, one after another.
     private static Course CreateCourse(

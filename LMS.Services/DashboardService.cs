@@ -86,6 +86,7 @@ public class DashboardService : IDashboardService
                 a.EndDate >= now)
             .OrderBy(a => a.EndDate)
             .Take(5)
+
             .Select(a => new DashboardActivityDto
             {
                 Id = a.Id,
@@ -109,8 +110,7 @@ public class DashboardService : IDashboardService
             .Select(d => new DashboardDocumentDto
             {
                 Id = d.Id,
-                FileName = d.FileName,
-                FilePath = d.FilePath,
+                FileName = d.StoredFile.FileName,
                 UploadAt = d.UploadAt
             })
             .ToListAsync();
