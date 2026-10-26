@@ -39,5 +39,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .IsRequired(false)
             .OnDelete(DeleteBehavior.NoAction);
 
+        modelBuilder.Entity<FeedBack>()
+            .Property(f => f.Grade)
+            .HasPrecision(5, 2);
     }
 }

@@ -36,7 +36,7 @@ namespace LMS.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ActionType");
+                    b.ToTable("ActionTypes");
                 });
 
             modelBuilder.Entity("Domain.Models.Entities.Activity", b =>
@@ -58,10 +58,7 @@ namespace LMS.Infrastructure.Migrations
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ModuleId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ModuleId1")
+                    b.Property<int?>("ModuleId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("StartDate")
@@ -75,8 +72,6 @@ namespace LMS.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ActionTypeId");
-
-                    b.HasIndex("ModuleId1");
 
                     b.HasIndex("ModuleId", "StartDate");
 
@@ -213,15 +208,10 @@ namespace LMS.Infrastructure.Migrations
                     b.Property<int?>("CourseId")
                         .HasColumnType("int");
 
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FilePath")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("ModuleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StoredFileId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UploadAt")
@@ -238,6 +228,8 @@ namespace LMS.Infrastructure.Migrations
                     b.HasIndex("CourseId");
 
                     b.HasIndex("ModuleId");
+
+                    b.HasIndex("StoredFileId");
 
                     b.HasIndex("UploadedById");
 
@@ -260,7 +252,8 @@ namespace LMS.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("Grade")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
 
                     b.Property<int>("SubmissionId")
                         .HasColumnType("int");
@@ -342,6 +335,40 @@ namespace LMS.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Notifications");
+                });
+
+            modelBuilder.Entity("Domain.Models.Entities.StoredFile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("StorageKey")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StorageKey")
+                        .IsUnique();
+
+                    b.ToTable("StoredFiles");
                 });
 
             modelBuilder.Entity("Domain.Models.Entities.Submission", b =>
@@ -527,14 +554,9 @@ namespace LMS.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("Domain.Models.Entities.Module", "Module")
-                        .WithMany()
-                        .HasForeignKey("ModuleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Models.Entities.Module", null)
                         .WithMany("Activities")
-                        .HasForeignKey("ModuleId1");
+                        .HasForeignKey("ModuleId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("ActionType");
 
@@ -564,6 +586,12 @@ namespace LMS.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("ModuleId");
 
+                    b.HasOne("Domain.Models.Entities.StoredFile", "StoredFile")
+                        .WithMany()
+                        .HasForeignKey("StoredFileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Domain.Models.Entities.ApplicationUser", "UploadedBy")
                         .WithMany()
                         .HasForeignKey("UploadedById")
@@ -575,6 +603,8 @@ namespace LMS.Infrastructure.Migrations
                     b.Navigation("Course");
 
                     b.Navigation("Module");
+
+                    b.Navigation("StoredFile");
 
                     b.Navigation("UploadedBy");
                 });
