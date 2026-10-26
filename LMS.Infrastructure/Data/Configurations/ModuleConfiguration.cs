@@ -26,6 +26,12 @@ namespace LMS.Infrastructure.Data.Configurations
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
 
+            builder.HasMany(m => m.Activities)
+    .WithOne(a => a.Module)
+    .HasForeignKey(a => a.ModuleId)
+    .IsRequired(false)
+    .OnDelete(DeleteBehavior.SetNull);
+
             builder.ToTable(t => t.HasCheckConstraint(
                 "CK_Module_Dates",
                 "[StartDate] <= [EndDate]"

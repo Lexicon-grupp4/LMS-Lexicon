@@ -113,11 +113,11 @@ else if (activities.Count > 0)
         </table>
     </div>
 }
-
-<a class="btn btn-secondary"
-   href="@($"/courses")">
-    Back to Courses
-</a>
+    <button class="btn btn-secondary"
+    @onclick="GoBack">
+        <span class="bi bi-arrow-left"></span>
+        Back
+    </button>
 
 @code {
     [Parameter]
@@ -208,4 +208,9 @@ else if (activities.Count > 0)
             isDeleting = false;
         }
     }
+    private async Task GoBack()
+    {
+     await JSRuntime.InvokeVoidAsync("history.back");   
+    }
+   
 }

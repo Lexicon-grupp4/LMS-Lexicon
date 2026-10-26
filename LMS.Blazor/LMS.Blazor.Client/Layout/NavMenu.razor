@@ -5,10 +5,11 @@
 @inject IApiProxyClient ApiProxyClient
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
+@using System.Net.Http
 @using LMS.Blazor.Client.Services.ApiProxy
+@using LMS.Shared.DTOs.CourseDtos
 @using LMS.Shared.DTOs.NotificationDtos
 @using Microsoft.AspNetCore.Components.Authorization
-@using System.Net.Http
 
 <div class="top-row ps-3 navbar">
     <div class="container-fluid">
@@ -54,7 +55,24 @@
                         Participants
                     </NavLink>
                 </div>
-
+               
+                    @if (courseId.HasValue)
+{
+    <div class="nav-item px-3">
+        <NavLink class="nav-link"
+                 href="@($"courses/{courseId.Value}/modules")">
+            <span class="bi bi-collection" aria-hidden="true"></span>
+            My Modules
+        </NavLink>
+    </div>
+}
+else if (isLoadingCourse)
+{
+    <div class="nav-item px-3">
+        <span class="nav-link">Loading modules...</span>
+    </div>
+}
+                
             </Authorized>
         </AuthorizeView>
 
@@ -228,6 +246,9 @@
 
 @code {
     private string? currentUrl;
+    private int? courseId;
+    private bool isLoadingCourse;
+
 
     private List<NotificationDto> notifications = [];
 
@@ -243,17 +264,24 @@
     protected override async Task OnInitializedAsync()
     {
         currentUrl =
-            NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
 
-        NavigationManager.LocationChanged += OnLocationChanged;
+    NavigationManager.LocationChanged += OnLocationChanged;
 
-        var authenticationState =
-            await AuthenticationStateProvider.GetAuthenticationStateAsync();
+    var authenticationState =
+        await AuthenticationStateProvider.GetAuthenticationStateAsync();
 
-        if (authenticationState.User.Identity?.IsAuthenticated == true)
+    var user = authenticationState.User;
+
+    if (user.Identity?.IsAuthenticated == true)
+    {
+        await LoadNotificationsAsync();
+
+        if (user.IsInRole("Student"))
         {
-            await LoadNotificationsAsync();
+            await LoadStudentCourseAsync();
         }
+    }
     }
 
     private async Task ToggleNotificationsAsync()
@@ -340,5 +368,35 @@
 
         componentCancellation.Cancel();
         componentCancellation.Dispose();
+    }
+    private async Task LoadStudentCourseAsync()
+    {
+        isLoadingCourse = true;
+
+    try
+    {
+        var course = await ApiProxyClient.GetAsync<CourseDto>(
+            "courses/my-course",
+            componentCancellation.Token);
+
+        courseId = course?.Id;
+
+        if (courseId is null)
+        {
+            Console.WriteLine("No course was returned for this student.");
+        }
+    }
+    catch (OperationCanceledException)
+        when (componentCancellation.IsCancellationRequested)
+    {
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Could not load student course: {ex.Message}");
+    }
+    finally
+    {
+        isLoadingCourse = false;
+    }
     }
 }
