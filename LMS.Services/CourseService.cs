@@ -1,7 +1,6 @@
 ﻿using Domain.Models.Entities;
 using Domain.Models.Exceptions;
 using LMS.Infrastructure.Data;
-using LMS.Infrastructure.Migrations;
 using LMS.Shared.DTOs.CourseDtos;
 using Microsoft.EntityFrameworkCore;
 using Service.Contracts;

@@ -1,4 +1,6 @@
-﻿@page "/course"
+﻿
+@page "/course"
+
 @using System.Net
 @using LMS.Blazor.Client.Components
 @using LMS.Blazor.Client.Helper
@@ -12,12 +14,18 @@
 
 @inject IApiProxyClient ApiProxyClient
 
-<PageTitle>Course</PageTitle>
+<PageTitle>My Course</PageTitle>
 
 <div class="course-page">
 
-    <PageHeader Title="My Course"
-                Description="Here you can see information about your course and the modules included." />
+    <!-- HEADER -->
+    <header class="course-header">
+        <h1>My Course</h1>
+        <p>
+            Here you can see information about your course
+            and the modules included.
+        </p>
+    </header>
 
     @if (isLoading)
     {
@@ -35,18 +43,53 @@
     }
     else
     {
-        <section class="course-card">
-            <h2>@course.Name</h2>
-            <p>@course.Description</p>
+        <!-- COURSE OVERVIEW -->
+        <section class="course-overview">
 
-            <div class="course-dates">
-                <span>Start: @course.StartDate.ToString("yyyy-MM-dd")</span>
-                <span>End: @course.EndDate.ToString("yyyy-MM-dd")</span>
+            <div>
+                <span class="course-label">MY COURSE</span>
+
+                <h2>@course.Name</h2>
+
+                <p>@course.Description</p>
             </div>
+
+            <div class="course-period">
+
+                <div>
+                    <span>Start date</span>
+                    <strong>
+                        @course.StartDate.ToString("yyyy-MM-dd")
+                    </strong>
+                </div>
+
+                <div>
+                    <span>End date</span>
+                    <strong>
+                        @course.EndDate.ToString("yyyy-MM-dd")
+                    </strong>
+                </div>
+
+            </div>
+
         </section>
 
-        <section class="modules-section">
-            <h2>Modules</h2>
+        <!-- MODULES -->
+        <section class="modules-section"
+                 aria-labelledby="modules-heading">
+
+            <div class="modules-heading">
+
+                <div>
+                    <h2 id="modules-heading">Modules</h2>
+                    <p>Explore the modules in your course.</p>
+                </div>
+
+                <span class="module-count">
+                    @modules.Count @(modules.Count == 1 ? "module" : "modules")
+                </span>
+
+            </div>
 
             @if (modules.Count == 0)
             {
@@ -57,42 +100,115 @@
             {
                 @foreach (var module in modules)
                 {
-                    <div class="module-card">
-                        <div>
-                            <h3>@module.Name</h3>
+                    var status = GetStatus(module);
+
+                    <div class="module-card @(status == "Ongoing" ? "ongoing" : "")">
+
+                        <button type="button"
+                                class="module-toggle"
+                                aria-expanded="@(openModule == module.Id)"
+                                aria-controls="@($"module-panel-{module.Id}")"
+                                @onclick="() => ToggleModule(module.Id)">
+
+                            @if (status == "Completed")
+                            {
+                                <span class="module-status-icon completed-icon"
+                                      aria-hidden="true">
+                                    ✓
+                                </span>
+                            }
+                            else if (status == "Ongoing")
+                            {
+                                <span class="module-status-icon ongoing-icon"
+                                      aria-hidden="true">
+                                    <span></span>
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="module-status-icon upcoming-icon"
+                                      aria-hidden="true">
+                                </span>
+                            }
+
+                            <span class="module-title">
+                                <small>Module</small>
+                                <strong>@module.Name</strong>
+                            </span>
+
+                            @if (status == "Completed")
+                            {
+                                <span class="module-status-text completed-text">
+                                    Completed
+                                </span>
+                            }
+                            else if (status == "Ongoing")
+                            {
+                                <span class="module-status-pill">
+                                    In progress
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="module-status-text">
+                                    Upcoming
+                                </span>
+                            }
+
+                            <span class="module-chevron @(openModule == module.Id ? "open" : "")"
+                                  aria-hidden="true">
+                                ⌄
+                            </span>
+
+                        </button>
+
+                        <div id="@($"module-panel-{module.Id}")"
+                             class="module-content"
+                             hidden="@(openModule != module.Id)">
+
                             <p>@module.Description</p>
+
                         </div>
-                        <span>@GetStatus(module)</span>
+
                     </div>
                 }
             }
+
         </section>
     }
+
 </div>
 
 @code {
     private CourseDto? course;
     private List<ModuleDto> modules = [];
+
     private bool isLoading = true;
     private bool hasError = false;
+
+    private int? openModule;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            course = await ApiProxyClient.GetAsync<CourseDto>("courses/my-course");
+            course = await ApiProxyClient.GetAsync<CourseDto>(
+                "courses/my-course");
 
             if (course is not null)
             {
-                var result = await ApiProxyClient.GetAsync<PagedResponse<ModuleDto>>(
-                    $"Module/course/{course.Id}");
+                var result =
+                    await ApiProxyClient.GetAsync<PagedResponse<ModuleDto>>(
+                        $"Module/course/{course.Id}");
 
-                modules = result?.Items.OrderBy(m => m.StartDate).ToList() ?? [];
+                modules = result?.Items
+                    .OrderBy(m => m.StartDate)
+                    .ToList() ?? [];
             }
         }
-        catch (ApiException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+        catch (ApiException ex)
+            when (ex.StatusCode == HttpStatusCode.NotFound)
         {
-            // The student has no course yet.
             course = null;
         }
         catch (Exception)
@@ -110,8 +226,19 @@
         var today = DateTime.Today;
 
         if (module.EndDate < today)
+        {
             return "Completed";
+        }
 
-        return module.StartDate <= today ? "Ongoing" : "Upcoming";
+        return module.StartDate <= today
+            ? "Ongoing"
+            : "Upcoming";
+    }
+
+    private void ToggleModule(int moduleId)
+    {
+        openModule = openModule == moduleId
+            ? null
+            : moduleId;
     }
 }

@@ -1,4 +1,5 @@
-﻿@implements IDisposable
+﻿
+@implements IDisposable
 
 @inject NavigationManager NavigationManager
 @inject IApiProxyClient ApiProxyClient
@@ -20,34 +21,60 @@
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="nav flex-column">
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door" aria-hidden="true"></span>
-                Dashboard
-            </NavLink>
-        </div>
+        <!-- Student navigation -->
+        <AuthorizeView Roles="Student">
+            <Authorized>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="course">
-                <span class="bi bi-book" aria-hidden="true"></span>
-                My Course
-            </NavLink>
-        </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link"
+                             href="student-dashboard"
+                             Match="NavLinkMatch.All">
+                        <span class="bi bi-house-door" aria-hidden="true"></span>
+                        Dashboard
+                    </NavLink>
+                </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="assignments">
-                <span class="bi bi-file-earmark-text" aria-hidden="true"></span>
-                Assignments
-            </NavLink>
-        </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="course">
+                        <span class="bi bi-book" aria-hidden="true"></span>
+                        My Course
+                    </NavLink>
+                </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="participants">
-                <span class="bi bi-people" aria-hidden="true"></span>
-                Participants
-            </NavLink>
-        </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="assignments">
+                        <span class="bi bi-file-earmark-text" aria-hidden="true"></span>
+                        Assignments
+                    </NavLink>
+                </div>
 
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="participants">
+                        <span class="bi bi-people" aria-hidden="true"></span>
+                        Participants
+                    </NavLink>
+                </div>
+
+            </Authorized>
+        </AuthorizeView>
+
+        <!-- Teacher navigation -->
+        <AuthorizeView Roles="Teacher">
+            <Authorized>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link"
+                             href="teacher-dashboard"
+                             Match="NavLinkMatch.All">
+                        <span class="bi bi-house-door" aria-hidden="true"></span>
+                        Dashboard
+                    </NavLink>
+                </div>
+
+            </Authorized>
+        </AuthorizeView>
+
+        <!-- Notifications for authenticated users -->
         <AuthorizeView>
             <Authorized>
 
@@ -140,16 +167,18 @@
                         Course Management
                     </NavLink>
                 </div>
+
                 <div class="nav-item px-3">
-                     <NavLink class="nav-link" href="courses/1/modules">
-                         <span class="bi bi-collection" aria-hidden="true"></span>
-                      Module Management
-                     </NavLink>
+                    <NavLink class="nav-link" href="courses/1/modules">
+                        <span class="bi bi-collection" aria-hidden="true"></span>
+                        Module Management
+                    </NavLink>
                 </div>
 
             </Authorized>
         </AuthorizeView>
 
+        <!-- User and logout -->
         <AuthorizeView>
             <Authorized>
 
