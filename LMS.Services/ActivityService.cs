@@ -3,6 +3,7 @@ using Domain.Contracts;
 using Domain.Models.Entities;
 using Domain.Models.Exceptions;
 using LMS.Shared.DTOs.Activity;
+using LMS.Shared.DTOs.AssignmentDtos;
 using LMS.Shared.Paging;
 using Service.Contracts;
 using System;
@@ -177,6 +178,21 @@ namespace LMS.Services
                 throw new InvalidActivityDateException(
                     "Activity dates must be within the module's date range.");
             }
+        }
+
+        public async Task<PagedResponse<AssignmentDetailsDto>?> GetStudentAssignmentsAsync(
+        string userId,
+        QueryParameters parameters,
+        bool trackChanges = false)
+        {
+            var assignments =
+                await _uow.ActivityRepository.GetStudentAssignmentsAsync(
+                    userId,
+                    parameters,
+                    trackChanges);
+
+            return _mapper.Map<PagedResponse<AssignmentDetailsDto>>(
+                assignments);
         }
     }
 }
