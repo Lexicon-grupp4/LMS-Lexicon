@@ -14,9 +14,11 @@ public static class ServiceExtensions
         services.AddScoped<IActivityRepository, ActivityRepository>();
         services.AddScoped<IActionTypeRepository, ActionTypeRepository>();
         services.AddScoped<IDocumentRepository, DocumentRepository>();
+        services.AddScoped<ISubmissionRepository, SubmissionRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddLazy<IModuleRepository>();
         services.AddLazy<IDocumentRepository>();
+        services.AddLazy<ISubmissionRepository>();
         services.AddLazy<IUserRepository>();
         services.AddScoped<INotificationRepository, NotificationRepository>();
         services.AddLazy<IActivityRepository>();
@@ -32,6 +34,7 @@ public static class ServiceExtensions
         services.AddScoped<IModuleService, ModuleService>();
         services.AddScoped<IActivityService, ActivityService>();
         services.AddScoped<IActionTypeService, ActionTypeService>();
+        services.AddScoped<ISubmissionService, SubmissionService>();
         services.AddLazy<IAuthService>();
         services.AddLazy<IUserService>();
         services.AddScoped<INotificationService, NotificationService>();
@@ -43,5 +46,6 @@ public static class ServiceExtensions
 
         services.AddScoped<IDocumentService, DocumentService>();
         services.AddLazy<IDocumentService>();
+        services.AddLazy<ISubmissionService>();
     }
 }

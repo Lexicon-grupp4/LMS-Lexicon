@@ -7,5 +7,6 @@ public interface IUnitOfWork
     IActivityRepository ActivityRepository { get; }
     IActionTypeRepository ActionTypeRepository { get; }
     IDocumentRepository DocumentRepository { get; }
+    ISubmissionRepository SubmissionRepository { get; }
     Task<int> CompleteAsync();
 }
