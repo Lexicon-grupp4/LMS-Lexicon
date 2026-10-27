@@ -1,13 +1,10 @@
-﻿
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Models.Entities;
 
 public class Submission
 {
     public int Id { get; set; }
-
-    public int AccountId { get; set; }
 
     [ForeignKey(nameof(User))]
     public string UserId { get; set; } = null!;
