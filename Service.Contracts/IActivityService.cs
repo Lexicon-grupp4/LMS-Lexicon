@@ -1,4 +1,5 @@
 ﻿using LMS.Shared.DTOs.Activity;
+using LMS.Shared.DTOs.AssignmentDtos;
 using LMS.Shared.Paging;
 using System;
 using System.Collections.Generic;
@@ -15,5 +16,6 @@ namespace Service.Contracts
         Task<ActivityDto> CreateActivityAsync(CreateActivityDto createActivityDto);
         Task<ActivityDto> UpdateActivityAsync(int activityId, UpdateActivityDto updateActivityDto);
         Task DeleteActivityAsync(int activityId);
+        Task<PagedResponse<AssignmentDetailsDto>?> GetStudentAssignmentsAsync(string userId, QueryParameters parameters, bool trackChanges = false);
     }
 }

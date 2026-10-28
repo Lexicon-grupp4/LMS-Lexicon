@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
 using Domain.Models.Entities;
+using Domain.Models.ReadModels;
 using LMS.Infrastructure.Paging;
 using LMS.Shared.DTOs.ActionType;
 using LMS.Shared.DTOs.Activity;
+using LMS.Shared.DTOs.AssignmentDtos;
 using LMS.Shared.DTOs.DocumentDtos;
 using LMS.Shared.DTOs.Module;
 using LMS.Shared.DTOs.UserDtos;
+using LMS.Shared.Enum;
 using LMS.Shared.Paging;
 using System;
 using System.Collections.Generic;
@@ -116,6 +119,31 @@ namespace LMS.Infrastructure.Data
                 .ForCtorParam("Size", opt => opt.MapFrom(src => src.StoredFile.Size))
                 .ForCtorParam("UploadedAt", opt => opt.MapFrom(src => src.UploadAt))
                 .ForCtorParam("CourseId", opt => opt.MapFrom(src => src.CourseId ?? src.Module!.CourseId));
+
+            CreateMap<StudentAssignmentReadModel, AssignmentDetailsDto>()
+            .ForMember(
+             dest => dest.AssignmentStatus,
+             opt => opt.MapFrom(src => MapAssignmentStatus(src.Status)));
+
+            CreateMap<PagedList<StudentAssignmentReadModel>,
+          PagedResponse<AssignmentDetailsDto>>()
+          .ForCtorParam("Items", opt =>
+           opt.MapFrom(src => src.Items))
+          .ForCtorParam("PageNumber", opt =>
+           opt.MapFrom(src => 1))
+          .ForCtorParam("PageSize", opt =>
+           opt.MapFrom(src => src.Items.Count))
+          .ForCtorParam("TotalCount", opt =>
+           opt.MapFrom(src => src.TotalCount));
+        }
+        private static AssignmentStatus MapAssignmentStatus(string? status)
+        {
+            return Enum.TryParse<AssignmentStatus>(
+                status,
+                true,
+                out var result)
+                    ? result
+                    : AssignmentStatus.Unsubmitted;
         }
     }
 }

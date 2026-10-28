@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace LMS.Presentation.Controllers
@@ -190,6 +191,35 @@ namespace LMS.Presentation.Controllers
             await _activityService.DeleteActivityAsync(id);
 
             return NoContent();
+        }
+
+        [HttpGet("my-assignments")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(
+            typeof(ProblemDetails),
+            StatusCodes.Status404NotFound)]
+        [ProducesResponseType(
+            typeof(ProblemDetails),
+            StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(
+            typeof(ProblemDetails),
+            StatusCodes.Status403Forbidden)]
+        public async Task<IActionResult> GetMyAssignments(
+        [FromQuery] QueryParameters parameters)
+        {
+            var userId = User.FindFirstValue(
+                System.Security.Claims.ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized();
+            }
+
+            var result = await _activityService.GetStudentAssignmentsAsync(
+                userId,
+                parameters);
+
+            return Ok(result);
         }
     }
 }
