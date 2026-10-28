@@ -1,7 +1,5 @@
-﻿using Domain.Contracts;
-using LMS.Infrastructure.Repositories;
+﻿using LMS.Infrastructure.Repositories;
 using LMS.Services;
-using Service.Contracts;
 
 namespace LMS.API.Extensions;
 
@@ -15,10 +13,12 @@ public static class ServiceExtensions
         services.AddScoped<IActionTypeRepository, ActionTypeRepository>();
         services.AddScoped<IDocumentRepository, DocumentRepository>();
         services.AddScoped<ISubmissionRepository, SubmissionRepository>();
+        services.AddScoped<IFeedbackRepository, FeedbackRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddLazy<IModuleRepository>();
         services.AddLazy<IDocumentRepository>();
         services.AddLazy<ISubmissionRepository>();
+        services.AddLazy<IFeedbackRepository>();
         services.AddLazy<IUserRepository>();
         services.AddScoped<INotificationRepository, NotificationRepository>();
         services.AddLazy<IActivityRepository>();
