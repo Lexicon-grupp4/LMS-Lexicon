@@ -90,7 +90,7 @@ namespace LMS.Infrastructure.Repositories
 
         public async Task<bool> IsInCourseAsync(int courseId, int moduleId)
         {
-            return _context.Modules.Any(m => m.CourseId == courseId && m.Id == moduleId);
+            return _context.Documents.Any(d => d.Id == moduleId && (d.CourseId == courseId || d.Module.CourseId == courseId));
         }
     }
 }

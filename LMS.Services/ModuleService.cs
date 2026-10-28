@@ -168,10 +168,5 @@ namespace LMS.Services
                     "Module dates must be within the course dates.");
             }
         }
-
-        public async Task<bool> IsInCourse(int courseId, int moduleId)
-        {
-            return await _uow.ModuleRepository.IsInCourseAsync(courseId, moduleId);
-        }
     }
 }

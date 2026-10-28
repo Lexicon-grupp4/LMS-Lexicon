@@ -29,5 +29,10 @@ public class DocumentRepository(ApplicationDbContext context) : RepositoryBase<D
         .ToListAsync();
 
     public void DeleteStoredFile(StoredFile file) => context.StoredFiles.Remove(file);
+
+    public async Task<bool> IsInCourseAsync(int courseId, int moduleId)
+    {
+        return context.Documents.Any(d => d.Id == moduleId && (d.CourseId == courseId || d.Module.CourseId == courseId));
+    }
 }
 

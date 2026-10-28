@@ -22,7 +22,7 @@ public class DocumentController(IServiceManager serviceManager) : ControllerBase
     [SwaggerResponse(StatusCodes.Status403Forbidden, "forbidden")]
     public async Task<ActionResult<IEnumerable<DocumentDto>>> GetByCourse(int courseId)
     {
-        if (!await CanAccessDocumentAsync(courseId, null))
+        if (!await CanAccessDocumentAsync(courseId))
             return Forbid();
 
         var documents = await _serviceManager.DocumentService.GetByCourseIdAsync(courseId);
@@ -51,7 +51,7 @@ public class DocumentController(IServiceManager serviceManager) : ControllerBase
         if (document is null)
             return NotFound();
 
-        if (!await CanAccessDocumentAsync(document.CourseId, document.ModuleId))
+        if (!await CanDownloadDocumentAsync(id))
             return Forbid();
 
         var file = await _serviceManager.DocumentService.DownloadAsync(id);
@@ -95,23 +95,31 @@ public class DocumentController(IServiceManager serviceManager) : ControllerBase
     }
 
     // Teachers can access all courses, students only their own
-    private async Task<bool> CanAccessDocumentAsync(int? courseId, int? moduleId)
+    private async Task<bool> CanAccessDocumentAsync(int? courseId)
     {
         if (User.IsInRole("Teacher"))
             return true;
 
-        if (courseId is null && moduleId is null)
+        if (courseId is null)
             return false;
 
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrWhiteSpace(userId))
             return false;
         var user = await _serviceManager.UserService.GetUserAsync(userId);
-        if (user.CourseId == courseId)
-            return true;
-        if (user.CourseId is null || moduleId is null)
-            return false;
-        return await _serviceManager.ModuleService.IsInCourse((int)user.CourseId, (int)moduleId);
+        return user.CourseId == courseId;
+    }
 
+    private async Task<bool> CanDownloadDocumentAsync(int documentId)
+    {
+        if (User.IsInRole("Teacher"))
+            return true;
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrWhiteSpace(userId))
+            return false;
+        var user = await _serviceManager.UserService.GetUserAsync(userId);
+        if (user.CourseId is null)
+            return false;
+        return await _serviceManager.DocumentService.IsInCourse((int)user.CourseId, documentId);
     }
 }
