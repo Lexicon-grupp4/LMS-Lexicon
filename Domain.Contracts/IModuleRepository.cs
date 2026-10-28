@@ -13,5 +13,6 @@ namespace Domain.Contracts
         Task<IPagedList<Module>> GetByCourseIdAsync(int courseId, bool trackChanges = false);
         Task<Module?> GetByIdWithCourseAsync(int moduleId, bool trackChanges = false);
         Task<bool> HasOverlappingDatesAsync(int courseId,DateTime startDate, DateTime endDate,  int? excludeModuleId = null);
+        Task<bool> IsInCourseAsync(int courseId, int moduleId);
     }
 }

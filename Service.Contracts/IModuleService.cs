@@ -17,5 +17,6 @@ namespace Service.Contracts
         Task<ModuleDto> UpdateModuleAsync(int moduleId, UpdateModuleDto updateModuleDto);
         Task<ModuleDto> CreateModuleAsync(CreateModuleDto createModuleDto);
         Task DeleteModuleAsync(int moduleId);
+        Task<bool> IsInCourse(int courseId, int moduleId);
     }
 }

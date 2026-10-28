@@ -22,7 +22,7 @@ public class DocumentController(IServiceManager serviceManager) : ControllerBase
     [SwaggerResponse(StatusCodes.Status403Forbidden, "forbidden")]
     public async Task<ActionResult<IEnumerable<DocumentDto>>> GetByCourse(int courseId)
     {
-        if (!await CanAccessCourseAsync(courseId))
+        if (!await CanAccessDocumentAsync(courseId, null))
             return Forbid();
 
         var documents = await _serviceManager.DocumentService.GetByCourseIdAsync(courseId);
@@ -30,7 +30,7 @@ public class DocumentController(IServiceManager serviceManager) : ControllerBase
     }
 
     [HttpGet("module/{moduleId:int}")]
-    [Authorize(Roles = "Teacher")]
+    [Authorize(Roles = "Student,Teacher")]
     [SwaggerOperation(Summary = "Module documents", Description = "Documents for a module")]
     [SwaggerResponse(StatusCodes.Status200OK, "successful", typeof(IEnumerable<DocumentDto>))]
     public async Task<ActionResult<IEnumerable<DocumentDto>>> GetByModule(int moduleId)
@@ -51,7 +51,7 @@ public class DocumentController(IServiceManager serviceManager) : ControllerBase
         if (document is null)
             return NotFound();
 
-        if (!await CanAccessCourseAsync(document.CourseId))
+        if (!await CanAccessDocumentAsync(document.CourseId, document.ModuleId))
             return Forbid();
 
         var file = await _serviceManager.DocumentService.DownloadAsync(id);
@@ -61,7 +61,7 @@ public class DocumentController(IServiceManager serviceManager) : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Teacher")]
+    [Authorize(Roles = "Teacher,Student")]
     [Consumes("multipart/form-data")]
     [RequestSizeLimit(11 * 1024 * 1024)]
     [SwaggerOperation(Summary = "Upload document", Description = "Max 10 MB. PDF, DOCX, PPTX, XLSX, TXT, JPG, PNG")]
@@ -95,19 +95,23 @@ public class DocumentController(IServiceManager serviceManager) : ControllerBase
     }
 
     // Teachers can access all courses, students only their own
-    private async Task<bool> CanAccessCourseAsync(int? courseId)
+    private async Task<bool> CanAccessDocumentAsync(int? courseId, int? moduleId)
     {
         if (User.IsInRole("Teacher"))
             return true;
 
-        if (courseId is null)
+        if (courseId is null && moduleId is null)
             return false;
 
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrWhiteSpace(userId))
             return false;
-
         var user = await _serviceManager.UserService.GetUserAsync(userId);
-        return user.CourseId == courseId;
+        if (user.CourseId == courseId)
+            return true;
+        if (user.CourseId is null || moduleId is null)
+            return false;
+        return await _serviceManager.ModuleService.IsInCourse((int)user.CourseId, (int)moduleId);
+
     }
 }
