@@ -39,31 +39,31 @@ else if (module is not null)
 
     <div class="card">
         <div class="card-body">
+            <div class="table-responsive">
+                <table>
+                    <tr>
+                        <td>Course ID</td>
+                        <td>@module.CourseId</td>
+                    </tr>
+                    <tr>
+                        <td>Module Name</td>
+                        <td>@module.Name</td>
+                    </tr>
+                    <tr>
+                        <td>Description</td>
+                        <td>@module.Description</td>
+                    </tr>
 
-            <div>
-                <span>Course ID</span>
-                <span>@module.CourseId</span>
+                    <tr>
+                        <td>Start Date</td>
+                        <td>@module.StartDate.ToString("yyyy-MM-dd")</td>
+                    </tr>
+                    <tr>
+                        <td>End Date</td>
+                        <td>@module.EndDate.ToString("yyyy-MM-dd")</td>
+                    </tr>
+                </table>
             </div>
-            <div>
-                <span>Module Name</span>
-                <span>@module.Name</span>
-            </div>
-            <div>
-                <span>Description</span>
-                <span>@module.Description</span>
-            </div>
-
-            <div class="course-period">
-                <div>
-                    <span>Start Date</span>
-                    <strong>@module.StartDate.ToString("yyyy-MM-dd")</strong>
-                </div>
-                <div>
-                    <span>End Date</span>
-                    <strong>@module.EndDate.ToString("yyyy-MM-dd")</strong>
-                </div>
-            </div>
-
         </div>
     </div>
     <div class="card">
