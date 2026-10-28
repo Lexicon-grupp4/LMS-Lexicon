@@ -13,18 +13,18 @@ namespace LMS.Presentation.Controllers;
 [Authorize(Roles = "Teacher")]
 [ApiController]
 public class TeacherSubmissionsController(
-    IServiceManager serviceManager) : ControllerBase
+    IServiceManager serviceManager) : ApiControllerBase
 {
     private readonly IServiceManager _serviceManager =
         serviceManager;
 
     [HttpGet]
     [ProducesResponseType(
-        typeof(PagedResponse<TeacherSubmissionDto>),
+        typeof(PagedResponse<TeacherAssignmentSubmissionDto>),
         StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<ActionResult<PagedResponse<TeacherSubmissionDto>>>
+    public async Task<ActionResult<PagedResponse<TeacherAssignmentSubmissionDto>>>
         GetSubmissions(
             [FromQuery] int courseId,
             [FromQuery] int? activityId,

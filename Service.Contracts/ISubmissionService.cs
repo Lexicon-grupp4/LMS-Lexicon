@@ -7,7 +7,7 @@ public interface ISubmissionService
 {
     Task<SubmissionDto> SubmitAsync(UploadSubmissionDto dto, Stream content, string userId);
     Task<SubmissionDto?> GetMySubmissionAsync(int activityId, string userId);
-    Task<PagedResponse<TeacherSubmissionDto>> GetTeacherSubmissionsAsync(
+    Task<PagedResponse<TeacherAssignmentSubmissionDto>> GetTeacherSubmissionsAsync(
         string teacherId,
         int courseId,
         int? activityId,

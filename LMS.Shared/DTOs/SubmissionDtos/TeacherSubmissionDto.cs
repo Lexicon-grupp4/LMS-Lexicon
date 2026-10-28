@@ -4,7 +4,7 @@ using System.Text;
 
 namespace LMS.Shared.DTOs.SubmissionDtos
 {
-    public sealed record TeacherSubmissionDto(
+    public sealed record TeacherAssignmentSubmissionDto(
     string StudentId,
     string StudentName,
     string StudentEmail,
