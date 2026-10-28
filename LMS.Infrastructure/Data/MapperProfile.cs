@@ -138,6 +138,9 @@ namespace LMS.Infrastructure.Data
            opt.MapFrom(src => src.Items.Count))
           .ForCtorParam("TotalCount", opt =>
            opt.MapFrom(src => src.TotalCount));
+
+            CreateMap<TeacherSubmissionReadModel, TeacherSubmissionDto>();
+
         }
         private static AssignmentStatus MapAssignmentStatus(string? status)
         {
