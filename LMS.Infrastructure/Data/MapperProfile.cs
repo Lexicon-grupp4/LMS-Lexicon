@@ -7,6 +7,7 @@ using LMS.Shared.DTOs.Activity;
 using LMS.Shared.DTOs.AssignmentDtos;
 using LMS.Shared.DTOs.DocumentDtos;
 using LMS.Shared.DTOs.Module;
+using LMS.Shared.DTOs.SubmissionDtos;
 using LMS.Shared.DTOs.UserDtos;
 using LMS.Shared.Enum;
 using LMS.Shared.Paging;
@@ -120,6 +121,8 @@ namespace LMS.Infrastructure.Data
                 .ForCtorParam("UploadedAt", opt => opt.MapFrom(src => src.UploadAt))
                 .ForCtorParam("CourseId", opt => opt.MapFrom(src => src.CourseId ?? src.Module!.CourseId));
 
+            CreateMap<Submission, SubmissionDto>()
+                .ForCtorParam("Status", opt => opt.MapFrom(src => src.Status.ToString()));
             CreateMap<StudentAssignmentReadModel, AssignmentDetailsDto>()
             .ForMember(
              dest => dest.AssignmentStatus,

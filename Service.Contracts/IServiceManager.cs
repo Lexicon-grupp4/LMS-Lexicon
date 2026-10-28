@@ -8,6 +8,7 @@ public interface IServiceManager
     INotificationService NotificationService { get; }
     IModuleService ModuleService { get; }
     IDocumentService DocumentService { get; }
+    ISubmissionService SubmissionService { get; }
 
     IDashboardService DashboardService { get; }
 }
