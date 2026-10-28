@@ -5,6 +5,7 @@ using LMS.Infrastructure.Paging;
 using LMS.Shared.DTOs.ActionType;
 using LMS.Shared.DTOs.Activity;
 using LMS.Shared.DTOs.AssignmentDtos;
+using LMS.Shared.DTOs.DashboardDtos;
 using LMS.Shared.DTOs.DocumentDtos;
 using LMS.Shared.DTOs.FeedbackDtos;
 using LMS.Shared.DTOs.Module;
@@ -130,6 +131,7 @@ namespace LMS.Infrastructure.Data
                         opt => opt.MapFrom(src => MapAssignmentStatus(src.Status)));
 
             CreateMap<PagedList<StudentAssignmentReadModel>,
+
             PagedResponse<AssignmentDetailsDto>>()
                 .ForCtorParam("Items", opt =>
                         opt.MapFrom(src => src.Items))
@@ -139,6 +141,15 @@ namespace LMS.Infrastructure.Data
                         opt.MapFrom(src => src.Items.Count))
                 .ForCtorParam("TotalCount", opt =>
                         opt.MapFrom(src => src.TotalCount));
+
+            CreateMap<TeacherSubmissionReadModel, TeacherAssignmentSubmissionDto>();
+            CreateMap<PagedList<TeacherSubmissionReadModel>,
+            PagedResponse<TeacherAssignmentSubmissionDto>>()
+                .ForCtorParam("Items", opt => opt.MapFrom(src => src.Items))
+                .ForCtorParam("PageNumber", opt => opt.MapFrom(src => 1))
+                .ForCtorParam("PageSize", opt => opt.MapFrom(src => src.Items.Count))
+                .ForCtorParam("TotalCount", opt => opt.MapFrom(src => src.TotalCount));
+
         }
 
         private static AssignmentStatus MapAssignmentStatus(string? status)
