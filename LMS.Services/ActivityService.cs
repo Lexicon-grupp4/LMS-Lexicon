@@ -28,13 +28,26 @@ namespace LMS.Services
             return _mapper.Map<PagedResponse<ActivityDto>>(activities);
         }
 
-        public async Task<PagedResponse<ActivityDto>?> GetByModuleIdAsync(int moduleId, QueryParameters parameters, bool trackChanges = false)
+
+        public async Task<PagedResponse<ActivityDto>?> GetByModuleIdAsync(
+            int moduleId,
+            QueryParameters parameters,
+            bool trackChanges = false)
         {
             await CheckModuleExistsAsync(moduleId);
 
-            var activities = await _uow.ActivityRepository.GetByModuleIdAsync(moduleId, parameters, trackChanges);
-            return _mapper.Map<PagedResponse<ActivityDto>>(activities);
+            var activities = await _uow.ActivityRepository
+                .GetByModuleIdAsync(moduleId, parameters, trackChanges);
+
+            var activityDtos = _mapper.Map<List<ActivityDto>>(activities.Items);
+
+            return new PagedResponse<ActivityDto>(
+                activityDtos,
+                parameters.PageNumber,
+                parameters.PageSize,
+                activities.TotalCount);
         }
+
 
         public async Task<ActivityDto?> GetByIdAsync(int id, bool trackChanges = false)
         {

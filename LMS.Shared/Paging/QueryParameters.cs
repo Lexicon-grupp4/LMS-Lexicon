@@ -14,6 +14,7 @@ namespace LMS.Shared.Paging
 
         [Range(1, _maxPageSize, ErrorMessage = "{0} must be between {1} and {2}.")]
         public int PageSize { get; init; } = 10;
+        public string? SearchTerm { get; init; }
 
         public int GetOffset => checked((PageNumber - 1) * PageSize);
 
