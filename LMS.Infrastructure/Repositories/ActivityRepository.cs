@@ -1,5 +1,6 @@
 ﻿using Domain.Contracts;
 using Domain.Models.Entities;
+using Domain.Models.ReadModels;
 using LMS.Infrastructure.Data;
 using LMS.Infrastructure.Extensions;
 using LMS.Shared.Paging;
@@ -107,6 +108,82 @@ namespace LMS.Infrastructure.Repositories
                 m.Id == moduleId &&
                 startDate >= m.StartDate &&
                 endDate <= m.EndDate);
+        }
+
+        public async Task<IPagedList<StudentAssignmentReadModel>> GetStudentAssignmentsAsync(
+        string userId,
+        QueryParameters queryParameters,
+        bool trackChanges = false)
+        {
+            var now = DateTime.UtcNow;
+
+           var query = _context.Activities
+           .Where(a =>
+           a.ActionType.Name == "Assignment" &&
+           a.Module != null &&
+           a.Module.Course.ApplicationUsers
+               .Any(u => u.Id == userId));
+
+            if (!trackChanges)
+            {
+                query = query.AsNoTracking();
+            }
+
+            var assignments = query.Select(a => new
+            {
+                Activity = a,
+
+                Submission = _context.Submissions
+                    .Where(s =>
+                        s.ActivityId == a.Id &&
+                        s.UserId == userId)
+                    .OrderByDescending(s => s.SubmittedAt)
+                    .FirstOrDefault()
+            });
+
+            var result = assignments.Select(x => new StudentAssignmentReadModel
+            {
+                Id = x.Activity.Id,
+                Name = x.Activity.Title,
+                Description = x.Activity.Description,
+                Deadline = x.Activity.EndDate,
+
+                Status = x.Submission == null
+                    ? (x.Activity.EndDate < now
+                        ? "Overdue"
+                        : "NotSubmitted")
+                    : "Submitted",
+
+                HasFeedback = x.Submission != null &&
+                    _context.Feedbacks.Any(f =>
+                        f.SubmissionId == x.Submission.Id),
+
+                Comment = x.Submission == null
+                    ? null
+                    : _context.Feedbacks
+                        .Where(f => f.SubmissionId == x.Submission.Id)
+                        .OrderByDescending(f => f.CreatedAt)
+                        .Select(f => f.Comment)
+                        .FirstOrDefault(),
+
+                Grade = x.Submission == null
+                    ? null
+                    : _context.Feedbacks
+                        .Where(f => f.SubmissionId == x.Submission.Id)
+                        .OrderByDescending(f => f.CreatedAt)
+                        .Select(f => (decimal?)f.Grade)
+                        .FirstOrDefault(),
+
+                CreatedAt = x.Submission == null
+                    ? null
+                    : _context.Feedbacks
+                        .Where(f => f.SubmissionId == x.Submission.Id)
+                        .OrderByDescending(f => f.CreatedAt)
+                        .Select(f => (DateTime?)f.CreatedAt)
+                        .FirstOrDefault()
+            });
+
+            return await result.ToPagedListAsync(queryParameters);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Domain.Models.Entities;
+using Domain.Models.ReadModels;
 using LMS.Shared.Paging;
 using System;
 using System.Collections.Generic;
@@ -14,5 +15,6 @@ namespace Domain.Contracts
         Task<Activity?> GetByIdWithModuleAsync(int activityId, bool trackChanges = false);
         Task<bool> HasOverlappingDatesAsync(int moduleId, DateTime startDate, DateTime endDate, int? excludeActivityId = null);
         Task<bool> IsWithinModulePeriodAsync(int moduleId, DateTime startDate, DateTime endDate);
+        Task<IPagedList<StudentAssignmentReadModel>> GetStudentAssignmentsAsync(string userId, QueryParameters queryParameters, bool trackChanges = false);
     }
 }
