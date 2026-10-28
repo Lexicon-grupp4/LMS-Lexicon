@@ -35,6 +35,7 @@ public static class ServiceExtensions
         services.AddScoped<IActivityService, ActivityService>();
         services.AddScoped<IActionTypeService, ActionTypeService>();
         services.AddScoped<ISubmissionService, SubmissionService>();
+        services.AddScoped<IFeedbackService, FeedbackService>();
         services.AddLazy<IAuthService>();
         services.AddLazy<IUserService>();
         services.AddScoped<INotificationService, NotificationService>();
@@ -47,5 +48,6 @@ public static class ServiceExtensions
         services.AddScoped<IDocumentService, DocumentService>();
         services.AddLazy<IDocumentService>();
         services.AddLazy<ISubmissionService>();
+        services.AddLazy<IFeedbackService>();
     }
 }
