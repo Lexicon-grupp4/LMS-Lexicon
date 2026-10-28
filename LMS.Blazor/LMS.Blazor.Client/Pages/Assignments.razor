@@ -1,5 +1,11 @@
 ﻿@page "/assignments"
 @using LMS.Blazor.Client.Components
+@using LMS.Blazor.Client.Services.ApiProxy
+@using LMS.Shared.DTOs.AssignmentDtos
+@using LMS.Shared.Enum;
+@using LMS.Shared.Paging
+@inject IApiProxyClient ApiProxyClient
+
 
 <PageTitle>Assignments</PageTitle>
 
@@ -24,91 +30,206 @@
     }
     else
     {
-        <div class="assignment-card">
+        @foreach (var assignment in assignments)
+        {
+            <div class="assignment-card">
 
-            <div class="assignment-content">
-                <span class="assignment-status todo">
-                    To do
-                </span>
+                <div class="assignment-content">
+                    <span class="assignment-status @GetStatusClass(assignment)">
+                        @GetStatusText(assignment)
+                    </span>
 
-                <h2>React Application</h2>
+                    <h2>@assignment.Name</h2>
 
-                <p class="assignment-deadline">
-                    Deadline: 10 Oct 2026
-                </p>
+                    <p class="assignment-deadline">
+                        Deadline: @assignment.Deadline.ToString("dd MMM yyyy")
+                    </p>
+                </div>
+
+                <button class="assignment-button secondary"
+                        @onclick="() => ViewDetails(assignment)">
+                    View details
+                </button>
+
             </div>
+        }
+    }
+    @if (showDetailsModal && selectedAssignment is not null)
+    {
+        <div class="assignment-modal-backdrop"
+             @onclick="CloseDetails">
 
-            <button class="assignment-button">
-                Submit
-            </button>
+            <div class="assignment-modal"
+                 role="dialog"
+                 aria-modal="true"
+                 aria-labelledby="assignment-modal-title"
+                 @onclick:stopPropagation="true">
 
-        </div>
+                <div class="assignment-modal-header">
 
-        <div class="assignment-card">
+                    <div>
+                        <span class="assignment-status @GetStatusClass(selectedAssignment)">
+                            @GetStatusText(selectedAssignment)
+                        </span>
 
-            <div class="assignment-content">
-                <span class="assignment-status awaiting">
-                    Awaiting feedback
-                </span>
+                        <h2 id="assignment-modal-title">
+                            @selectedAssignment.Name
+                        </h2>
+                    </div>
 
-                <h2>Database Design</h2>
+                    <button type="button"
+                            class="assignment-modal-close"
+                            @onclick="CloseDetails"
+                            aria-label="Close details">
+                        &times;
+                    </button>
 
-                <p class="assignment-deadline">
-                    Deadline: 15 Oct 2026
-                </p>
+                </div>
+
+                <div class="assignment-modal-body">
+
+                    <section class="assignment-modal-section">
+                        <h3>Description</h3>
+
+                        @if (string.IsNullOrWhiteSpace(selectedAssignment.Description))
+                        {
+                            <p>No description available.</p>
+                        }
+                        else
+                        {
+                            <p>@selectedAssignment.Description</p>
+                        }
+                    </section>
+
+                    <div class="assignment-modal-info-grid">
+
+                        <div class="assignment-modal-info-item">
+                            <span>Deadline</span>
+                            <strong>
+                                @selectedAssignment.Deadline.ToString("dd MMM yyyy HH:mm")
+                            </strong>
+                        </div>
+
+                        <div class="assignment-modal-info-item">
+                            <span>Created</span>
+                            <strong>
+                                @(selectedAssignment.CreatedAt?.ToString("dd MMM yyyy")
+                                    ?? "Not available")
+                            </strong>
+                        </div>
+
+                        <div class="assignment-modal-info-item">
+                            <span>Grade</span>
+                            <strong>
+                                @(selectedAssignment.Grade?.ToString("0.##")
+                                    ?? "Not graded")
+                            </strong>
+                        </div>
+
+                    </div>
+
+                    <section class="assignment-modal-section">
+                        <h3>Teacher feedback</h3>
+
+                        @if (selectedAssignment.HasFeedback)
+                        {
+                            @if (!string.IsNullOrWhiteSpace(selectedAssignment.Comment))
+                            {
+                                <div class="assignment-feedback">
+                                    @selectedAssignment.Comment
+                                </div>
+                            }
+                            else
+                            {
+                                <p>
+                                    Feedback is available, but no comment was provided.
+                                </p>
+                            }
+                        }
+                        else
+                        {
+                            <p>No feedback available yet.</p>
+                        }
+                    </section>
+
+                </div>
+
+                <div class="assignment-modal-footer">
+                    <button type="button"
+                            class="assignment-button secondary"
+                            @onclick="CloseDetails">
+                        Close
+                    </button>
+                </div>
+
             </div>
-
-            <button class="assignment-button secondary">
-                View submission
-            </button>
-
-        </div>
-
-        <div class="assignment-card">
-
-            <div class="assignment-content">
-                <span class="assignment-status graded">
-                    Graded
-                </span>
-
-                <h2>API Integration</h2>
-
-                <p class="assignment-deadline">
-                    Deadline: 12 Oct 2026
-                </p>
-            </div>
-
-            <button class="assignment-button secondary">
-                View feedback
-            </button>
-
-        </div>
-
-        <div class="assignment-card">
-
-            <div class="assignment-content">
-                <span class="assignment-status overdue">
-                    Overdue
-                </span>
-
-                <h2>ASP.NET Core Exercise</h2>
-
-                <p class="assignment-deadline">
-                    Deadline: 05 Oct 2026
-                </p>
-            </div>
-
-            <button class="assignment-button">
-                Submit
-            </button>
-
         </div>
     }
 
 </div>
 
 @code {
-    private bool isLoading = false;
+    private bool isLoading = true;
     private bool hasError = false;
-    private bool hasAssignments = true;
+    private AssignmentDetailsDto? selectedAssignment;
+    private bool showDetailsModal;
+    private List<AssignmentDetailsDto> assignments = new();
+
+    private bool hasAssignments => assignments.Count > 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            isLoading = true;
+            hasError = false;
+
+            var response = await ApiProxyClient.GetAsync<PagedResponse<AssignmentDetailsDto>>(
+                                    "Activity/my-assignments?PageNumber=1&PageSize=100");
+
+            assignments = response?.Items?.ToList() ?? [];
+
+        }
+        catch
+        {
+            hasError = true;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private string GetStatusText(AssignmentDetailsDto assignment)
+    {
+        return assignment.AssignmentStatus switch
+        {
+            AssignmentStatus.Unsubmitted => "To do",
+            AssignmentStatus.Submitted => "Submitted",
+            AssignmentStatus.Late => "Overdue",
+            _ => "Unknown"
+        };
+    }
+
+    private string GetStatusClass(AssignmentDetailsDto assignment)
+    {
+        return assignment.AssignmentStatus switch
+        {
+            AssignmentStatus.Unsubmitted => "todo",
+            AssignmentStatus.Submitted => "awaiting",
+            AssignmentStatus.Late => "overdue",
+            _ => string.Empty
+        };
+    }
+    private void ViewDetails(AssignmentDetailsDto assignment)
+    {
+        selectedAssignment = assignment;
+        showDetailsModal = true;
+    }
+
+    private void CloseDetails()
+    {
+        showDetailsModal = false;
+        selectedAssignment = null;
+    }
 }
