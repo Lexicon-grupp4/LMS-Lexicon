@@ -4,19 +4,11 @@ using Service.Contracts;
 
 namespace LMS.Services;
 
-public class NotificationService : INotificationService
+public class NotificationService(IUnitOfWork uow) : INotificationService
 {
-    private readonly INotificationRepository _notificationRepository;
-
-    public NotificationService(INotificationRepository notificationRepository)
-    {
-        _notificationRepository = notificationRepository;
-    }
-
     public async Task<IEnumerable<NotificationDto>> GetNotificationsAsync(string userId)
     {
-        var notifications =
-            await _notificationRepository.GetNotificationsByUserIdAsync(userId);
+        var notifications = await uow.NotificationRepository.GetNotificationsByUserIdAsync(userId);
 
         return notifications.Select(notification => new NotificationDto
         {
@@ -29,10 +21,7 @@ public class NotificationService : INotificationService
 
     public async Task<bool> MarkAsReadAsync(int notificationId, string userId)
     {
-        var notification =
-            await _notificationRepository.GetNotificationByIdAsync(
-                notificationId,
-                userId);
+        var notification = await uow.NotificationRepository.GetNotificationByIdAsync(notificationId, userId);
 
         if (notification is null)
             return false;
@@ -41,7 +30,6 @@ public class NotificationService : INotificationService
             return true;
 
         notification.IsRead = true;
-
-        return await _notificationRepository.SaveChangesAsync() > 0;
+        return await uow.CompleteAsync() > 0;
     }
 }
