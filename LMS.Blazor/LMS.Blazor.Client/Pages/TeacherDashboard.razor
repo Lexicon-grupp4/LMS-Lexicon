@@ -139,7 +139,7 @@
 
                         @foreach (var course in dashboard.CurrentCourses)
                         {
-                            <NavLink href="@($"/t-course/{course.CourseId}")"
+                            <NavLink href="@($"/course/{course.CourseId}")"
                                      class="dashboard-list-item">
 
                                 <div>
@@ -194,7 +194,7 @@
 
                         @foreach (var activity in dashboard.UpcomingActivities)
                         {
-                            <NavLink href="@($"/t-course/{activity.CourseId}")"
+                            <NavLink href="@($"/course/{activity.CourseId}")"
                                      class="dashboard-list-item">
 
                                 <div>
@@ -253,7 +253,7 @@
 
                         @foreach (var submission in dashboard.SubmissionsNeedingAttention)
                         {
-                            <NavLink href="@($"/t-course/{submission.CourseId}")"
+                            <NavLink href="@($"/course/{submission.CourseId}")"
                                      class="dashboard-list-item">
 
                                 <div>
@@ -305,7 +305,7 @@
 
                         @foreach (var feedback in dashboard.PendingFeedback)
                         {
-                            <NavLink href="@($"/t-course/{feedback.CourseId}")"
+                            <NavLink href="@($"/course/{feedback.CourseId}")"
                                      class="dashboard-list-item">
 
                                 <div>
@@ -357,7 +357,7 @@
 
                     @foreach (var activity in dashboard.RecentActivities)
                     {
-                        <NavLink href="@($"/t-course/{activity.CourseId}")"
+                        <NavLink href="@($"/course/{activity.CourseId}")"
                                  class="dashboard-list-item">
 
                             <div>
