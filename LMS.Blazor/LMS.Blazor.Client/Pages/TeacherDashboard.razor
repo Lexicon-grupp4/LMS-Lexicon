@@ -16,117 +16,232 @@
 
 <div class="teacher-dashboard">
 
-    <!-- WELCOME -->
+    <!-- WELCOME HEADER -->
+
     <header class="dashboard-welcome">
+
         <div class="welcome-copy">
             <h1>Hi @displayName</h1>
             <p>
-                Welcome back. Here's what needs your
-                attention across your courses.
+                Welcome back. Here's what needs your attention
+                across your courses.
             </p>
         </div>
 
         <div class="teacher-mode-switch">
+
             <button type="button"
                     class="@(!isDemoMode ? "active" : "")"
+                    aria-pressed="@(!isDemoMode)"
                     @onclick="() => isDemoMode = false">
                 Live Mode
             </button>
 
             <button type="button"
                     class="@(isDemoMode ? "active" : "")"
+                    aria-pressed="@isDemoMode"
                     @onclick="() => isDemoMode = true">
                 Demo Mode
             </button>
+
         </div>
+
     </header>
 
     @if (isDemoMode)
     {
         <div class="teacher-demo-notice">
-            Demo Mode is active. All information shown
-            below is example data.
+            <span aria-hidden="true">ⓘ</span>
+            Demo Mode is active. All information shown below
+            is example data.
         </div>
     }
 
     @if (isLoading && !isDemoMode)
     {
         <div class="dashboard-loading">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">
+                    Loading dashboard...
+                </span>
+            </div>
             <p>Loading dashboard...</p>
         </div>
     }
     else if (dashboard is null)
     {
-        <section class="next-activity-empty">
-            <div class="empty-icon">!</div>
-
-            <div>
-                <h2>Dashboard unavailable</h2>
-                <p>
-                    @errorMessage
-                </p>
+        <section class="dashboard-card">
+            <div class="empty-state">
+                <span class="empty-icon">!</span>
+                <strong>Dashboard unavailable</strong>
+                <p>@errorMessage</p>
             </div>
         </section>
     }
     else
     {
-        <!-- SUMMARY -->
-        <section class="teacher-summary-grid">
+        <!-- FOUR CLICKABLE STATISTICS CARDS -->
 
-            <div class="teacher-summary-card">
-                <span class="teacher-summary-label">
-                    Current Courses
-                </span>
-                <strong>@dashboard.CurrentCourses.Count</strong>
-                <span>Active courses</span>
-            </div>
+        <section class="teacher-summary-grid"
+                 aria-label="Dashboard overview">
 
-            <div class="teacher-summary-card">
-                <span class="teacher-summary-label">
-                    Upcoming Activities
-                </span>
-                <strong>@dashboard.UpcomingActivities.Count</strong>
-                <span>Next scheduled activities</span>
-            </div>
+            <!-- CURRENT COURSES -->
 
-            <div class="teacher-summary-card">
-                <span class="teacher-summary-label">
-                    Submissions
-                </span>
-                <strong>@dashboard.SubmissionsNeedingAttention.Count</strong>
-                <span>Need attention</span>
-            </div>
+            <a href="#teacher-courses"
+               class="teacher-summary-card summary-courses">
 
-            <div class="teacher-summary-card">
-                <span class="teacher-summary-label">
-                    Pending Feedback
+                <span class="teacher-summary-icon"
+                      aria-hidden="true">
+                    ▤
                 </span>
-                <strong>@dashboard.PendingFeedback.Count</strong>
-                <span>Waiting for review</span>
-            </div>
+
+                <div class="teacher-summary-content">
+                    <span class="teacher-summary-label">
+                        Current Courses
+                    </span>
+
+                    <strong>
+                        @dashboard.CurrentCourses.Count
+                    </strong>
+
+                    <span class="teacher-summary-description">
+                        Active courses
+                    </span>
+                </div>
+
+                <span class="teacher-summary-arrow"
+                      aria-hidden="true">
+                    →
+                </span>
+
+            </a>
+
+            <!-- UPCOMING ACTIVITIES -->
+
+            <a href="#teacher-activities"
+               class="teacher-summary-card summary-activities">
+
+                <span class="teacher-summary-icon"
+                      aria-hidden="true">
+                    ◷
+                </span>
+
+                <div class="teacher-summary-content">
+                    <span class="teacher-summary-label">
+                        Upcoming Activities
+                    </span>
+
+                    <strong>
+                        @dashboard.UpcomingActivities.Count
+                    </strong>
+
+                    <span class="teacher-summary-description">
+                        Next scheduled activities
+                    </span>
+                </div>
+
+                <span class="teacher-summary-arrow"
+                      aria-hidden="true">
+                    →
+                </span>
+
+            </a>
+
+            <!-- SUBMISSIONS -->
+
+            <a href="#teacher-submissions"
+               class="teacher-summary-card summary-submissions">
+
+                <span class="teacher-summary-icon"
+                      aria-hidden="true">
+                    ▣
+                </span>
+
+                <div class="teacher-summary-content">
+                    <span class="teacher-summary-label">
+                        Submissions
+                    </span>
+
+                    <strong>
+                        @dashboard.SubmissionsNeedingAttention.Count
+                    </strong>
+
+                    <span class="teacher-summary-description">
+                        Need attention
+                    </span>
+                </div>
+
+                <span class="teacher-summary-arrow"
+                      aria-hidden="true">
+                    →
+                </span>
+
+            </a>
+
+            <!-- PENDING FEEDBACK -->
+
+            <a href="#teacher-feedback"
+               class="teacher-summary-card summary-feedback">
+
+                <span class="teacher-summary-icon"
+                      aria-hidden="true">
+                    ◉
+                </span>
+
+                <div class="teacher-summary-content">
+                    <span class="teacher-summary-label">
+                        Pending Feedback
+                    </span>
+
+                    <strong>
+                        @dashboard.PendingFeedback.Count
+                    </strong>
+
+                    <span class="teacher-summary-description">
+                        Waiting for review
+                    </span>
+                </div>
+
+                <span class="teacher-summary-arrow"
+                      aria-hidden="true">
+                    →
+                </span>
+
+            </a>
 
         </section>
 
-        <!-- CURRENT COURSES + UPCOMING ACTIVITIES -->
+        <!-- ROW 1: COURSES AND ACTIVITIES -->
+
         <div class="dashboard-grid">
 
-            <section class="dashboard-card">
+            <!-- CURRENT COURSES -->
+
+            <section class="dashboard-card"
+                     id="teacher-courses">
 
                 <div class="dashboard-card-header">
+
                     <div class="panel-title">
-                        <span class="panel-icon">▤</span>
+                        <span class="panel-icon panel-icon-courses"
+                              aria-hidden="true">
+                            ▤
+                        </span>
+
                         <h2>Current Courses</h2>
                     </div>
 
-                    <NavLink href="/courses">
+                    <NavLink href="/courses"
+                             class="dashboard-header-link">
                         All courses →
                     </NavLink>
+
                 </div>
 
                 @if (dashboard.CurrentCourses.Count == 0)
                 {
                     <div class="empty-state">
-                        <div class="empty-icon">✓</div>
+                        <span class="empty-icon">✓</span>
                         <strong>No active courses</strong>
                         <p>
                             Current courses will appear here.
@@ -142,7 +257,13 @@
                             <NavLink href="@($"/t-course/{course.CourseId}")"
                                      class="dashboard-list-item">
 
-                                <div>
+                                <span class="dashboard-row-icon"
+                                      aria-hidden="true">
+                                    ▤
+                                </span>
+
+                                <div class="dashboard-row-content">
+
                                     <strong>@course.Name</strong>
 
                                     <p>
@@ -156,9 +277,13 @@
                                         –
                                         @course.EndDate.ToString("dd MMM yyyy")
                                     </p>
+
                                 </div>
 
-                                <span class="row-arrow">→</span>
+                                <span class="row-arrow"
+                                      aria-hidden="true">
+                                    →
+                                </span>
 
                             </NavLink>
                         }
@@ -168,19 +293,28 @@
 
             </section>
 
-            <section class="dashboard-card">
+            <!-- UPCOMING ACTIVITIES -->
+
+            <section class="dashboard-card"
+                     id="teacher-activities">
 
                 <div class="dashboard-card-header">
+
                     <div class="panel-title">
-                        <span class="panel-icon">◷</span>
+                        <span class="panel-icon panel-icon-activities"
+                              aria-hidden="true">
+                            ◷
+                        </span>
+
                         <h2>Upcoming Activities</h2>
                     </div>
+
                 </div>
 
                 @if (dashboard.UpcomingActivities.Count == 0)
                 {
                     <div class="empty-state">
-                        <div class="empty-icon">✓</div>
+                        <span class="empty-icon">✓</span>
                         <strong>No upcoming activities</strong>
                         <p>
                             Upcoming course activities will
@@ -197,7 +331,13 @@
                             <NavLink href="@($"/t-course/{activity.CourseId}")"
                                      class="dashboard-list-item">
 
-                                <div>
+                                <span class="dashboard-row-icon"
+                                      aria-hidden="true">
+                                    ▣
+                                </span>
+
+                                <div class="dashboard-row-content">
+
                                     <strong>@activity.Title</strong>
 
                                     <p>
@@ -210,9 +350,13 @@
                                         Due
                                         @activity.EndDate.ToString("dd MMM yyyy")
                                     </p>
+
                                 </div>
 
-                                <span class="row-arrow">→</span>
+                                <span class="row-arrow"
+                                      aria-hidden="true">
+                                    →
+                                </span>
 
                             </NavLink>
                         }
@@ -224,26 +368,35 @@
 
         </div>
 
-        <!-- SUBMISSIONS + FEEDBACK -->
+        <!-- ROW 2: SUBMISSIONS AND FEEDBACK -->
+
         <div class="dashboard-grid">
 
-            <section class="dashboard-card">
+            <!-- SUBMISSIONS -->
+
+            <section class="dashboard-card"
+                     id="teacher-submissions">
 
                 <div class="dashboard-card-header">
+
                     <div class="panel-title">
-                        <span class="panel-icon">☑</span>
+                        <span class="panel-icon panel-icon-submissions"
+                              aria-hidden="true">
+                            ▣
+                        </span>
+
                         <h2>Submissions Needing Attention</h2>
                     </div>
+
                 </div>
 
                 @if (dashboard.SubmissionsNeedingAttention.Count == 0)
                 {
                     <div class="empty-state">
-                        <div class="empty-icon">✓</div>
+                        <span class="empty-icon">✓</span>
                         <strong>All caught up</strong>
                         <p>
-                            No submissions currently
-                            need attention.
+                            No submissions currently need attention.
                         </p>
                     </div>
                 }
@@ -256,19 +409,33 @@
                             <NavLink href="@($"/t-course/{submission.CourseId}")"
                                      class="dashboard-list-item">
 
-                                <div>
+                                <span class="dashboard-row-icon"
+                                      aria-hidden="true">
+                                    ▣
+                                </span>
+
+                                <div class="dashboard-row-content">
+
                                     <strong>@submission.StudentName</strong>
 
-                                    <p>@submission.AssignmentTitle</p>
+                                    <p>
+                                        @submission.AssignmentTitle
+                                    </p>
 
                                     <p class="assignment-deadline">
                                         Deadline:
                                         @submission.Deadline.ToString("dd MMM yyyy")
                                     </p>
+
                                 </div>
 
                                 <span class="status-label @GetStatusClass(submission.Status)">
                                     @submission.Status
+                                </span>
+
+                                <span class="row-arrow"
+                                      aria-hidden="true">
+                                    →
                                 </span>
 
                             </NavLink>
@@ -279,23 +446,31 @@
 
             </section>
 
-            <section class="dashboard-card">
+            <!-- PENDING FEEDBACK -->
+
+            <section class="dashboard-card"
+                     id="teacher-feedback">
 
                 <div class="dashboard-card-header">
+
                     <div class="panel-title">
-                        <span class="panel-icon">❝</span>
+                        <span class="panel-icon panel-icon-feedback"
+                              aria-hidden="true">
+                            ◉
+                        </span>
+
                         <h2>Pending Feedback</h2>
                     </div>
+
                 </div>
 
                 @if (dashboard.PendingFeedback.Count == 0)
                 {
                     <div class="empty-state">
-                        <div class="empty-icon">✓</div>
+                        <span class="empty-icon">✓</span>
                         <strong>No pending feedback</strong>
                         <p>
-                            All received submissions
-                            have been reviewed.
+                            All received submissions have been reviewed.
                         </p>
                     </div>
                 }
@@ -308,18 +483,30 @@
                             <NavLink href="@($"/t-course/{feedback.CourseId}")"
                                      class="dashboard-list-item">
 
-                                <div>
+                                <span class="dashboard-row-icon"
+                                      aria-hidden="true">
+                                    ◉
+                                </span>
+
+                                <div class="dashboard-row-content">
+
                                     <strong>@feedback.StudentName</strong>
 
-                                    <p>@feedback.AssignmentTitle</p>
+                                    <p>
+                                        @feedback.AssignmentTitle
+                                    </p>
 
                                     <p>
                                         Submitted:
                                         @feedback.SubmittedAt.ToString("dd MMM yyyy")
                                     </p>
+
                                 </div>
 
-                                <span class="row-arrow">→</span>
+                                <span class="row-arrow"
+                                      aria-hidden="true">
+                                    →
+                                </span>
 
                             </NavLink>
                         }
@@ -332,19 +519,27 @@
         </div>
 
         <!-- RECENT ACTIVITY -->
-        <section class="dashboard-card">
+
+        <section class="dashboard-card teacher-recent-card"
+                 id="teacher-recent">
 
             <div class="dashboard-card-header">
+
                 <div class="panel-title">
-                    <span class="panel-icon">♢</span>
+                    <span class="panel-icon panel-icon-recent"
+                          aria-hidden="true">
+                        ◷
+                    </span>
+
                     <h2>Recent Activity</h2>
                 </div>
+
             </div>
 
             @if (dashboard.RecentActivities.Count == 0)
             {
                 <div class="empty-state">
-                    <div class="empty-icon">◷</div>
+                    <span class="empty-icon">◷</span>
                     <strong>No recent activity</strong>
                     <p>
                         Recent submissions will appear here.
@@ -360,7 +555,13 @@
                         <NavLink href="@($"/t-course/{activity.CourseId}")"
                                  class="dashboard-list-item">
 
-                            <div>
+                            <span class="dashboard-row-icon"
+                                  aria-hidden="true">
+                                ◷
+                            </span>
+
+                            <div class="dashboard-row-content">
+
                                 <strong>@activity.Description</strong>
 
                                 <p>
@@ -368,9 +569,13 @@
                                     ·
                                     @activity.CreatedAt.ToString("dd MMM yyyy, HH:mm")
                                 </p>
+
                             </div>
 
-                            <span class="row-arrow">→</span>
+                            <span class="row-arrow"
+                                  aria-hidden="true">
+                                →
+                            </span>
 
                         </NavLink>
                     }
@@ -384,10 +589,14 @@
 </div>
 
 @code {
+
     private TeacherDashboardDto? liveDashboard;
+
     private bool isLoading = true;
     private bool isDemoMode;
+
     private string displayName = "Teacher";
+
     private string errorMessage =
         "Could not load your dashboard. Please try again later.";
 
