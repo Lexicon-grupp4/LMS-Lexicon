@@ -10,7 +10,8 @@ public class UnitOfWork(ApplicationDbContext context,
         Lazy<IActionTypeRepository> actionTypeRepository,
         Lazy<IDocumentRepository> documentRepository,
         Lazy<ISubmissionRepository> submissionRepository,
-        Lazy<IFeedbackRepository> feedbackRepository
+        Lazy<IFeedbackRepository> feedbackRepository,
+        Lazy<INotificationRepository> notificationRepository
         ) : IUnitOfWork
 {
     private readonly ApplicationDbContext _context = context;
@@ -21,6 +22,7 @@ public class UnitOfWork(ApplicationDbContext context,
     private readonly Lazy<IFeedbackRepository> _feedbackRepository = feedbackRepository;
     private readonly Lazy<IActivityRepository> _activityRepository = activityRepository;
     private readonly Lazy<IActionTypeRepository> _actionTypeRepository = actionTypeRepository;
+    private readonly Lazy<INotificationRepository> _notificationRepository = notificationRepository;
     public IUserRepository UserRepsoitory => _userRepsoitory.Value;
     public IModuleRepository ModuleRepository => _moduleRepository.Value;
     public IActivityRepository ActivityRepository => _activityRepository.Value;
@@ -28,6 +30,7 @@ public class UnitOfWork(ApplicationDbContext context,
     public ISubmissionRepository SubmissionRepository => _submissionRepository.Value;
     public IFeedbackRepository FeedbackRepository => _feedbackRepository.Value;
     public IDocumentRepository DocumentRepository => _documentRepository.Value;
+    public INotificationRepository NotificationRepository => _notificationRepository.Value;
 
     public async Task<int> CompleteAsync() => await _context.SaveChangesAsync();
 }
