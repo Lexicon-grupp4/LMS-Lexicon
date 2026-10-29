@@ -56,7 +56,19 @@
                 ♙
             </span>
         </div>
+        <div class="users-search">
+            <input type="search"
+                   class="form-control"
+                   placeholder="Search by name or email..."
+                   aria-label="Search users"
+                   @bind="searchTerm" />
 
+            <button type="button"
+                    class="users-add-button"
+                    @onclick="SearchUsers">
+                Search
+            </button>
+        </div>
         @if (isLoading)
         {
             <div class="users-empty-state">
@@ -89,7 +101,9 @@
                 <strong>No users found</strong>
 
                 <p>
-                    Users will appear here when they are added.
+                    @(string.IsNullOrWhiteSpace(searchTerm)
+                        ? "Users will appear here when they are added."
+                        : "Try a different name or email.")
                 </p>
             </div>
         }
@@ -219,6 +233,8 @@
 
     private int currentPage = 1;
 
+    private string searchTerm = string.Empty;
+
     private const int PageSize = 10;
 
     protected override async Task OnInitializedAsync()
@@ -235,7 +251,7 @@
         {
             var response =
                 await ApiProxyClient.GetAsync<PagedResponse<UserDto>>(
-                    $"users?pageNumber={currentPage}&pageSize={PageSize}");
+                   $"users?pageNumber={currentPage}&pageSize={PageSize}&searchTerm={Uri.EscapeDataString(searchTerm.Trim())}");
 
             if (response is not null)
             {
@@ -263,7 +279,11 @@
             isLoading = false;
         }
     }
-
+    private async Task SearchUsers()
+    {
+        currentPage = 1;
+        await LoadUsers();
+    }
     private async Task NextPage()
     {
         if (pagedResponse is null ||
