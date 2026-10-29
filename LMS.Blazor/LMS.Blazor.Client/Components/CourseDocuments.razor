@@ -24,13 +24,11 @@
         <p class="doc-message error" role="alert">@errorMessage</p>
     }
 
-    <AuthorizeView Roles="Teacher">
-        <div class="upload-area">
-            <InputFile @key="inputKey" OnChange="UploadAsync" accept="@string.Join(",", AllowedExtensions)"
-                       disabled="@isUploading" />
-            <span>@(isUploading ? "Uploading..." : "PDF, DOCX, PPTX, XLSX, TXT, JPG, PNG · max 10 MB")</span>
-        </div>
-    </AuthorizeView>
+    <div class="upload-area">
+        <InputFile @key="inputKey" OnChange="UploadAsync" accept="@string.Join(",", AllowedExtensions)"
+                    disabled="@isUploading" />
+        <span>@(isUploading ? "Uploading..." : "PDF, DOCX, PPTX, XLSX, TXT, JPG, PNG · max 10 MB")</span>
+    </div>
 
     @if (documents is null)
     {
@@ -60,7 +58,8 @@
 </section>
 
 @code {
-    [Parameter, EditorRequired] public int CourseId { get; set; }
+    [Parameter, EditorRequired] public int Id { get; set; }
+    [Parameter, EditorRequired] public string Type { get; set; }
 
     private const long MaxFileSize = 10 * 1024 * 1024;
     private static readonly string[] AllowedExtensions =
@@ -81,7 +80,11 @@
     {
         try
         {
-            documents = await ApiProxyClient.GetAsync<DocumentDto[]>($"documents/course/{CourseId}") ?? [];
+            if (Type == "course")
+                documents = await ApiProxyClient.GetAsync<DocumentDto[]>($"documents/course/{Id}") ?? [];
+            else {
+                documents = await ApiProxyClient.GetAsync<DocumentDto[]>($"documents/module/{Id}") ?? [];
+            }
         }
         catch (Exception ex)
         {
@@ -118,7 +121,7 @@
             var content = new MultipartFormDataContent
             {
                 { fileContent, "file", file.Name },
-                { new StringContent(CourseId.ToString()), "courseId" }
+                { new StringContent(Id.ToString()), Type + "Id" }
             };
 
             await ApiProxyClient.SendAsync<DocumentDto>(HttpMethod.Post, "documents", content);
