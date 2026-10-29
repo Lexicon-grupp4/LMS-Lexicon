@@ -610,3 +610,56 @@ a.dashboard-list-item:hover {
         flex-direction: column;
     }
 }
+/* DASHBOARD LINKS – MAGIC PATTERNS STYLE */
+
+.student-dashboard ::deep .dashboard-card-header a {
+    color: #245337 !important;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none !important;
+    white-space: nowrap;
+    transition: color 150ms ease;
+}
+
+    .student-dashboard ::deep .dashboard-card-header a:hover {
+        color: #173d2a !important;
+        text-decoration: none !important;
+    }
+
+    .student-dashboard ::deep .dashboard-card-header a:focus-visible {
+        outline: 2px solid #315a42;
+        outline-offset: 3px;
+        border-radius: 3px;
+    }
+
+/* NEXT ACTIVITY LINK – MATCH DASHBOARD LINKS */
+
+.student-dashboard ::deep .next-activity-content a,
+.student-dashboard ::deep a.activity-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #245337 !important;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none !important;
+    white-space: nowrap;
+    transition: color 150ms ease;
+}
+
+    .student-dashboard ::deep .next-activity-content a:hover,
+    .student-dashboard ::deep a.activity-link:hover {
+        color: #173d2a !important;
+        background: transparent;
+        text-decoration: none !important;
+    }
+
+    .student-dashboard ::deep .next-activity-content a:focus-visible,
+    .student-dashboard ::deep a.activity-link:focus-visible {
+        outline: 2px solid #315a42;
+        outline-offset: 3px;
+        border-radius: 3px;
+    }
