@@ -87,11 +87,6 @@ namespace LMS.Infrastructure.Repositories
                 m.StartDate <= endDate &&
                 m.EndDate >= startDate);
         }
-
-        public async Task<bool> IsInCourseAsync(int courseId, int moduleId)
-        {
-            return _context.Documents.Any(d => d.Id == moduleId && (d.CourseId == courseId || d.Module.CourseId == courseId));
-        }
     }
 }
 

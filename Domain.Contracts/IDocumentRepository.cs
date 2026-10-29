@@ -8,5 +8,5 @@ public interface IDocumentRepository : IRepositoryBase<Document>
     Task<IEnumerable<Document>> GetByCourseIdAsync(int courseId);
     Task<IEnumerable<Document>> GetByModuleIdAsync(int moduleId);
     void DeleteStoredFile(StoredFile name);
-    bool IsInCourseAsync(int courseId, int documentId);
+    Task<bool> IsInCourseAsync(int courseId, int documentId);
 }

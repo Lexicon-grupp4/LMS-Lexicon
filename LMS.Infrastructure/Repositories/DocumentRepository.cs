@@ -30,9 +30,9 @@ public class DocumentRepository(ApplicationDbContext context) : RepositoryBase<D
 
     public void DeleteStoredFile(StoredFile file) => context.StoredFiles.Remove(file);
 
-    public bool IsInCourseAsync(int courseId, int moduleId)
+    public async Task<bool> IsInCourseAsync(int courseId, int moduleId)
     {
-        return context.Documents.Any(d => d.Id == moduleId && (d.CourseId == courseId || d.Module.CourseId == courseId));
+        return await context.Documents.AnyAsync(d => d.Id == moduleId && (d.CourseId == courseId || d.Module.CourseId == courseId));
     }
 }
 

@@ -76,9 +76,9 @@ public class DocumentController(IServiceManager serviceManager) : ControllerBase
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrWhiteSpace(userId))
-            return Unauthorized();
+            return Forbid();
         if (!await CanUploadDocumentAsync(courseId, moduleId))
-            return Unauthorized();
+            return Forbid();
 
         var dto = new UploadDocumentDto(file.FileName, file.ContentType, file.Length, courseId, moduleId);
 
@@ -141,11 +141,13 @@ public class DocumentController(IServiceManager serviceManager) : ControllerBase
         var user = await _serviceManager.UserService.GetUserAsync(userId);
         if (user.CourseId is null)
             return false;
-        return _serviceManager.DocumentService.IsInCourse((int)user.CourseId, documentId);
+        return await _serviceManager.DocumentService.IsInCourseAsync((int)user.CourseId, documentId);
     }
 
     private async Task<bool> CanUploadDocumentAsync(int? courseId, int? moduleId)
     {
+        if (courseId != null && moduleId != null)
+            return false;
         if (User.IsInRole("Teacher"))
             return true;
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);

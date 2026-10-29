@@ -108,8 +108,8 @@ public class DocumentService(IUnitOfWork uow, IMapper mapper, IConfiguration con
             throw new InvalidFileException($"File type '{extension}' is not allowed.");
     }
 
-    public bool IsInCourse(int courseId, int moduleId)
+    public async Task<bool> IsInCourseAsync(int courseId, int moduleId)
     {
-        return uow.DocumentRepository.IsInCourseAsync(courseId, moduleId);
+        return await uow.DocumentRepository.IsInCourseAsync(courseId, moduleId);
     }
 }
