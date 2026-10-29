@@ -145,14 +145,15 @@ internal class DataSeedService : IHostedService
         await context.SaveChangesAsync();
 
         var teachers = new List<ApplicationUser>();
-        foreach (var (email, firstName, lastName) in SeedData.Teachers)
+        foreach (var (email, firstName, lastName, courseCode) in SeedData.Teachers)
         {
             var teacher = new ApplicationUser
             {
                 Email = email,
                 UserName = email,
                 FirstName = firstName,
-                LastName = lastName
+                LastName = lastName,
+                CourseId = courses.Single(c => c.Code == courseCode).Id
             };
             await CreateUserAsync(teacher, "Teacher");
             teachers.Add(teacher);
