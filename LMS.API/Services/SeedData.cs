@@ -5,10 +5,10 @@ internal static class SeedData
 {
     public const string TeacherEmail = "Teacher@Lms.com";
 
-    public static readonly (string Email, string FirstName, string LastName)[] Teachers =
+    public static readonly (string Email, string FirstName, string LastName, string CourseCode)[] Teachers =
     [
-        (TeacherEmail, "Test", "Teacher"),
-        ("Anna.Larsson@Lms.com", "Anna", "Larsson"),
+        (TeacherEmail, "Test", "Teacher", "COURSE-A"),
+        ("Anna.Larsson@Lms.com", "Anna", "Larsson", "COURSE-B"),
     ];
 
     // CourseCode must match a code in Courses().
