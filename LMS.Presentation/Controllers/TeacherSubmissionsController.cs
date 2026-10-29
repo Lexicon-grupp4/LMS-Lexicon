@@ -18,31 +18,20 @@ public class TeacherSubmissionsController(
     private readonly IServiceManager _serviceManager =
         serviceManager;
 
-    [HttpGet]
-    [ProducesResponseType(
-        typeof(PagedResponse<TeacherAssignmentSubmissionDto>),
-        StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public async Task<ActionResult<PagedResponse<TeacherAssignmentSubmissionDto>>>
-        GetSubmissions(
-            [FromQuery] int courseId,
-            [FromQuery] int? activityId,
-            [FromQuery] string? status,
-            [FromQuery] QueryParameters parameters)
+    public async Task< ActionResult<PagedResponse<TeacherAssignmentSubmissionDto>>> GetSubmissions(
+        [FromQuery] int? activityId,
+        [FromQuery] string? status,
+        [FromQuery] QueryParameters parameters)
     {
         var teacherId = User.FindFirstValue(
             ClaimTypes.NameIdentifier);
 
         if (string.IsNullOrWhiteSpace(teacherId))
-        {
             return Unauthorized();
-        }
 
         var result = await _serviceManager.SubmissionService
             .GetTeacherSubmissionsAsync(
                 teacherId,
-                courseId,
                 activityId,
                 status,
                 parameters);
@@ -51,6 +40,7 @@ public class TeacherSubmissionsController(
     }
 
     [HttpGet("{submissionId:int}/file")]
+    [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]

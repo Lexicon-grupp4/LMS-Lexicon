@@ -9,7 +9,6 @@ public interface ISubmissionService
     Task<SubmissionDto?> GetMySubmissionAsync(int activityId, string userId);
     Task<PagedResponse<TeacherAssignmentSubmissionDto>> GetTeacherSubmissionsAsync(
         string teacherId,
-        int courseId,
         int? activityId,
         string? status,
         QueryParameters parameters);
