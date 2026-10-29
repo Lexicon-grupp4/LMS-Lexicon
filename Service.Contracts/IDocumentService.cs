@@ -10,6 +10,6 @@ public interface IDocumentService
     Task<DocumentDto> UploadAsync(UploadDocumentDto document, Stream content, string userId);
     Task<DocumentFileDto?> DownloadAsync(int id);
     Task<bool> DeleteDocumentAsync(int id);
-    Task<bool> IsInCourse(int courseId, int documentId);
+    bool IsInCourse(int courseId, int documentId);
 }
 

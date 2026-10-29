@@ -22,7 +22,7 @@ public class DocumentController(IServiceManager serviceManager) : ControllerBase
     [SwaggerResponse(StatusCodes.Status403Forbidden, "forbidden")]
     public async Task<ActionResult<IEnumerable<DocumentDto>>> GetByCourse(int courseId)
     {
-        if (!await CanAccessDocumentAsync(courseId))
+        if (!await CanAccessCourseDocumentAsync(courseId))
             return Forbid();
 
         var documents = await _serviceManager.DocumentService.GetByCourseIdAsync(courseId);
@@ -35,6 +35,8 @@ public class DocumentController(IServiceManager serviceManager) : ControllerBase
     [SwaggerResponse(StatusCodes.Status200OK, "successful", typeof(IEnumerable<DocumentDto>))]
     public async Task<ActionResult<IEnumerable<DocumentDto>>> GetByModule(int moduleId)
     {
+        if (!await CanAccessModuleDocumentAsync(moduleId))
+            return Forbid();
         var documents = await _serviceManager.DocumentService.GetByModuleIdAsync(moduleId);
         return Ok(documents);
     }
@@ -75,6 +77,8 @@ public class DocumentController(IServiceManager serviceManager) : ControllerBase
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrWhiteSpace(userId))
             return Unauthorized();
+        if (!await CanUploadDocumentAsync(courseId, moduleId))
+            return Unauthorized();
 
         var dto = new UploadDocumentDto(file.FileName, file.ContentType, file.Length, courseId, moduleId);
 
@@ -95,7 +99,7 @@ public class DocumentController(IServiceManager serviceManager) : ControllerBase
     }
 
     // Teachers can access all courses, students only their own
-    private async Task<bool> CanAccessDocumentAsync(int? courseId)
+    private async Task<bool> CanAccessCourseDocumentAsync(int? courseId)
     {
         if (User.IsInRole("Teacher"))
             return true;
@@ -110,6 +114,23 @@ public class DocumentController(IServiceManager serviceManager) : ControllerBase
         return user.CourseId == courseId;
     }
 
+    // Teachers can access all courses, students only their own
+    private async Task<bool> CanAccessModuleDocumentAsync(int? moduleId)
+    {
+        if (User.IsInRole("Teacher"))
+            return true;
+
+        if (moduleId is null)
+            return false;
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrWhiteSpace(userId))
+            return false;
+        var user = await _serviceManager.UserService.GetUserAsync(userId);
+        var module = await _serviceManager.ModuleService.GetByIdAsync((int)moduleId);
+        return module!.CourseId == user.CourseId;
+    }
+
     private async Task<bool> CanDownloadDocumentAsync(int documentId)
     {
         if (User.IsInRole("Teacher"))
@@ -120,6 +141,24 @@ public class DocumentController(IServiceManager serviceManager) : ControllerBase
         var user = await _serviceManager.UserService.GetUserAsync(userId);
         if (user.CourseId is null)
             return false;
-        return await _serviceManager.DocumentService.IsInCourse((int)user.CourseId, documentId);
+        return _serviceManager.DocumentService.IsInCourse((int)user.CourseId, documentId);
+    }
+
+    private async Task<bool> CanUploadDocumentAsync(int? courseId, int? moduleId)
+    {
+        if (User.IsInRole("Teacher"))
+            return true;
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrWhiteSpace(userId))
+            return false;
+        var user = await _serviceManager.UserService.GetUserAsync(userId);
+        if (user.CourseId is null)
+            return false;
+        if (user.CourseId == courseId)
+            return true;
+        if (moduleId is null)
+            return false;
+        var module = await _serviceManager.ModuleService.GetByIdAsync((int)moduleId);
+        return module!.CourseId == user.CourseId;
     }
 }
