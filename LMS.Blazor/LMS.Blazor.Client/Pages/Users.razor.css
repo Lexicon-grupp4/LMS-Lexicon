@@ -348,3 +348,82 @@
         order: -1;
     }
 }
+
+/* =========================================
+   USER MANAGEMENT - SEARCH BAR
+   MAGIC PATTERNS STYLE
+   ========================================= */
+
+.users-search {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 24px 26px;
+    background: #ffffff;
+    border-bottom: 1px solid #edf0ed;
+}
+
+    /* SEARCH INPUT */
+
+    .users-search input.form-control {
+        flex: 1;
+        width: 100%;
+        max-width: 480px;
+        min-height: 44px;
+        padding: 11px 16px;
+        border: 1px solid #dce3de;
+        border-radius: 9px;
+        background: #fafcfb;
+        color: #33453a;
+        font-size: 13px;
+        box-shadow: none;
+    }
+
+        .users-search input.form-control::placeholder {
+            color: #98a39b;
+        }
+
+        .users-search input.form-control:focus {
+            background: #ffffff;
+            border-color: #658b70;
+            box-shadow: 0 0 0 3px rgba(101, 139, 112, 0.12);
+            outline: none;
+        }
+
+    /* SEARCH BUTTON */
+
+    .users-search .users-add-button {
+        min-height: 44px;
+        padding: 11px 24px;
+        border-radius: 9px;
+        background: #233e32;
+        border-color: #233e32;
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+        .users-search .users-add-button:hover {
+            background: #315645;
+            border-color: #315645;
+        }
+
+/* RESPONSIVE SEARCH */
+
+@media (max-width: 620px) {
+    .users-search {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 20px 18px;
+    }
+
+        .users-search input.form-control {
+            max-width: none;
+        }
+
+        .users-search .users-add-button {
+            width: 100%;
+        }
+}

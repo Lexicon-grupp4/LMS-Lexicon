@@ -88,7 +88,20 @@ namespace LMS.Infrastructure.Repositories
             Role = role.Name
         });
 
-            return await query.ToPagedListAsync(parameters);
+            if (!string.IsNullOrWhiteSpace(parameters.SearchTerm))
+            {
+                var searchTerm = parameters.SearchTerm.Trim();
+
+                query = query.Where(x =>
+                    (x.User.FirstName ?? "").Contains(searchTerm) ||
+                    (x.User.LastName ?? "").Contains(searchTerm) ||
+                    (x.User.Email ?? "").Contains(searchTerm));
+            }
+            return await query
+               .OrderBy(x => x.User.LastName)
+               .ThenBy(x => x.User.FirstName)
+               .ThenBy(x => x.User.Id)
+               .ToPagedListAsync(parameters);
         }
 
         public async Task<IEnumerable<ApplicationUser>> GetUsersByCourseIdAsync(int courseId, bool trackChanges = false) =>

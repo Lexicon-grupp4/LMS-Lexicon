@@ -1,4 +1,5 @@
-﻿@page "/courses/{CourseId:int}/modules"
+﻿
+@page "/courses/{CourseId:int}/modules"
 
 @using LMS.Shared.DTOs.Module
 @using LMS.Shared.Paging
@@ -11,94 +12,154 @@
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<PageTitle>Course Modules</PageTitle>
+<PageTitle>Module Management</PageTitle>
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h3>Course Modules</h3>
-        <p class="text-muted mb-0">Modules ordered by start date</p>
-    </div>
+<div class="modules-page">
 
-    @if (isTeacher)
-    {
-        <a class="btn btn-primary"
-           href="@($"/modules/create/{CourseId}")">
-            <span class="bi bi-plus-circle"></span>
-            Add Module
-        </a>
-    }
-</div>
-
-@if (isLoading)
-{
-    <div class="text-center">
-        <div class="spinner-border" role="status">
-            <span class="visually-hidden">Loading...</span>
+    <!-- PAGE HEADER -->
+    <header class="modules-header">
+        <div class="modules-header-text">
+            <h1>Module Management</h1>
+            <p>Manage course modules, schedules and activities.</p>
         </div>
-    </div>
-}
-else if (!string.IsNullOrWhiteSpace(errorMessage))
-{
-    <div class="alert alert-danger">@errorMessage</div>
-}
-else if (modules.Count == 0)
-{
-    <div class="alert alert-info">
-        No modules have been created for this course yet.
-    </div>
-}
-else
-{
-    <div class="table-responsive">
-    <table class="table table-striped table-hover">
-        <thead>
-            <tr>
-                <th>Module ID</th>
-                <th>Module Name</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Schedule</th>
 
-                @if (isTeacher)
-                {
-                    <th>Actions</th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var module in modules)
-            {
-                <tr @key="module.Id">
-                    <td>@module.Id</td>
-                    <td>@module.Name</td>
-                    <td>@module.StartDate.ToString("yyyy-MM-dd")</td>
-                    <td>@module.EndDate.ToString("yyyy-MM-dd")</td>
+        @if (isTeacher)
+        {
+            <a class="modules-add-button"
+               href="@($"/modules/create/{CourseId}")">
+                <span class="bi bi-plus-circle"></span>
+                Add Module
+            </a>
+        }
+    </header>
 
-                    <td>
-                        <a class="btn btn-sm btn-info"
-                           href="@($"/modules/{module.Id}/activities")">
-                            <span class="bi bi-calendar-event"></span>
-                            Schedule
-                        </a>
-                    </td>
+    <!-- MAIN CARD -->
+    <section class="modules-card">
 
-                    @if (isTeacher)
+        <div class="modules-card-header">
+            <div>
+                <h2>All Modules</h2>
+                <p>
+                    @if (!isLoading && string.IsNullOrWhiteSpace(errorMessage))
                     {
-                        <td>
-                            <a class="btn btn-sm btn-primary"
-                               href="@($"/modules/edit/{module.Id}")">
-                                <span class="bi bi-pencil"></span>
-                                Edit
-                            </a>
-                        </td>
+                        <span>@modules.Count modules available</span>
                     }
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
+                    else
+                    {
+                        <span>Module overview</span>
+                    }
+                </p>
+            </div>
 
-}
+            <span class="modules-header-icon bi bi-journal-text"
+                  aria-hidden="true"></span>
+        </div>
+
+        @if (isLoading)
+        {
+            <div class="modules-state">
+                <div class="spinner-border modules-spinner"
+                     role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <strong>Loading modules...</strong>
+                <p>Please wait while we load your modules.</p>
+            </div>
+        }
+        else if (!string.IsNullOrWhiteSpace(errorMessage))
+        {
+            <div class="modules-error" role="alert">
+                <span class="bi bi-exclamation-circle"
+                      aria-hidden="true"></span>
+                <span>@errorMessage</span>
+            </div>
+        }
+        else if (modules.Count == 0)
+        {
+            <div class="modules-state">
+                <span class="modules-empty-icon bi bi-journal-x"
+                      aria-hidden="true"></span>
+                <strong>No modules found</strong>
+                <p>No modules have been created for this course yet.</p>
+            </div>
+        }
+        else
+        {
+            <div class="modules-table-wrapper">
+                <table class="modules-table">
+                    <thead>
+                        <tr>
+                            <th>MODULE ID</th>
+                            <th>MODULE NAME</th>
+                            <th>START DATE</th>
+                            <th>END DATE</th>
+                            <th>SCHEDULE</th>
+
+                            @if (isTeacher)
+                            {
+                                <th class="modules-actions-heading">
+                                    ACTIONS
+                                </th>
+                            }
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var module in modules)
+                        {
+                            <tr @key="module.Id">
+                                <td>
+                                    <span class="modules-id-badge">
+                                        @module.Id
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <div class="modules-name-cell">
+                                        <span class="modules-name-icon bi bi-journal-bookmark"
+                                              aria-hidden="true"></span>
+                                        <span class="modules-name">
+                                            @module.Name
+                                        </span>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    @module.StartDate.ToString("yyyy-MM-dd")
+                                </td>
+
+                                <td>
+                                    @module.EndDate.ToString("yyyy-MM-dd")
+                                </td>
+
+                                <td>
+                                    <a class="modules-schedule-button"
+                                       href="@($"/modules/{module.Id}/activities")">
+                                        <span class="bi bi-calendar-event"
+                                              aria-hidden="true"></span>
+                                        Schedule
+                                    </a>
+                                </td>
+
+                                @if (isTeacher)
+                                {
+                                    <td class="modules-actions-cell">
+                                        <a class="modules-edit-button"
+                                           href="@($"/modules/edit/{module.Id}")">
+                                            <span class="bi bi-pencil"
+                                                  aria-hidden="true"></span>
+                                            Edit
+                                        </a>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
+</div>
 
 @code {
     [Parameter]
@@ -109,7 +170,7 @@ else
     private bool isTeacher;
     private string? errorMessage;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
         var authState =
             await AuthenticationStateProvider.GetAuthenticationStateAsync();
