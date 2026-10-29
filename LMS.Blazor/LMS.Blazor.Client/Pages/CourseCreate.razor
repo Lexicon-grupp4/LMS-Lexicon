@@ -1,10 +1,12 @@
-﻿
-@page "/course/create"
+﻿@page "/course/create"
 
 @using LMS.Blazor.Client.Components
 @using LMS.Blazor.Client.Models
 @using LMS.Blazor.Client.Services.ApiProxy
 @using LMS.Shared.DTOs.CourseDtos
+
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Teacher")]
 
 @inject IApiProxyClient ApiProxyClient
 @inject NavigationManager NavigationManager
@@ -31,16 +33,14 @@
                 <p>Enter the details for the new course below.</p>
             </div>
 
-            <span class="course-create-header-icon bi bi-journal-plus"
-                  aria-hidden="true"></span>
+            <span class="course-create-header-icon bi bi-journal-plus" aria-hidden="true"></span>
         </div>
 
         <!-- ERROR MESSAGE -->
         @if (!string.IsNullOrWhiteSpace(errorMessage))
         {
             <div class="course-create-error" role="alert">
-                <span class="bi bi-exclamation-circle"
-                      aria-hidden="true"></span>
+                <span class="bi bi-exclamation-circle" aria-hidden="true"></span>
 
                 <span>@errorMessage</span>
             </div>
@@ -49,9 +49,7 @@
         <!-- COURSE FORM -->
         <div class="course-create-form">
 
-            <CourseForm Model="model"
-                        OnValidSubmit="HandleValidSubmit"
-                        IsSubmitting="isSubmitting"
+            <CourseForm Model="model" OnValidSubmit="HandleValidSubmit" IsSubmitting="isSubmitting"
                         SubmitButtonText="Create" />
 
         </div>

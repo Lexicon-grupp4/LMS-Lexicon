@@ -1,8 +1,10 @@
 ﻿@page "/courses"
 
-@using LMS.Blazor.Client.Components
 @using LMS.Blazor.Client.Services.ApiProxy
 @using LMS.Shared.DTOs.CourseDtos
+
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Teacher")]
 
 @inject IApiProxyClient ApiProxyClient
 @inject IJSRuntime JS
