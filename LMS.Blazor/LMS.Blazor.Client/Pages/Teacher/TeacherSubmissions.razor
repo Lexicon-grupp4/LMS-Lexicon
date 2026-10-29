@@ -4,9 +4,11 @@
 @using LMS.Blazor.Client.Services.ApiProxy
 @using LMS.Shared.DTOs.SubmissionDtos
 @using LMS.Shared.Paging
+@using Microsoft.AspNetCore.Authorization
 
 @inject IApiProxyClient ApiProxyClient
 @inject NavigationManager NavigationManager
+@attribute [Authorize(Roles = "Teacher")]
 
 <PageTitle>Student Submissions</PageTitle>
 

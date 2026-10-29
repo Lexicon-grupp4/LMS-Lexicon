@@ -69,15 +69,15 @@ public class SubmissionService(IUnitOfWork uow, IMapper mapper, IConfiguration c
         if (teacher is null ||
             !await userManager.IsInRoleAsync(teacher, "Teacher"))
         {
-            throw new TokenValidationException (
+            throw new TokenValidationException(
                 "Only teachers can view submissions.");
         }
 
         // CourseId identifies the teacher's authorized course.
         if (teacher.CourseId is not int courseId || courseId <= 0)
         {
-            throw new InvalidOperationException(
-                "The teacher is not assigned to a course.");
+            throw new NotFoundException(
+                "Could not load submissions", "Could not Load");
         }
 
         var allowedStatuses = new[]
@@ -98,8 +98,8 @@ public class SubmissionService(IUnitOfWork uow, IMapper mapper, IConfiguration c
 
             if (status is null)
             {
-                throw new NotFoundException(
-                    "Invalid submission status.");
+                throw new InvalidSubmissionStatusException(
+                      "Invalid submission status.");
             }
         }
 
