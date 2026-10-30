@@ -55,8 +55,8 @@ public class SubmissionService(IUnitOfWork uow, IMapper mapper, IConfiguration c
         return mapper.Map<SubmissionDto>(submission);
     }
 
-    public async Task<SubmissionDto?> GetMySubmissionAsync(int activityId, string userId) =>
-        mapper.Map<SubmissionDto?>(
+    public async Task<List<SubmissionDto>> GetMySubmissionsAsync(int activityId, string userId) =>
+        mapper.Map<List<SubmissionDto>>(
                 await uow.SubmissionRepository.GetByActivityAndUserAsync(activityId, userId));
     public async Task<PagedResponse<TeacherAssignmentSubmissionDto>> GetTeacherSubmissionsAsync(
         string teacherId,

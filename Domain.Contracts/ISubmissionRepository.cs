@@ -7,7 +7,7 @@ namespace Domain.Contracts;
 public interface ISubmissionRepository : IRepositoryBase<Submission>
 {
     Task<Submission?> GetByIdAsync(int id);
-    Task<Submission?> GetByActivityAndUserAsync(int activityId, string userId);
+    Task<List<Submission>> GetByActivityAndUserAsync(int activityId, string userId);
     Task<IPagedList<TeacherSubmissionReadModel>> GetTeacherSubmissionsAsync(
             int courseId,
             int? activityId,

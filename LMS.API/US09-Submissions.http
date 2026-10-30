@@ -2,6 +2,10 @@
 @NotificationId = 1
 @CourseId = 1
 
+# Local seed password. It differs between machines, so update it to match yours:
+# dotnet user-secrets list --project LMS.API (key "password")
+@SeedPassword = Dev1!KDXKDFZZ9Bbk
+
 ########################################
 # Submissions – user story US09
 # Run top to bottom.
@@ -13,7 +17,7 @@ Content-Type: application/json
 
 {
   "email": "Teacher@Lms.com",
-  "password": "Dev!qNVT3lFip31a"
+  "password": "{{SeedPassword}}"
 }
 
 > {%
@@ -76,7 +80,7 @@ Content-Type: application/json
 
 {
   "email": "Student@Lms.com",
-  "password": "Dev!qNVT3lFip31a"
+  "password": "{{SeedPassword}}"
 }
 
 > {%
@@ -99,8 +103,32 @@ Content-Disposition: form-data; name="activityId"
 {{assignmentId}}
 --LmsBoundary--
 
-### 9. Student sees own submission (200)
+### 9. Student sees own submissions (200, list with "answer.txt")
 GET {{LMS.API_HostAddress}}/api/submissions/activity/{{assignmentId}}/mine
+Authorization: Bearer {{studentToken}}
+
+### 9a. Student resubmits (200)
+POST {{LMS.API_HostAddress}}/api/submissions
+Authorization: Bearer {{studentToken}}
+Content-Type: multipart/form-data; boundary=LmsBoundary
+
+--LmsBoundary
+Content-Disposition: form-data; name="file"; filename="answer-v2.txt"
+Content-Type: text/plain
+
+My second submission
+--LmsBoundary
+Content-Disposition: form-data; name="activityId"
+
+{{assignmentId}}
+--LmsBoundary--
+
+### 9b. Student sees both submissions (200, "answer-v2.txt" first)
+GET {{LMS.API_HostAddress}}/api/submissions/activity/{{assignmentId}}/mine
+Authorization: Bearer {{studentToken}}
+
+### 9c. Student with no submission on this assignment (200, empty list)
+GET {{LMS.API_HostAddress}}/api/submissions/activity/{{pastAssignmentId}}/mine
 Authorization: Bearer {{studentToken}}
 
 ### 10. Student uploads a forbidden file type (400)
@@ -141,7 +169,7 @@ Content-Type: application/json
 
 {
   "email": "Maria.Garcia@Lms.com",
-  "password": "Dev!qNVT3lFip31a"
+  "password": "{{SeedPassword}}"
 }
 
 > {%

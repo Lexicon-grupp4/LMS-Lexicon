@@ -15,9 +15,10 @@ public class SubmissionRepository(ApplicationDbContext context) : RepositoryBase
         .Include(s => s.Activity)
         .FirstOrDefaultAsync();
 
-    public async Task<Submission?> GetByActivityAndUserAsync(int activityId, string userId) =>
+    public async Task<List<Submission>> GetByActivityAndUserAsync(int activityId, string userId) =>
         await FindByCondition(s => s.ActivityId == activityId && s.UserId == userId)
-        .FirstOrDefaultAsync();
+        .OrderByDescending(s => s.SubmittedAt)
+        .ToListAsync();
 
     public async Task<IPagedList<TeacherSubmissionReadModel>> GetTeacherSubmissionsAsync(
            int courseId,
