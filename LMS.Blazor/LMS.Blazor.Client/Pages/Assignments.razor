@@ -1,6 +1,6 @@
-﻿
-@page "/assignments"
-
+﻿@page "/assignments"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Student")]
 @using LMS.Blazor.Client.Components
 @using LMS.Blazor.Client.Services.ApiProxy
 @using LMS.Blazor.Client.Helper
@@ -18,8 +18,7 @@
 
 <div class="assignments-page">
 
-    <PageHeader Title="Assignments"
-                Description="Here you can see your assignments and their status." />
+    <PageHeader Title="Assignments" Description="Here you can see your assignments and their status." />
 
     @if (isLoading)
     {
@@ -27,13 +26,11 @@
     }
     else if (hasError)
     {
-        <ContentState Type="error"
-                      Message="Could not load the assignments." />
+        <ContentState Type="error" Message="Could not load the assignments." />
     }
     else if (!hasAssignments)
     {
-        <ContentState Type="empty"
-                      Message="There are no assignments to display." />
+        <ContentState Type="empty" Message="There are no assignments to display." />
     }
     else
     {
@@ -53,9 +50,7 @@
                     </p>
                 </div>
 
-                <button type="button"
-                        class="assignment-button secondary"
-                        @onclick="() => ViewDetails(assignment)">
+                <button type="button" class="assignment-button secondary" @onclick="() => ViewDetails(assignment)">
                     View details
                 </button>
 
@@ -65,13 +60,9 @@
 
     @if (showDetailsModal && selectedAssignment is not null)
     {
-        <div class="assignment-modal-backdrop"
-             @onclick="CloseDetails">
+        <div class="assignment-modal-backdrop" @onclick="CloseDetails">
 
-            <div class="assignment-modal"
-                 role="dialog"
-                 aria-modal="true"
-                 aria-labelledby="assignment-modal-title"
+            <div class="assignment-modal" role="dialog" aria-modal="true" aria-labelledby="assignment-modal-title"
                  @onclick:stopPropagation="true">
 
                 <div class="assignment-modal-header">
@@ -86,10 +77,7 @@
                         </h2>
                     </div>
 
-                    <button type="button"
-                            class="assignment-modal-close"
-                            disabled="@isUploading"
-                            @onclick="CloseDetails"
+                    <button type="button" class="assignment-modal-close" disabled="@isUploading" @onclick="CloseDetails"
                             aria-label="Close details">
                         &times;
                     </button>
@@ -181,19 +169,21 @@
                         {
                             <p>Loading submission...</p>
                         }
-                        else if (currentSubmission is not null)
+                        else if (submissions.Count > 0)
                         {
                             <div class="assignment-submission-info">
-                                <strong>Current submission</strong>
+                                <strong>Your submissions</strong>
 
-                                <p>@currentSubmission.FileName</p>
-
-                                <p>
-                                    Submitted:
-                                    @currentSubmission.SubmittedAt.ToLocalTime().ToString("dd MMM yyyy HH:mm")
-                                </p>
-
-                                <p>Status: @currentSubmission.Status</p>
+                                @foreach (var submission in submissions)
+                                {
+                                    <p>
+                                        @submission.FileName
+                                        - @submission.SubmittedAt.ToLocalTime().ToString("dd MMM yyyy HH:mm")
+                                        <span class="assignment-status @(submission.Status == "Late" ? "overdue" : "awaiting")">
+                                            @submission.Status
+                                        </span>
+                                    </p>
+                                }
                             </div>
                         }
 
@@ -201,8 +191,7 @@
 
                             <label class="assignment-file-label">
 
-                                <span class="bi bi-cloud-arrow-up assignment-upload-icon"
-                                      aria-hidden="true"></span>
+                                <span class="bi bi-cloud-arrow-up assignment-upload-icon" aria-hidden="true"></span>
 
                                 <strong>
                                     @(selectedFile?.Name ?? "Choose a file")
@@ -216,10 +205,8 @@
                                     Maximum file size: 10 MB
                                 </span>
 
-                                <InputFile @key="fileInputKey"
-                                           OnChange="OnFileSelected"
-                                           accept=".pdf,.docx,.pptx,.xlsx,.txt,.jpg,.jpeg,.png"
-                                           disabled="@isUploading"
+                                <InputFile @key="fileInputKey" OnChange="OnFileSelected"
+                                           accept=".pdf,.docx,.pptx,.xlsx,.txt,.jpg,.jpeg,.png" disabled="@isUploading"
                                            class="assignment-file-input" />
 
                             </label>
@@ -229,8 +216,7 @@
                         <div class="assignment-validation-info">
 
                             <strong>
-                                <span class="bi bi-info-circle"
-                                      aria-hidden="true"></span>
+                                <span class="bi bi-info-circle" aria-hidden="true"></span>
                                 File validation
                             </strong>
 
@@ -255,10 +241,8 @@
                             </div>
                         }
 
-                        <button type="button"
-                                class="assignment-submit-button"
-                                disabled="@(selectedFile is null || isUploading)"
-                                @onclick="SubmitAssignment">
+                        <button type="button" class="assignment-submit-button"
+                                disabled="@(selectedFile is null || isUploading)" @onclick="SubmitAssignment">
 
                             @if (isUploading)
                             {
@@ -266,8 +250,7 @@
                             }
                             else
                             {
-                                <span class="bi bi-upload"
-                                      aria-hidden="true"></span>
+                                <span class="bi bi-upload" aria-hidden="true"></span>
 
                                 <span>Submit assignment</span>
                             }
@@ -280,9 +263,7 @@
 
                 <div class="assignment-modal-footer">
 
-                    <button type="button"
-                            class="assignment-button secondary"
-                            disabled="@isUploading"
+                    <button type="button" class="assignment-button secondary" disabled="@isUploading"
                             @onclick="CloseDetails">
                         Close
                     </button>
@@ -305,7 +286,7 @@
     private List<AssignmentDetailsDto> assignments = new();
 
     private IBrowserFile? selectedFile;
-    private SubmissionDto? currentSubmission;
+    private List<SubmissionDto> submissions = [];
 
     private bool isUploading;
     private bool isLoadingSubmission;
@@ -374,7 +355,7 @@
         showDetailsModal = true;
 
         selectedFile = null;
-        currentSubmission = null;
+        submissions = [];
         uploadError = null;
         uploadSuccess = null;
 
@@ -385,26 +366,27 @@
 
         try
         {
-            var submission =
-                await ApiProxyClient.GetAsync<SubmissionDto>(
+            var result =
+                await ApiProxyClient.GetAsync<List<SubmissionDto>>(
                     $"submissions/activity/{assignment.Id}/mine");
 
             if (version == modalVersion)
             {
-                currentSubmission = submission;
+                submissions = result ?? [];
             }
         }
         catch (ApiException ex)
-            when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
         {
-            // No previous submission exists.
-            // This is normal for a new assignment.
+            if (version == modalVersion)
+            {
+                uploadError = ex.Message;
+            }
         }
         catch
         {
             if (version == modalVersion)
             {
-                uploadError = "Could not load your previous submission.";
+                uploadError = "Could not load your submissions. The server could not be reached.";
             }
         }
         finally
@@ -427,7 +409,7 @@
         selectedAssignment = null;
 
         selectedFile = null;
-        currentSubmission = null;
+        submissions = [];
 
         uploadError = null;
         uploadSuccess = null;
@@ -515,7 +497,7 @@
                 return;
             }
 
-            currentSubmission = result;
+            submissions.Insert(0, result);
 
             selectedFile = null;
             fileInputKey++;
@@ -525,10 +507,9 @@
 
             await RefreshAssignmentsAfterUpload();
         }
-        catch
+        catch (ApiException ex)
         {
-            uploadError =
-                "Upload failed. Please try again.";
+            uploadError = ex.Message;
         }
         finally
         {

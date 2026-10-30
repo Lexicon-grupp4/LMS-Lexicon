@@ -12,4 +12,6 @@ public interface IServiceManager
     IFeedbackService FeedbackService { get; }
 
     IDashboardService DashboardService { get; }
+    IActionTypeService ActionTypeService { get; }
+    IActivityService ActivityService { get; }
 }

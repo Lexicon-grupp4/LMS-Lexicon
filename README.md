@@ -298,4 +298,6 @@ Push till `main` kör GitHub Actions som bygger och publicerar två appar till A
 
 Azure-inloggningen gäller bara körningar från `main`.
 
+**Varje deploy från `main` raderar all data i Azure-databasen.** Workflowen tar bort alla tabeller och kör EF Core-migreringarna, och API:et seedar databasen när det startar. Om ett steg misslyckas stoppas deployen. Anslutningssträngen ligger i GitHub-secreten `AZURE_SQL_CONNECTION_STRING`. Ta bort steget `Reset database` om databasen ska börja innehålla riktig data.
+
 API:et har ingen sida på rot-URL:en (`/` ger 404), använd `/swagger`. Swagger visas bara när `ASPNETCORE_ENVIRONMENT` är `Development`, vilket just nu är satt i appinställningarna för `lms2-api`. Om den inställningen tas bort slutar Swagger-länken att fungera.

@@ -6,7 +6,7 @@ namespace Service.Contracts;
 public interface ISubmissionService
 {
     Task<SubmissionDto> SubmitAsync(UploadSubmissionDto dto, Stream content, string userId);
-    Task<SubmissionDto?> GetMySubmissionAsync(int activityId, string userId);
+    Task<List<SubmissionDto>> GetMySubmissionsAsync(int activityId, string userId);
     Task<PagedResponse<TeacherAssignmentSubmissionDto>> GetTeacherSubmissionsAsync(
         string teacherId,
         int? activityId,
