@@ -166,6 +166,12 @@
                                             Edit
                                         </a>
 
+                                        <!-- VIEW MODULES -->
+                                        <a class="courses-view-modules-button"
+                                           href="@($"/courses/{c.Id}/modules")">
+                                            View Modules
+                                        </a>
+
                                         <!-- DELETE -->
                                         <button type="button" class="courses-delete-button"
                                                 disabled="@deletingIds.Contains(c.Id)" @onclick="() => DeleteCourseAsync(c.Id)">
