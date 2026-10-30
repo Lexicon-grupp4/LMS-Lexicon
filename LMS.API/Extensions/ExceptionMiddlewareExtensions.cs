@@ -31,6 +31,7 @@ public static class ExceptionMiddlewareExtensions
                         DeleteOwnAccountException ex => (StatusCodes.Status400BadRequest, ex.Title),
                         NotFoundException ex => (StatusCodes.Status404NotFound, ex.Title),
                         TokenValidationException ex => (StatusCodes.Status401Unauthorized, "Unauthorized"),
+                        DeleteCourseException ex => (StatusCodes.Status409Conflict, ex.Title),
                         _ => (StatusCodes.Status500InternalServerError, "Internal Server Error")
                     };
 
