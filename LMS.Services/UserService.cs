@@ -305,7 +305,18 @@ namespace LMS.Services
         public async Task<IEnumerable<CourseParticipantDto>> GetCourseParticipantsAsync(int courseId)
         {
             var users = await _uow.UserRepsoitory.GetUsersByCourseIdAsync(courseId);
-            return _mapper.Map<IEnumerable<CourseParticipantDto>>(users);
+            var participants = new List<CourseParticipantDto>();
+
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                participants.Add(_mapper.Map<CourseParticipantDto>(user) with
+                {
+                    Role = roles.FirstOrDefault() ?? string.Empty
+                });
+            }
+
+            return participants;
         }
 
     }

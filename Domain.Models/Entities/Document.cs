@@ -14,12 +14,14 @@ namespace Domain.Models.Entities
         public Course? Course { get; set; }
         public int? ActivityId { get; set; }
         public Activity? Activity { get; set; }
-        public string FileName { get; set; } = null!;
-        public string FilePath { get; set; } = null!;
         public DateTime UploadAt { get; set; }
 
         [ForeignKey(nameof(UploadedBy))]
         public string UploadedById { get; set; } = null!;
         public ApplicationUser UploadedBy { get; set; } = null!;
+
+        [ForeignKey(nameof(StoredFile))]
+        public int StoredFileId { get; set; }
+        public StoredFile StoredFile { get; set; } = null!;
     }
 }

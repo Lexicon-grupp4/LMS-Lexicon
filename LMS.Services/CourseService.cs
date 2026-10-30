@@ -1,5 +1,6 @@
-﻿using LMS.Infrastructure.Data;
-using LMS.Infrastructure.Migrations;
+﻿using Domain.Models.Entities;
+using Domain.Models.Exceptions;
+using LMS.Infrastructure.Data;
 using LMS.Shared.DTOs.CourseDtos;
 using Microsoft.EntityFrameworkCore;
 using Service.Contracts;
@@ -47,6 +48,7 @@ public class CourseService : ICourseService
         c.Description = course.Description;
         c.StartDate = course.StartDate;
         c.EndDate = course.EndDate;
+        ValidateCourse(c);
         await _context.Courses.AddAsync(c);
         await _context.SaveChangesAsync();
         return new CourseDto(c.Id, c.Name, c.Code, c.Description, c.StartDate, c.EndDate);
@@ -54,22 +56,34 @@ public class CourseService : ICourseService
 
     public async Task<bool> DeleteCourseAsync(int id)
     {
-        var entity = await _context.Courses.FindAsync(id);
-        if (entity is null)
-            throw new KeyNotFoundException($"Course with id {id} not found.");
+        var course = await _context.Courses.FirstOrDefaultAsync(c => c.Id == id);
 
-        _context.Remove(entity);
+        if (course is null)
+        {
+            throw new NotFoundException($"Course with id {id} not found.");
 
-        await _context.SaveChangesAsync();
+        }
 
-        return true;
+        _context.Courses.Remove(course);
+
+        try
+        {
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new DeleteCourseException(
+                "Cannot delete this course because students or documents are still associated with it.",
+                ex);
+        }
     }
 
     public async Task<CourseDto> PatchCourseAsync(PatchCourseDto course)
     {
         var entity = await _context.Courses.FindAsync(course.Id);
         if (entity is null)
-            throw new KeyNotFoundException($"Course with id {course.Id} not found.");
+            throw new NotFoundException($"Course with id {course.Id} not found.");
 
         if (!string.IsNullOrWhiteSpace(course.Name))
             entity.Name = course.Name;
@@ -86,8 +100,18 @@ public class CourseService : ICourseService
         if (course.EndDate.HasValue)
             entity.EndDate = course.EndDate.Value;
 
+        ValidateCourse(entity);
+
         await _context.SaveChangesAsync();
 
         return new CourseDto(entity.Id, entity.Name, entity.Code, entity.Description, entity.StartDate, entity.EndDate);
+    }
+
+    private static void ValidateCourse(Course course)
+    {
+        if (string.IsNullOrWhiteSpace(course.Name))
+            throw new CourseNameRequiredException("Name is required");
+        if (course.StartDate > course.EndDate)
+            throw new CourseInvalidDatesException("Invalid dates. Startdate must not be after Enddate");
     }
 }

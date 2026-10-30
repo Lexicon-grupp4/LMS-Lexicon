@@ -1,60 +1,39 @@
 ﻿@page "/course/edit/{id:int}"
 @using LMS.Blazor.Client.Components
+@using LMS.Blazor.Client.Models
 @using LMS.Blazor.Client.Services.ApiProxy
 @using LMS.Shared.DTOs.CourseDtos
+
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Teacher")]
 
 @inject IApiProxyClient ApiProxyClient
 @inject NavigationManager NavigationManager
 
-<PageTitle>Edit course</PageTitle>
+<PageTitle>Edit Course</PageTitle>
 
 <div class="course-page">
+    @if (!string.IsNullOrWhiteSpace(errorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @errorMessage
+        </div>
+    }
     @if (isLoading)
     {
         <p>Loading...</p>
     }
     else
     {
-        <EditForm Model="model" OnValidSubmit="HandleValidSubmit">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-
-            <div class="mb-3">
-                <label class="form-label">Name</label>
-                <InputText class="form-control" @bind-Value="model.Name" />
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Code</label>
-                <InputText class="form-control" @bind-Value="model.Code" />
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Description</label>
-                <InputTextArea class="form-control" @bind-Value="model.Description" />
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Start date</label>
-                <InputDate class="form-control" @bind-Value="model.StartDate" />
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">End date</label>
-                <InputDate class="form-control" @bind-Value="model.EndDate" />
-            </div>
-
-            <button type="submit" class="btn btn-primary" disabled="@isSubmitting">
-                @(isSubmitting ? "Saving..." : "Save")
-            </button>
-        </EditForm>
+        <CourseForm Model="model" OnValidSubmit="HandleValidSubmit" IsSubmitting="isSubmitting" SubmitButtonText="Save" />
     }
 </div>
 
 @code {
     [Parameter] public int id { get; set; }
 
-    private CourseModel model = new();
+    private string errorMessage = string.Empty;
+    private CourseFormModel model = new();
     private bool isSubmitting = false;
     private bool isLoading = true;
 
@@ -64,8 +43,10 @@
         {
             CourseDto? course = await ApiProxyClient.GetAsync<CourseDto>($"courses/{id}");
             if (course == null)
+            {
+                errorMessage = "Could not load the course";
                 return;
-            model.Id = course.Id;
+            }
             model.Name = course.Name;
             model.Code = course.Code;
             model.Description = course.Description;
@@ -75,7 +56,7 @@
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            errorMessage = "Could not load the course: " + ex.Message;
         }
     }
 
@@ -85,7 +66,7 @@
         try
         {
             var dto = new PatchCourseDto(
-                model.Id,
+                id,
                 model.Name,
                 model.Code,
                 model.Description,
@@ -95,19 +76,13 @@
             await ApiProxyClient.PatchAsync<PatchCourseDto, CourseDto>("courses", dto);
             NavigationManager.NavigateTo("/courses");
         }
+        catch (Exception ex)
+        {
+            errorMessage = "Could not edit the course: " + ex.Message;
+        }
         finally
         {
             isSubmitting = false;
         }
-    }
-
-    private sealed class CourseModel
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string Code { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public DateTime StartDate { get; set; } = DateTime.Today;
-        public DateTime EndDate { get; set; } = DateTime.Today.AddDays(10);
     }
 }
