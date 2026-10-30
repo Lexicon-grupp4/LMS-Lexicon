@@ -11,7 +11,7 @@
 # Run top to bottom.
 ########################################
 
-### 1. Teacher logs in
+### 1. Teacher logs in (200)
 POST {{LMS.API_HostAddress}}/api/auth/login
 Content-Type: application/json
 
@@ -24,7 +24,7 @@ Content-Type: application/json
   client.global.set("teacherToken", response.body.accessToken);
 %}
 
-### 2. Teacher finds the first module in Course A (id 1)
+### 2. Teacher finds the first module in Course A (id 1) (200)
 GET {{LMS.API_HostAddress}}/api/Module/course/1
 Authorization: Bearer {{teacherToken}}
 
@@ -32,7 +32,7 @@ Authorization: Bearer {{teacherToken}}
   client.global.set("moduleA", response.body.items[0].id);
 %}
 
-### 3. Teacher finds the assignment in that module (deadline in the future)
+### 3. Teacher finds the assignment in that module (deadline in the future) (200)
 GET {{LMS.API_HostAddress}}/api/Activity/module/{{moduleA}}
 Authorization: Bearer {{teacherToken}}
 
@@ -41,7 +41,7 @@ Authorization: Bearer {{teacherToken}}
   client.global.set("assignmentId", a.id);
 %}
 
-### 4. Teacher finds the first module in Course C (id 3, already ended)
+### 4. Teacher finds the first module in Course C (id 3, already ended) (200)
 GET {{LMS.API_HostAddress}}/api/Module/course/3
 Authorization: Bearer {{teacherToken}}
 
@@ -49,7 +49,7 @@ Authorization: Bearer {{teacherToken}}
   client.global.set("moduleC", response.body.items[0].id);
 %}
 
-### 5. Teacher finds the past assignment
+### 5. Teacher finds the past assignment (200)
 GET {{LMS.API_HostAddress}}/api/Activity/module/{{moduleC}}
 Authorization: Bearer {{teacherToken}}
 
@@ -74,7 +74,7 @@ Content-Disposition: form-data; name="activityId"
 {{assignmentId}}
 --LmsBoundary--
 
-### 7. Student (Course A) logs in
+### 7. Student (Course A) logs in (200)
 POST {{LMS.API_HostAddress}}/api/auth/login
 Content-Type: application/json
 
@@ -163,7 +163,7 @@ Content-Disposition: form-data; name="activityId"
 {{pastAssignmentId}}
 --LmsBoundary--
 
-### 12. Student in Course C logs in
+### 12. Student in Course C logs in (200)
 POST {{LMS.API_HostAddress}}/api/auth/login
 Content-Type: application/json
 
