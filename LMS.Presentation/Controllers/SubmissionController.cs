@@ -38,16 +38,15 @@ public class SubmissionController(IServiceManager serviceManager) : ControllerBa
     }
 
     [HttpGet("activity/{activityId:int}/mine")]
-    [SwaggerOperation(Summary = "My submission", Description = "The logged-in student's submission for an activity")]
-    [SwaggerResponse(StatusCodes.Status200OK, "successful", typeof(SubmissionDto))]
-    [SwaggerResponse(StatusCodes.Status404NotFound, "no submission")]
-    public async Task<ActionResult<SubmissionDto>> GetMine(int activityId)
+    [SwaggerOperation(Summary = "My submissions", Description = "The logged-in student's submissions for an activity, newest first. Empty list if none.")]
+    [SwaggerResponse(StatusCodes.Status200OK, "successful", typeof(List<SubmissionDto>))]
+    public async Task<ActionResult<List<SubmissionDto>>> GetMine(int activityId)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrWhiteSpace(userId))
             return Unauthorized();
 
-        var result = await _serviceManager.SubmissionService.GetMySubmissionAsync(activityId, userId);
-        return result is null ? NotFound() : Ok(result);
+        var result = await _serviceManager.SubmissionService.GetMySubmissionsAsync(activityId, userId);
+        return Ok(result);
     }
 }
