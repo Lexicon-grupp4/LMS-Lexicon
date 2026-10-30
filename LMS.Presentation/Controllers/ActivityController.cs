@@ -17,7 +17,7 @@ namespace LMS.Presentation.Controllers
     {
         private readonly IServiceManager _serviceManager;
 
-        public ModuleController(IServiceManager serviceManager)
+        public ActivityController(IServiceManager serviceManager)
         {
             _serviceManager = serviceManager;
         }
