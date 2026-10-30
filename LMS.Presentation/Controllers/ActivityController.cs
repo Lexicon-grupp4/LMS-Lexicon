@@ -15,11 +15,11 @@ namespace LMS.Presentation.Controllers
     [Route("api/Activity")]
     public class ActivityController : ApiControllerBase
     {
-        private readonly IActivityService _activityService;
+        private readonly IServiceManager _serviceManager;
 
-        public ActivityController(IActivityService activityService)
+        public ModuleController(IServiceManager serviceManager)
         {
-            _activityService = activityService;
+            _serviceManager = serviceManager;
         }
 
         // GET: api/Activity
@@ -40,7 +40,7 @@ namespace LMS.Presentation.Controllers
             [FromQuery] QueryParameters parameters)
         {
             var activities =
-                await _activityService.GetAllAsync(parameters);
+                await _serviceManager.ActivityService.GetAllAsync(parameters);
 
             return Ok(activities);
         }
@@ -67,7 +67,7 @@ namespace LMS.Presentation.Controllers
             [FromQuery] QueryParameters parameters)
         {
             var activities =
-                await _activityService.GetByModuleIdAsync(
+                await _serviceManager.ActivityService.GetByModuleIdAsync(
                     moduleId, parameters);
 
             return Ok(activities);
@@ -92,7 +92,7 @@ namespace LMS.Presentation.Controllers
             StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetById(int id)
         {
-            var activity = await _activityService.GetByIdAsync(id);
+            var activity = await _serviceManager.ActivityService.GetByIdAsync(id);
 
             return Ok(activity);
         }
@@ -125,7 +125,7 @@ namespace LMS.Presentation.Controllers
             [FromBody] CreateActivityDto createActivityDto)
         {
             var activity =
-                await _activityService.CreateActivityAsync(
+                await _serviceManager.ActivityService.CreateActivityAsync(
                     createActivityDto);
 
             return CreatedAtAction(
@@ -163,7 +163,7 @@ namespace LMS.Presentation.Controllers
             [FromBody] UpdateActivityDto updateActivityDto)
         {
             var activity =
-                await _activityService.UpdateActivityAsync(
+                await _serviceManager.ActivityService.UpdateActivityAsync(
                     id,
                     updateActivityDto);
 
@@ -188,7 +188,7 @@ namespace LMS.Presentation.Controllers
             StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> Delete(int id)
         {
-            await _activityService.DeleteActivityAsync(id);
+            await _serviceManager.ActivityService.DeleteActivityAsync(id);
 
             return NoContent();
         }
@@ -215,7 +215,7 @@ namespace LMS.Presentation.Controllers
                 return Unauthorized();
             }
 
-            var result = await _activityService.GetStudentAssignmentsAsync(
+            var result = await _serviceManager.ActivityService.GetStudentAssignmentsAsync(
                 userId,
                 parameters);
 

@@ -18,11 +18,11 @@ namespace LMS.Presentation.Controllers
     [Route("api/ActionType")]
     public class ActionTypeController : ApiControllerBase
     {
-        private readonly IActionTypeService _actionTypeService;
+        private readonly IServiceManager _serviceManager;
 
-        public ActionTypeController(IActionTypeService actionTypeService)
+        public ModuleController(IServiceManager serviceManager)
         {
-            _actionTypeService = actionTypeService;
+            _serviceManager = serviceManager;
         }
 
         // GET: api/ActionType
@@ -43,7 +43,7 @@ namespace LMS.Presentation.Controllers
             [FromQuery] QueryParameters parameters)
         {
             var actionTypes =
-                await _actionTypeService.GetAllAsync(parameters);
+                await _serviceManager.ActionTypeService.GetAllAsync(parameters);
 
             return Ok(actionTypes);
         }
@@ -70,7 +70,7 @@ namespace LMS.Presentation.Controllers
             
         {
             var actionTypes =
-                await _actionTypeService.GetByActivityIdAsync(
+                await _serviceManager.ActionTypeService.GetByActivityIdAsync(
                     activityId);
 
             return Ok(actionTypes);
