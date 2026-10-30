@@ -1,5 +1,4 @@
-﻿
-@page "/course"
+﻿@page "/course"
 
 @using System.Net
 @using LMS.Blazor.Client.Components
@@ -167,7 +166,11 @@
                              hidden="@(openModule != module.Id)">
 
                             <p>@module.Description</p>
-
+                            <p>
+                                <a class="courses-name-link" href="@($"/modules/{module.Id}")">
+                                    <span>View module</span>
+                                </a>
+                            </p>
                         </div>
 
                     </div>
@@ -176,7 +179,7 @@
 
         </section>
 
-        <CourseDocuments CourseId="course.Id" />
+        <CourseDocuments Id="course.Id" Type="course" />
     }
 
 </div>
