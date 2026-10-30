@@ -11,6 +11,7 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
     public const string SeedPassword = "Test1!Password";
 
     private readonly string _connectionString;
+    private readonly string _uploadFolder = Path.Combine(Path.GetTempPath(), $"LMS_Tests_{Guid.NewGuid():N}");
 
     public ApiFactory()
     {
@@ -30,6 +31,7 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         Environment.SetEnvironmentVariable("ConnectionStrings__ApplicationDbContext", _connectionString);
         Environment.SetEnvironmentVariable("JwtSettings__SecretKey", "test-only-secret-key-at-least-32-characters");
         Environment.SetEnvironmentVariable("password", SeedPassword);
+        Environment.SetEnvironmentVariable("FileStorage__RootPath", _uploadFolder);
 
         // The seed step runs when the API starts, so the tables must exist first
         await using var context = CreateContext();
@@ -46,6 +48,9 @@ public class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
         await using var context = CreateContext();
         await context.Database.EnsureDeletedAsync();
+
+        if (Directory.Exists(_uploadFolder))
+            Directory.Delete(_uploadFolder, recursive: true);
     }
 
     private ApplicationDbContext CreateContext() =>
