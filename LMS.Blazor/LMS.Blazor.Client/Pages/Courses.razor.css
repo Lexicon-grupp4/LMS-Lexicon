@@ -253,6 +253,32 @@
         cursor: not-allowed;
     }
 
+/* VIEW MODULES BUTTON */
+
+.courses-view-modules-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.55rem 0.8rem;
+    background: #edf3fa;
+    border: 1px solid #d4e2f2;
+    border-radius: 8px;
+    color: #285b91;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 150ms ease;
+}
+
+    .courses-view-modules-button:hover {
+        background: #dce9f7;
+        border-color: #bfd3eb;
+        color: #194875;
+        text-decoration: none;
+    }
+
 /* LOADING AND EMPTY STATES */
 
 .courses-empty-state {

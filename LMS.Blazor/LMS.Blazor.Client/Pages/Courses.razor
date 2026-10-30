@@ -12,7 +12,10 @@
 <div class="courses-page">
     @if (!string.IsNullOrWhiteSpace(errorMessage))
     {
-        <div class="alert alert-danger" role="alert">@errorMessage</div>
+        <div class="alert alert-danger alert-dismissible" role="alert">
+            <strong>Unable to delete course</strong>
+            <p class="mb-0">@errorMessage</p>
+        </div>
     }
     <!-- PAGE HEADER -->
     <header class="courses-header">
@@ -163,6 +166,12 @@
                                             Edit
                                         </a>
 
+                                        <!-- VIEW MODULES -->
+                                        <a class="courses-view-modules-button"
+                                           href="@($"/courses/{c.Id}/modules")">
+                                            View Modules
+                                        </a>
+
                                         <!-- DELETE -->
                                         <button type="button" class="courses-delete-button"
                                                 disabled="@deletingIds.Contains(c.Id)" @onclick="() => DeleteCourseAsync(c.Id)">
@@ -225,12 +234,16 @@
         }
         catch (Exception ex)
         {
-            errorMessage = "Failed to delete course: " + ex.Message;
+            errorMessage = await GetDeleteErrorMessageAsync(ex);
         }
         finally
         {
             deletingIds.Remove(id);
-            StateHasChanged();
         }
+    }
+
+    private async Task<string> GetDeleteErrorMessageAsync(Exception ex)
+    {
+        return "Unable to delete the course. It may have associated students or documents. Please remove those associations before trying again.";
     }
 }

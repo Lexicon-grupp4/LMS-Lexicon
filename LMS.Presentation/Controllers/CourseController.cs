@@ -109,10 +109,14 @@ public class CourseController(IServiceManager serviceManager) : ControllerBase
 
     [HttpDelete("{id:int}")]
     [Authorize(Roles = "Teacher")]
-    [SwaggerOperation(Summary = "Delete course", Description = "Delete course desc")]
-    [SwaggerResponse(StatusCodes.Status200OK, "successful", typeof(CourseDto))]
-    [SwaggerResponse(StatusCodes.Status401Unauthorized, "unauthorized")]
-    [SwaggerResponse(StatusCodes.Status403Forbidden, "forbidden")]
+    [SwaggerOperation(
+    Summary = "Delete course",
+    Description = "Delete a course if no students or documents are associated with it.")]
+    [SwaggerResponse(StatusCodes.Status200OK, "Course deleted successfully")]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "Unauthorized")]
+    [SwaggerResponse(StatusCodes.Status403Forbidden, "Forbidden")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "Course not found")]
+    [SwaggerResponse(StatusCodes.Status409Conflict, "Course cannot be deleted because it has associated students or documents")]
     public async Task<ActionResult<bool>> DeleteCourse(int id)
     {
         var ret = await _serviceManager.CourseService.DeleteCourseAsync(id);

@@ -60,7 +60,6 @@ public class SubmissionService(IUnitOfWork uow, IMapper mapper, IConfiguration c
                 await uow.SubmissionRepository.GetByActivityAndUserAsync(activityId, userId));
     public async Task<PagedResponse<TeacherAssignmentSubmissionDto>> GetTeacherSubmissionsAsync(
         string teacherId,
-        int courseId,
         int? activityId,
         string? status,
         QueryParameters parameters)
@@ -70,20 +69,15 @@ public class SubmissionService(IUnitOfWork uow, IMapper mapper, IConfiguration c
         if (teacher is null ||
             !await userManager.IsInRoleAsync(teacher, "Teacher"))
         {
-            throw new UnauthorizedAccessException(
+            throw new TokenValidationException(
                 "Only teachers can view submissions.");
         }
 
         // CourseId identifies the teacher's authorized course.
-        if (teacher.CourseId != courseId)
+        if (teacher.CourseId is not int courseId || courseId <= 0)
         {
-            throw new UnauthorizedAccessException(
-                "You are not assigned to this course.");
-        }
-
-        if (courseId <= 0)
-        {
-            throw new ArgumentException("Invalid course ID.");
+            throw new NotFoundException(
+                "Could not load submissions", "Could not Load");
         }
 
         var allowedStatuses = new[]
@@ -104,21 +98,20 @@ public class SubmissionService(IUnitOfWork uow, IMapper mapper, IConfiguration c
 
             if (status is null)
             {
-                throw new ArgumentException(
-                    "Invalid submission status.");
+                throw new InvalidSubmissionStatusException(
+                      "Invalid submission status.");
             }
         }
 
-        var result =
-            await uow.SubmissionRepository
-                .GetTeacherSubmissionsAsync(
-                    courseId,
-                    activityId,
-                    status,
-                    parameters);
+        var result = await uow.SubmissionRepository
+        .GetTeacherSubmissionsAsync(
+            courseId,
+            activityId,
+            status,
+            parameters);
 
-        return mapper.Map<PagedResponse<TeacherAssignmentSubmissionDto>>(
-            result);
+        return mapper.Map<
+            PagedResponse<TeacherAssignmentSubmissionDto>>(result);
     }
     public async Task<(Stream Content, string FileName)?> DownloadSubmissionAsync(
         int submissionId,
