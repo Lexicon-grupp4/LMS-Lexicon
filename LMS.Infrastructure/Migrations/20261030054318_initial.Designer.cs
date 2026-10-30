@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LMS.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20261026105543_Init")]
-    partial class Init
+    [Migration("20261030054318_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -382,9 +382,6 @@ namespace LMS.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AccountId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("ActivityId")
                         .HasColumnType("int");
 
@@ -570,7 +567,8 @@ namespace LMS.Infrastructure.Migrations
                 {
                     b.HasOne("Domain.Models.Entities.Course", "Course")
                         .WithMany("ApplicationUsers")
-                        .HasForeignKey("CourseId");
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Course");
                 });
@@ -579,15 +577,18 @@ namespace LMS.Infrastructure.Migrations
                 {
                     b.HasOne("Domain.Models.Entities.Activity", "Activity")
                         .WithMany()
-                        .HasForeignKey("ActivityId");
+                        .HasForeignKey("ActivityId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Domain.Models.Entities.Course", "Course")
                         .WithMany()
-                        .HasForeignKey("CourseId");
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Domain.Models.Entities.Module", "Module")
                         .WithMany()
-                        .HasForeignKey("ModuleId");
+                        .HasForeignKey("ModuleId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Domain.Models.Entities.StoredFile", "StoredFile")
                         .WithMany()

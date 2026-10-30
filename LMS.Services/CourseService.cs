@@ -56,15 +56,27 @@ public class CourseService : ICourseService
 
     public async Task<bool> DeleteCourseAsync(int id)
     {
-        var entity = await _context.Courses.FindAsync(id);
-        if (entity is null)
-            throw new KeyNotFoundException($"Course with id {id} not found.");
+        var course = await _context.Courses.FirstOrDefaultAsync(c => c.Id == id);
 
-        _context.Remove(entity);
+        if (course is null)
+        {
+            throw new NotFoundException($"Course with id {id} not found.");
 
-        await _context.SaveChangesAsync();
+        }
 
-        return true;
+        _context.Courses.Remove(course);
+
+        try
+        {
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (DbUpdateException ex)
+        {
+            throw new DeleteCourseException(
+                "Cannot delete this course because students or documents are still associated with it.",
+                ex);
+        }
     }
 
     public async Task<CourseDto> PatchCourseAsync(PatchCourseDto course)

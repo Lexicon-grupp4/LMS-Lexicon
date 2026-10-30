@@ -7,6 +7,8 @@ using Service.Contracts;
 using Swashbuckle.AspNetCore.Annotations;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Security.Claims;
 using System.Text;
 
 namespace LMS.Presentation.Controllers
@@ -16,11 +18,11 @@ namespace LMS.Presentation.Controllers
     [Route("api/Module")]
     public class ModuleController : ApiControllerBase
     {
-        private readonly IModuleService _moduleService;
+        private readonly IServiceManager _serviceManager;
 
-        public ModuleController(IModuleService moduleService)
+        public ModuleController(IServiceManager serviceManager)
         {
-            _moduleService = moduleService;
+            _serviceManager = serviceManager;
         }
 
         // GET: api/Module
@@ -36,7 +38,7 @@ namespace LMS.Presentation.Controllers
             StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetAll([FromQuery] QueryParameters parameters)
         {
-            var modules = await _moduleService.GetAllAsync(parameters);
+            var modules = await _serviceManager.ModuleService.GetAllAsync(parameters);
 
             return Ok(modules);
         }
@@ -56,7 +58,9 @@ namespace LMS.Presentation.Controllers
             StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetById(int id)
         {
-            var module = await _moduleService.GetByIdAsync(id);
+            if (!await CanAccessModuleAsync(id))
+                return Forbid();
+            var module = await _serviceManager.ModuleService.GetByIdAsync(id);
 
             return Ok(module);
         }
@@ -76,7 +80,7 @@ namespace LMS.Presentation.Controllers
             StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetByIdWithCourse(int id)
         {
-            var module = await _moduleService.GetByIdWithCourseAsync(id);
+            var module = await _serviceManager.ModuleService.GetByIdWithCourseAsync(id);
 
             return Ok(module);
         }
@@ -96,7 +100,7 @@ namespace LMS.Presentation.Controllers
             StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetByCourseId(int courseId)
         {
-            var modules = await _moduleService.GetByCourseIdAsync(courseId);
+            var modules = await _serviceManager.ModuleService.GetByCourseIdAsync(courseId);
 
             return Ok(modules);
         }
@@ -121,7 +125,7 @@ namespace LMS.Presentation.Controllers
             [FromQuery] int? excludeModuleId = null)
         {
             var isOverlapping =
-                await _moduleService.HasOverlappingDatesAsync(courseId, startDate, endDate, excludeModuleId);
+                await _serviceManager.ModuleService.HasOverlappingDatesAsync(courseId, startDate, endDate, excludeModuleId);
 
             return Ok(new { isOverlapping });
         }
@@ -144,7 +148,7 @@ namespace LMS.Presentation.Controllers
             StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> Create([FromBody] CreateModuleDto createModuleDto)
         {
-            var module = await _moduleService.CreateModuleAsync(createModuleDto);
+            var module = await _serviceManager.ModuleService.CreateModuleAsync(createModuleDto);
 
             return CreatedAtAction(nameof(GetById), new { id = module.Id }, module);
         }
@@ -167,7 +171,7 @@ namespace LMS.Presentation.Controllers
             StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> Update( int id,[FromBody] UpdateModuleDto updateModuleDto)
         {
-            var module = await _moduleService.UpdateModuleAsync(id,updateModuleDto);
+            var module = await _serviceManager.ModuleService.UpdateModuleAsync(id,updateModuleDto);
       
             return Ok(module);
         }
@@ -187,9 +191,26 @@ namespace LMS.Presentation.Controllers
             StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> Delete(int id)
         {
-            await _moduleService.DeleteModuleAsync(id);
+            await _serviceManager.ModuleService.DeleteModuleAsync(id);
 
             return NoContent();
+        }
+
+        // Teachers can access all courses, students only their own
+        private async Task<bool> CanAccessModuleAsync(int? moduleId)
+        {
+            if (User.IsInRole("Teacher"))
+                return true;
+
+            if (moduleId is null)
+                return false;
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrWhiteSpace(userId))
+                return false;
+            var user = await _serviceManager.UserService.GetUserAsync(userId);
+            var module = await _serviceManager.ModuleService.GetByIdAsync((int)moduleId);
+            return module!.CourseId == user.CourseId;
         }
     }
 }

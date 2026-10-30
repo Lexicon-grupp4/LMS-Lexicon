@@ -1,5 +1,4 @@
-﻿
-@page "/participants"
+﻿@page "/participants"
 @using LMS.Blazor.Client.Components
 @using LMS.Blazor.Client.Services.ApiProxy
 @using LMS.Shared.DTOs.UserDtos
@@ -16,196 +15,95 @@
 
 <div class="participants-page">
 
-    <PageHeader Title="Participants"
-                Description="Here you can see the participants in your course." />
-
-    @* SAMPLE TEACHERS *@
-    <section class="participant-group">
-
-        <div class="participant-group-heading">
-            <h2>Teachers (sample)</h2>
-            <span>1</span>
-        </div>
-
-        <ul class="participants-card">
-
-            <li class="participant-row">
-
-                <div class="participant-avatar teacher">
-                    AK
-                </div>
-
-                <div class="participant-content">
-
-                    <div class="participant-name-row">
-                        <h3>Anna Karlsson</h3>
-                    </div>
-
-                    <a href="mailto:anna.karlsson@example.com"
-                       class="participant-email">
-                        <span class="mail-icon" aria-hidden="true">✉</span>
-                        anna.karlsson@example.com
-                    </a>
-
-                </div>
-
-            </li>
-
-        </ul>
-
-    </section>
-
-    @* SAMPLE STUDENTS *@
-    <section class="participant-group">
-
-        <div class="participant-group-heading">
-            <h2>Students (sample)</h2>
-            <span>3</span>
-        </div>
-
-        <ul class="participants-card">
-
-            <li class="participant-row">
-
-                <div class="participant-avatar student">
-                    MJ
-                </div>
-
-                <div class="participant-content">
-
-                    <div class="participant-name-row">
-                        <h3>Mohamed Jama</h3>
-                    </div>
-
-                    <a href="mailto:mohamed.jama@example.com"
-                       class="participant-email">
-                        <span class="mail-icon" aria-hidden="true">✉</span>
-                        mohamed.jama@example.com
-                    </a>
-
-                </div>
-
-            </li>
-
-            <li class="participant-row">
-
-                <div class="participant-avatar student">
-                    SL
-                </div>
-
-                <div class="participant-content">
-
-                    <div class="participant-name-row">
-                        <h3>Sara Lind</h3>
-                    </div>
-
-                    <a href="mailto:sara.lind@example.com"
-                       class="participant-email">
-                        <span class="mail-icon" aria-hidden="true">✉</span>
-                        sara.lind@example.com
-                    </a>
-
-                </div>
-
-            </li>
-
-            <li class="participant-row">
-
-                <div class="participant-avatar student">
-                    JD
-                </div>
-
-                <div class="participant-content">
-
-                    <div class="participant-name-row">
-                        <h3>Johan Dahl</h3>
-                    </div>
-
-                    <a href="mailto:johan.dahl@example.com"
-                       class="participant-email">
-                        <span class="mail-icon" aria-hidden="true">✉</span>
-                        johan.dahl@example.com
-                    </a>
-
-                </div>
-
-            </li>
-
-        </ul>
-
-    </section>
+    <PageHeader Title="Participants" Description="Here you can see the participants in your course." />
 
     @* DYNAMIC COURSE PARTICIPANTS *@
-    <section class="participant-group">
-
-        <div class="participant-group-heading">
-            <h2>Course participants</h2>
-            <span>@participants.Count</span>
-        </div>
-
-        @if (isLoading)
-        {
+    @if (isLoading)
+    {
+        <section class="participant-group">
             <p>Loading participants...</p>
-        }
-        else if (hasError)
-        {
+        </section>
+    }
+    else if (hasError)
+    {
+        <section class="participant-group">
             <p role="alert">
                 Unable to load participants. Please try again later.
             </p>
-        }
-        else if (participants.Count == 0)
-        {
+        </section>
+    }
+    else if (participants.Count == 0)
+    {
+        <section class="participant-group">
             <p>No course participants found.</p>
-        }
-        else
+        </section>
+    }
+    else
+    {
+        @foreach (var (title, role, avatarClass) in participantGroups)
         {
-            <ul class="participants-card">
+            var group = participants
+                .Where(p => p.Role == role)
+                .ToList();
 
-                @foreach (var participant in participants)
-                {
-                    <li class="participant-row" @key="participant">
+            if (group.Count == 0)
+            {
+                continue;
+            }
 
-                        <div class="participant-avatar student">
-                            @GetInitials(participant)
-                        </div>
+            <section class="participant-group">
 
-                        <div class="participant-content">
+                <div class="participant-group-heading">
+                    <h2>@title</h2>
+                    <span>@group.Count</span>
+                </div>
 
-                            <div class="participant-name-row">
+                <ul class="participants-card">
 
-                                <h3>@GetDisplayName(participant)</h3>
+                    @foreach (var participant in group)
+                    {
+                        <li class="participant-row" @key="participant">
 
-                                @if (IsCurrentUser(participant))
+                            <div class="participant-avatar @avatarClass">
+                                @GetInitials(participant)
+                            </div>
+
+                            <div class="participant-content">
+
+                                <div class="participant-name-row">
+
+                                    <h3>@GetDisplayName(participant)</h3>
+
+                                    @if (IsCurrentUser(participant))
+                                    {
+                                        <span class="current-user-badge">
+                                            You
+                                        </span>
+                                    }
+
+                                </div>
+
+                                @if (!string.IsNullOrWhiteSpace(participant.Email))
                                 {
-                                    <span class="current-user-badge">
-                                        You
-                                    </span>
+                                    <a href="@($"mailto:{participant.Email}")" class="participant-email">
+
+                                        <span class="mail-icon" aria-hidden="true">✉</span>
+
+                                        @participant.Email
+
+                                    </a>
                                 }
 
                             </div>
 
-                            @if (!string.IsNullOrWhiteSpace(participant.Email))
-                            {
-                                <a href="@($"mailto:{participant.Email}")"
-                                   class="participant-email">
+                        </li>
+                    }
 
-                                    <span class="mail-icon"
-                                          aria-hidden="true">✉</span>
+                </ul>
 
-                                    @participant.Email
-
-                                </a>
-                            }
-
-                        </div>
-
-                    </li>
-                }
-
-            </ul>
+            </section>
         }
-
-    </section>
+    }
 
 </div>
 
@@ -217,6 +115,12 @@
     private bool hasError = false;
 
     private string? currentUserEmail;
+
+    private static readonly (string Title, string Role, string AvatarClass)[] participantGroups =
+    [
+        ("Teachers", "Teacher", "teacher"),
+        ("Students", "Student", "student"),
+    ];
 
     protected override async Task OnInitializedAsync()
     {
