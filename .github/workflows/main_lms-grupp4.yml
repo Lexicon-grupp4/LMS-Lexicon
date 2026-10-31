@@ -120,9 +120,11 @@ jobs:
 
       # Creates all tables again from the migrations in the repo.
       # If this fails, the workflow stops and neither app is deployed.
+      # The bundle starts Program, which needs ConnectionStrings__ApplicationDbContext.
       - name: Apply database migrations
         env:
           AZURE_SQL_CONNECTION_STRING: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
+          ConnectionStrings__ApplicationDbContext: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
         run: ./migrations/efbundle.exe --connection "$env:AZURE_SQL_CONNECTION_STRING"
 
       # Gets the API files from the build job.
