@@ -226,8 +226,16 @@
                  aria-labelledby="feedback-modal-title"
                  @onclick:stopPropagation="true">
 
-                <h2 id="feedback-modal-title">Give Feedback</h2>
+                @if(latestFeedback is not null)
+                {
+                    <h2 id="feedback-modal-title">Give another feedback</h2>
 
+                }
+                else
+                {
+                    <h2 id="feedback-modal-title">Give Feedback</h2>
+
+                }
                 <p class="feedback-modal-description">
                     <strong>Student:</strong> @selectedSubmission.StudentName
                 </p>
@@ -309,9 +317,10 @@
     private bool isSubmittingFeedback;
     private TeacherAssignmentSubmissionDto? selectedSubmission;
     private string feedbackComment = string.Empty;
-    private decimal feedbackGrade;
+    private decimal? feedbackGrade;
     private string? feedbackError;
     private string? feedbackSuccess;
+    private FeedbackDto? latestFeedback;
 
     protected override async Task OnInitializedAsync()
     {
@@ -431,17 +440,39 @@
     private static string GetDownloadUrl(int submissionId) =>
         $"api/proxy/teacher/submissions/{submissionId}/file";
 
-    private void OpenFeedback(TeacherAssignmentSubmissionDto submission)
+    private async void OpenFeedback(TeacherAssignmentSubmissionDto submission)
     {
         if (!submission.SubmissionId.HasValue)
             return;
 
         selectedSubmission = submission;
         feedbackComment = string.Empty;
-        feedbackGrade = 0;
+        feedbackGrade = null;
         feedbackError = null;
         feedbackSuccess = null;
         showFeedbackModal = true;
+        try
+        {
+            var existingFeedback =
+                await ApiProxyClient.GetAsync<IEnumerable<FeedbackDto>>(
+                    $"submissions/{submission.SubmissionId.Value}/feedback");
+
+            // API returns feedback newest first.
+             latestFeedback = existingFeedback?.FirstOrDefault();
+
+            if (latestFeedback is not null)
+            {
+                feedbackComment = latestFeedback.Comment;
+                feedbackGrade = latestFeedback.Grade;
+            }
+            await InvokeAsync(StateHasChanged);
+
+        }
+        catch (Exception ex)
+        {
+            feedbackError = "Could not load existing feedback.";
+            Console.WriteLine(ex);
+        }
     }
 
     private void CloseFeedback()
@@ -473,6 +504,12 @@
             return;
         }
 
+        if (feedbackGrade is null)
+        {
+            feedbackError = "Grade is required.";
+            return;
+        }
+
         if (feedbackGrade < 0 || feedbackGrade > 10)
         {
             feedbackError = "Grade must be between 0 and 10.";
@@ -486,7 +523,8 @@
             var dto = new CreateFeedbackDto
             {
                 Comment = feedbackComment.Trim(),
-                Grade = feedbackGrade
+                Grade = feedbackGrade.Value
+
             };
 
             using var content = JsonContent.Create(dto);
