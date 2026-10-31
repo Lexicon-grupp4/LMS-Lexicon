@@ -287,6 +287,16 @@ Det behövs framför allt för US06 Dokument, US07 studentdelning och US09 inlä
   ## Kom igång
 _Fylls i när templaten finns: krav (.NET 10 SDK), secrets, databas och hur API och Blazor startas._
 
+## Testa API:et
+
+Varje user story med endpoints har en egen fil i `LMS.API/`, t.ex. `US09-Submissions.http`.
+
+1. Starta API:et och se till att databasen är seedad.
+2. Uppdatera `@SeedPassword` högst upp i filen så att det matchar din maskin: `dotnet user-secrets list --project LMS.API` (nyckeln `password`).
+3. Kör filen uppifrån och ned. Varje rubrik anger förväntad status, t.ex. `(403)`. Läs alltid `Status:` i svaret.
+
+Rubriker med `returns ... today` är kända buggar. Den första statusen är den korrekta, och den andra är vad API:et svarar i dag.
+
 ## Deploy
 
 Push till `main` kör GitHub Actions som bygger och publicerar två appar till Azure App Service:
