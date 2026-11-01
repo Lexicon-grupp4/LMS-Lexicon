@@ -6,7 +6,7 @@
 .activities-page {
     width: 100%;
     padding: 32px 36px 48px;
-    color: #202a25;
+    color: var(--color-text-strong);
 }
 
 /* PAGE HEADER */
@@ -26,14 +26,14 @@
     font-weight: 700;
     letter-spacing: -0.8px;
     line-height: 1.25;
-    color: #202824;
+    color: var(--color-text-strong);
 }
 
 .activities-header-text p {
     margin: 0;
     font-size: 14px;
     line-height: 1.6;
-    color: #7b8580;
+    color: var(--color-text-subtle);
 }
 
 /* ADD ACTIVITY BUTTON */
@@ -45,10 +45,10 @@
     gap: 9px;
     min-height: 40px;
     padding: 10px 18px;
-    border: 1px solid #233e32;
+    border: 1px solid var(--color-primary-dark);
     border-radius: 8px;
-    background: #233e32;
-    color: #ffffff;
+    background: var(--color-primary-dark);
+    color: var(--color-white);
     font-size: 13px;
     font-weight: 600;
     text-decoration: none;
@@ -57,17 +57,17 @@
 }
 
     .activities-add-button:hover {
-        background: #315645;
-        border-color: #315645;
-        color: #ffffff;
+        background: var(--color-primary-hover);
+        border-color: var(--color-primary-hover);
+        color: var(--color-white);
     }
 
 /* MAIN CARD */
 
 .activities-card {
     width: 100%;
-    background: #ffffff;
-    border: 1px solid #e8ede9;
+    background: var(--color-white);
+    border: 1px solid var(--color-border-light);
     border-radius: 13px;
     overflow: hidden;
     box-shadow: 0 3px 16px rgba(30, 50, 40, 0.035);
@@ -79,24 +79,24 @@
     align-items: center;
     gap: 15px;
     padding: 23px 25px;
-    border-bottom: 1px solid #edf0ed;
+    border-bottom: 1px solid var(--color-border-light);
 }
 
     .activities-card-header h2 {
         margin: 0 0 6px;
         font-size: 17px;
         font-weight: 700;
-        color: #27332c;
+        color: var(--color-text);
     }
 
     .activities-card-header p {
         margin: 0;
-        color: #929b95;
+        color: var(--color-text-faint);
         font-size: 12px;
     }
 
 .activities-header-icon {
-    color: #87978c;
+    color: var(--color-text-faint);
     font-size: 19px;
 }
 
@@ -115,25 +115,25 @@
 }
 
     .activities-table thead {
-        background: #fafbf9;
+        background: var(--color-surface);
     }
 
     .activities-table th {
         padding: 17px 18px;
-        color: #77837b;
+        color: var(--color-text-subtle);
         font-size: 10px;
         font-weight: 700;
         letter-spacing: 0.65px;
         white-space: nowrap;
-        border-bottom: 1px solid #edf0ed;
+        border-bottom: 1px solid var(--color-border-light);
     }
 
     .activities-table td {
         padding: 16px 18px;
         font-size: 13px;
-        color: #66726b;
+        color: var(--color-text-subtle);
         vertical-align: middle;
-        border-bottom: 1px solid #eef1ee;
+        border-bottom: 1px solid var(--color-border-light);
     }
 
     .activities-table tbody tr:last-child td {
@@ -145,7 +145,7 @@
     }
 
         .activities-table tbody tr:hover {
-            background: #f8faf8;
+            background: var(--color-surface);
         }
 
 /* ACTIVITY TYPE */
@@ -155,8 +155,8 @@
     align-items: center;
     padding: 6px 10px;
     border-radius: 6px;
-    background: #edf3ee;
-    color: #47644e;
+    background: var(--color-surface-muted);
+    color: var(--color-primary-light);
     font-size: 11px;
     font-weight: 600;
     white-space: nowrap;
@@ -165,13 +165,13 @@
 /* ACTIVITY CONTENT */
 
 .activities-title {
-    color: #334238;
+    color: var(--color-text-secondary);
     font-size: 13px;
     font-weight: 600;
 }
 
 .activities-description {
-    color: #77837b;
+    color: var(--color-text-subtle);
     font-size: 12px;
     line-height: 1.5;
 }
@@ -208,23 +208,23 @@
 }
 
 .activities-edit-button {
-    background: #edf0ed;
-    color: #58685d;
+    background: var(--color-border-light);
+    color: var(--color-text-muted);
 }
 
     .activities-edit-button:hover {
-        background: #dfe7e0;
-        color: #304a36;
+        background: var(--color-border);
+        color: var(--color-primary-hover);
     }
 
 .activities-delete-button {
-    background: #fff0ee;
-    color: #b7524b;
+    background: var(--color-danger-soft);
+    color: var(--color-danger-accent);
 }
 
     .activities-delete-button:hover {
-        background: #f8ddda;
-        color: #943c36;
+        background: var(--color-danger-border);
+        color: var(--color-danger-muted);
     }
 
     .activities-delete-button:disabled {
@@ -241,7 +241,7 @@
     flex-wrap: wrap;
     gap: 14px;
     padding: 20px 24px;
-    border-top: 1px solid #edf0ed;
+    border-top: 1px solid var(--color-border-light);
 }
 
 .activities-page-button {
@@ -250,18 +250,18 @@
     justify-content: center;
     gap: 8px;
     padding: 9px 14px;
-    border: 1px solid #dfe7e0;
+    border: 1px solid var(--color-border);
     border-radius: 7px;
-    background: #ffffff;
-    color: #395443;
+    background: var(--color-white);
+    color: var(--color-primary-hover);
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
 }
 
     .activities-page-button:hover:not(:disabled) {
-        background: #edf3ee;
-        border-color: #b9d0be;
+        background: var(--color-surface-muted);
+        border-color: var(--color-border-strong);
     }
 
     .activities-page-button:disabled {
@@ -270,7 +270,7 @@
     }
 
 .activities-page-info {
-    color: #66726b;
+    color: var(--color-text-subtle);
     font-size: 12px;
     font-weight: 500;
 }
@@ -287,18 +287,18 @@
     justify-content: center;
     gap: 9px;
     padding: 10px 16px;
-    border: 1px solid #dfe7e0;
+    border: 1px solid var(--color-border);
     border-radius: 7px;
-    background: #ffffff;
-    color: #395443;
+    background: var(--color-white);
+    color: var(--color-primary-hover);
     font-size: 12px;
     font-weight: 600;
     text-decoration: none;
 }
 
     .activities-back-button:hover {
-        background: #edf3ee;
-        color: #274332;
+        background: var(--color-surface-muted);
+        color: var(--color-primary-dark);
     }
 
 /* LOADING AND EMPTY STATES */
@@ -315,7 +315,7 @@
 }
 
     .activities-state strong {
-        color: #37443b;
+        color: var(--color-text-secondary);
         font-size: 14px;
         font-weight: 700;
     }
@@ -324,19 +324,19 @@
         margin: 0;
         font-size: 13px;
         line-height: 1.6;
-        color: #909b93;
+        color: var(--color-text-faint);
     }
 
 .activities-spinner {
     width: 30px;
     height: 30px;
     margin-bottom: 10px;
-    color: #416a50;
+    color: var(--color-primary-light);
 }
 
 .activities-empty-icon {
     font-size: 28px;
-    color: #839a89;
+    color: var(--color-text-faint);
     margin-bottom: 8px;
 }
 
@@ -349,9 +349,9 @@
     margin: 20px 24px;
     padding: 14px 16px;
     border-radius: 8px;
-    background: #fff2f1;
-    border: 1px solid #f3d6d3;
-    color: #a13d38;
+    background: var(--color-danger-soft);
+    border: 1px solid var(--color-danger-border);
+    color: var(--color-danger-muted);
     font-size: 13px;
     line-height: 1.6;
 }
@@ -363,7 +363,7 @@
 .activities-delete-button:focus-visible,
 .activities-page-button:focus-visible,
 .activities-back-button:focus-visible {
-    outline: 3px solid #9bc9b0;
+    outline: 3px solid var(--color-accent-light);
     outline-offset: 3px;
 }
 
@@ -425,8 +425,8 @@
 .activities-dialog {
     width: 100%;
     max-width: 440px;
-    background: #ffffff;
-    border: 1px solid #e8ede9;
+    background: var(--color-white);
+    border: 1px solid var(--color-border-light);
     border-radius: 14px;
     box-shadow: 0 20px 60px rgba(20, 32, 25, 0.2);
     overflow: hidden;
@@ -447,21 +447,21 @@
     width: 46px;
     height: 46px;
     border-radius: 10px;
-    background: #fff0ee;
-    color: #b7524b;
+    background: var(--color-danger-soft);
+    color: var(--color-danger-accent);
     font-size: 20px;
 }
 
 .activities-dialog-header h2 {
     margin: 0 0 5px;
-    color: #27332c;
+    color: var(--color-text);
     font-size: 19px;
     font-weight: 700;
 }
 
 .activities-dialog-header p {
     margin: 0;
-    color: #929b95;
+    color: var(--color-text-faint);
     font-size: 12px;
 }
 
@@ -471,7 +471,7 @@
 
     .activities-dialog-body p {
         margin: 0 0 12px;
-        color: #66726b;
+        color: var(--color-text-subtle);
         font-size: 13px;
         line-height: 1.7;
     }
@@ -479,14 +479,14 @@
     .activities-dialog-body strong {
         display: block;
         margin-bottom: 14px;
-        color: #334238;
+        color: var(--color-text-secondary);
         font-size: 14px;
         overflow-wrap: anywhere;
     }
 
     .activities-dialog-body .activities-dialog-warning {
         margin-bottom: 0;
-        color: #b7524b;
+        color: var(--color-danger-accent);
         font-size: 12px;
     }
 
@@ -495,7 +495,7 @@
     justify-content: flex-end;
     gap: 10px;
     padding: 18px 26px;
-    border-top: 1px solid #edf0ed;
+    border-top: 1px solid var(--color-border-light);
 }
 
 .activities-dialog-cancel,
@@ -513,24 +513,24 @@
 }
 
 .activities-dialog-cancel {
-    border: 1px solid #dfe7e0;
-    background: #ffffff;
-    color: #58685d;
+    border: 1px solid var(--color-border);
+    background: var(--color-white);
+    color: var(--color-text-muted);
 }
 
     .activities-dialog-cancel:hover:not(:disabled) {
-        background: #edf3ee;
+        background: var(--color-surface-muted);
     }
 
 .activities-dialog-confirm {
-    border: 1px solid #b7524b;
-    background: #b7524b;
-    color: #ffffff;
+    border: 1px solid var(--color-danger-accent);
+    background: var(--color-danger-accent);
+    color: var(--color-white);
 }
 
     .activities-dialog-confirm:hover:not(:disabled) {
-        background: #963f39;
-        border-color: #963f39;
+        background: var(--color-danger-muted);
+        border-color: var(--color-danger-muted);
     }
 
     .activities-dialog-cancel:disabled,
@@ -541,7 +541,7 @@
 
     .activities-dialog-cancel:focus-visible,
     .activities-dialog-confirm:focus-visible {
-        outline: 3px solid #9bc9b0;
+        outline: 3px solid var(--color-accent-light);
         outline-offset: 3px;
     }
 

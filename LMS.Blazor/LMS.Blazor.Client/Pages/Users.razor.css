@@ -6,7 +6,7 @@
     max-width: 1180px;
     margin: 0 auto;
     padding: 2.75rem 2rem 4rem;
-    color: #18231d;
+    color: var(--color-text-strong);
 }
 
 /* PAGE HEADER */
@@ -21,7 +21,7 @@
 
 .users-header-text h1 {
     margin: 0;
-    color: #17231c;
+    color: var(--color-text-strong);
     font-size: 2.5rem;
     font-weight: 650;
     letter-spacing: -0.035em;
@@ -29,7 +29,7 @@
 
 .users-header-text p {
     margin: 0.65rem 0 0;
-    color: #657069;
+    color: var(--color-text-subtle);
     font-size: 1rem;
     line-height: 1.6;
 }
@@ -43,10 +43,10 @@
     gap: 0.6rem;
     flex-shrink: 0;
     padding: 0.85rem 1.3rem;
-    background: #173d2a;
-    border: 1px solid #173d2a;
+    background: var(--color-primary-dark);
+    border: 1px solid var(--color-primary-dark);
     border-radius: 10px;
-    color: #ffffff;
+    color: var(--color-white);
     font-size: 0.9rem;
     font-weight: 650;
     text-decoration: none;
@@ -54,9 +54,9 @@
 }
 
     .users-add-button:hover {
-        background: #245337;
-        border-color: #245337;
-        color: #ffffff;
+        background: var(--color-primary);
+        border-color: var(--color-primary);
+        color: var(--color-white);
         text-decoration: none;
     }
 
@@ -64,8 +64,8 @@
 
 .users-card {
     overflow: hidden;
-    background: #ffffff;
-    border: 1px solid #dce3de;
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
     border-radius: 16px;
     box-shadow: 0 3px 14px rgba(24, 54, 37, 0.04);
 }
@@ -76,24 +76,24 @@
     justify-content: space-between;
     gap: 1rem;
     padding: 1.5rem;
-    border-bottom: 1px solid #edf0ee;
+    border-bottom: 1px solid var(--color-border-light);
 }
 
     .users-card-header h2 {
         margin: 0;
-        color: #243029;
+        color: var(--color-text);
         font-size: 1.15rem;
         font-weight: 650;
     }
 
     .users-card-header p {
         margin: 0.4rem 0 0;
-        color: #7b847f;
+        color: var(--color-text-subtle);
         font-size: 0.85rem;
     }
 
 .users-header-icon {
-    color: #315a42;
+    color: var(--color-primary-hover);
     font-size: 1.3rem;
 }
 
@@ -111,13 +111,13 @@
 }
 
     .users-table thead {
-        background: #f8faf9;
+        background: var(--color-surface);
     }
 
     .users-table th {
         padding: 1rem;
-        border-bottom: 1px solid #dce3de;
-        color: #66726a;
+        border-bottom: 1px solid var(--color-border);
+        color: var(--color-text-subtle);
         font-size: 0.75rem;
         font-weight: 650;
         text-transform: uppercase;
@@ -127,8 +127,8 @@
 
     .users-table td {
         padding: 1.1rem 1rem;
-        border-bottom: 1px solid #edf0ee;
-        color: #33453a;
+        border-bottom: 1px solid var(--color-border-light);
+        color: var(--color-text-secondary);
         font-size: 0.87rem;
         vertical-align: middle;
     }
@@ -138,34 +138,34 @@
     }
 
     .users-table tbody tr:hover {
-        background: #f8faf9;
+        background: var(--color-surface);
     }
 
 /* USER INFORMATION */
 
 .users-first-name,
 .users-last-name {
-    color: #17231c;
+    color: var(--color-text-strong);
     font-weight: 600;
 }
 
 .users-email {
-    color: #657069 !important;
+    color: var(--color-text-subtle) !important;
 }
 
 .users-course-badge {
     display: inline-block;
     padding: 0.35rem 0.65rem;
-    background: #edf4ef;
+    background: var(--color-surface-muted);
     border-radius: 7px;
-    color: #245337;
+    color: var(--color-primary);
     font-size: 0.78rem;
     font-weight: 600;
     white-space: nowrap;
 }
 
 .users-no-course {
-    color: #7b847f;
+    color: var(--color-text-subtle);
     font-size: 0.83rem;
 }
 
@@ -196,26 +196,26 @@
 }
 
 .users-edit-button {
-    background: #edf4ef;
-    border: 1px solid #dce3de;
-    color: #245337;
+    background: var(--color-surface-muted);
+    border: 1px solid var(--color-border);
+    color: var(--color-primary);
 }
 
     .users-edit-button:hover {
-        background: #dcece0;
-        color: #173d2a;
+        background: var(--color-primary-soft);
+        color: var(--color-primary-dark);
         text-decoration: none;
     }
 
 .users-delete-button {
-    background: #fcebea;
-    border: 1px solid #f5d5d2;
-    color: #b42318;
+    background: var(--color-danger-soft);
+    border: 1px solid var(--color-danger-border);
+    color: var(--color-danger);
 }
 
     .users-delete-button:hover {
-        background: #f8d9d6;
-        color: #912018;
+        background: var(--color-danger-border);
+        color: var(--color-danger-dark);
         text-decoration: none;
     }
 
@@ -227,16 +227,16 @@
     justify-content: space-between;
     gap: 1rem;
     padding: 1.25rem 1.5rem;
-    border-top: 1px solid #edf0ee;
-    background: #ffffff;
+    border-top: 1px solid var(--color-border-light);
+    background: var(--color-white);
 }
 
 .users-pagination-button {
     padding: 0.65rem 1rem;
-    background: #ffffff;
-    border: 1px solid #dce3de;
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
     border-radius: 8px;
-    color: #245337;
+    color: var(--color-primary);
     font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
@@ -244,8 +244,8 @@
 }
 
     .users-pagination-button:hover:not(:disabled) {
-        background: #edf4ef;
-        border-color: #adc2b4;
+        background: var(--color-surface-muted);
+        border-color: var(--color-border-strong);
     }
 
     .users-pagination-button:disabled {
@@ -254,7 +254,7 @@
     }
 
 .users-page-number {
-    color: #657069;
+    color: var(--color-text-subtle);
     font-size: 0.85rem;
     font-weight: 500;
 }
@@ -273,33 +273,33 @@
 }
 
 .users-empty-icon {
-    color: #315a42;
+    color: var(--color-primary-hover);
     font-size: 2rem;
 }
 
 .users-empty-state strong {
-    color: #26332b;
+    color: var(--color-text);
     font-size: 1rem;
     font-weight: 650;
 }
 
 .users-empty-state p {
     margin: 0;
-    color: #7b847f;
+    color: var(--color-text-subtle);
     font-size: 0.9rem;
 }
 
 .users-empty-state .spinner-border {
-    color: #315a42;
+    color: var(--color-primary-hover);
 }
 
 .users-error-message {
     margin: 1.5rem;
     padding: 1rem;
-    background: #fcebea;
-    border: 1px solid #f5d5d2;
+    background: var(--color-danger-soft);
+    border: 1px solid var(--color-danger-border);
     border-radius: 9px;
-    color: #b42318;
+    color: var(--color-danger);
 }
 
 /* RESPONSIVE */
@@ -359,8 +359,8 @@
     align-items: center;
     gap: 14px;
     padding: 24px 26px;
-    background: #ffffff;
-    border-bottom: 1px solid #edf0ed;
+    background: var(--color-white);
+    border-bottom: 1px solid var(--color-border-light);
 }
 
     /* SEARCH INPUT */
@@ -371,21 +371,21 @@
         max-width: 480px;
         min-height: 44px;
         padding: 11px 16px;
-        border: 1px solid #dce3de;
+        border: 1px solid var(--color-border);
         border-radius: 9px;
-        background: #fafcfb;
-        color: #33453a;
+        background: var(--color-surface);
+        color: var(--color-text-secondary);
         font-size: 13px;
         box-shadow: none;
     }
 
         .users-search input.form-control::placeholder {
-            color: #98a39b;
+            color: var(--color-text-faint);
         }
 
         .users-search input.form-control:focus {
-            background: #ffffff;
-            border-color: #658b70;
+            background: var(--color-white);
+            border-color: var(--color-accent);
             box-shadow: 0 0 0 3px rgba(101, 139, 112, 0.12);
             outline: none;
         }
@@ -396,17 +396,17 @@
         min-height: 44px;
         padding: 11px 24px;
         border-radius: 9px;
-        background: #233e32;
-        border-color: #233e32;
-        color: #ffffff;
+        background: var(--color-primary-dark);
+        border-color: var(--color-primary-dark);
+        color: var(--color-white);
         font-size: 13px;
         font-weight: 600;
         white-space: nowrap;
     }
 
         .users-search .users-add-button:hover {
-            background: #315645;
-            border-color: #315645;
+            background: var(--color-primary-hover);
+            border-color: var(--color-primary-hover);
         }
 
 /* RESPONSIVE SEARCH */
