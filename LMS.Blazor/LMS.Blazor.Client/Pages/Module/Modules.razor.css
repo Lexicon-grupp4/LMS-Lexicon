@@ -5,7 +5,7 @@
 .modules-page {
     width: 100%;
     padding: 32px 36px 48px;
-    color: #202a25;
+    color: var(--color-text-strong);
 }
 
 /* PAGE HEADER */
@@ -25,14 +25,14 @@
     font-weight: 700;
     letter-spacing: -0.8px;
     line-height: 1.25;
-    color: #202824;
+    color: var(--color-text-strong);
 }
 
 .modules-header-text p {
     margin: 0;
     font-size: 14px;
     line-height: 1.6;
-    color: #7b8580;
+    color: var(--color-text-subtle);
 }
 
 /* ADD MODULE BUTTON */
@@ -44,10 +44,10 @@
     gap: 9px;
     min-height: 40px;
     padding: 10px 18px;
-    border: 1px solid #233e32;
+    border: 1px solid var(--color-primary-dark);
     border-radius: 8px;
-    background: #233e32;
-    color: #ffffff;
+    background: var(--color-primary-dark);
+    color: var(--color-white);
     font-size: 13px;
     font-weight: 600;
     text-decoration: none;
@@ -56,13 +56,13 @@
 }
 
     .modules-add-button:hover {
-        background: #315645;
-        border-color: #315645;
-        color: #ffffff;
+        background: var(--color-primary-hover);
+        border-color: var(--color-primary-hover);
+        color: var(--color-white);
     }
 
     .modules-add-button:focus-visible {
-        outline: 3px solid #9bc9b0;
+        outline: 3px solid var(--color-accent-light);
         outline-offset: 3px;
     }
 
@@ -70,8 +70,8 @@
 
 .modules-card {
     width: 100%;
-    background: #ffffff;
-    border: 1px solid #e8ede9;
+    background: var(--color-white);
+    border: 1px solid var(--color-border-light);
     border-radius: 13px;
     overflow: hidden;
     box-shadow: 0 3px 16px rgba(30, 50, 40, 0.035);
@@ -83,7 +83,7 @@
     align-items: center;
     gap: 15px;
     padding: 23px 25px;
-    border-bottom: 1px solid #edf0ed;
+    border-bottom: 1px solid var(--color-border-light);
 }
 
     .modules-card-header h2 {
@@ -91,17 +91,17 @@
         font-size: 17px;
         line-height: 1.3;
         font-weight: 700;
-        color: #27332c;
+        color: var(--color-text);
     }
 
     .modules-card-header p {
         margin: 0;
-        color: #929b95;
+        color: var(--color-text-faint);
         font-size: 12px;
     }
 
 .modules-header-icon {
-    color: #87978c;
+    color: var(--color-text-faint);
     font-size: 19px;
 }
 
@@ -120,25 +120,25 @@
 }
 
     .modules-table thead {
-        background: #fafbf9;
+        background: var(--color-surface);
     }
 
     .modules-table th {
         padding: 17px 22px;
-        color: #77837b;
+        color: var(--color-text-subtle);
         font-size: 10px;
         font-weight: 700;
         letter-spacing: 0.65px;
         white-space: nowrap;
-        border-bottom: 1px solid #edf0ed;
+        border-bottom: 1px solid var(--color-border-light);
     }
 
     .modules-table td {
         padding: 16px 22px;
         font-size: 13px;
-        color: #66726b;
+        color: var(--color-text-subtle);
         vertical-align: middle;
-        border-bottom: 1px solid #eef1ee;
+        border-bottom: 1px solid var(--color-border-light);
     }
 
     .modules-table tbody tr:last-child td {
@@ -150,7 +150,7 @@
     }
 
         .modules-table tbody tr:hover {
-            background: #f8faf8;
+            background: var(--color-surface);
         }
 
 /* MODULE NAME */
@@ -169,14 +169,14 @@
     flex-shrink: 0;
     width: 32px;
     height: 32px;
-    background: #edf3ee;
+    background: var(--color-surface-muted);
     border-radius: 7px;
-    color: #42654f;
+    color: var(--color-primary-light);
     font-size: 15px;
 }
 
 .modules-name {
-    color: #334238;
+    color: var(--color-text-secondary);
     font-size: 13px;
     font-weight: 600;
 }
@@ -190,8 +190,8 @@
     min-width: 30px;
     padding: 5px 9px;
     border-radius: 6px;
-    background: #edf3ee;
-    color: #47644e;
+    background: var(--color-surface-muted);
+    color: var(--color-primary-light);
     font-size: 11px;
     font-weight: 700;
 }
@@ -214,28 +214,28 @@
 }
 
 .modules-schedule-button {
-    background: #e7f0eb;
-    color: #315e46;
+    background: var(--color-surface-muted);
+    color: var(--color-primary-light);
 }
 
     .modules-schedule-button:hover {
-        background: #d6e7dc;
-        color: #234932;
+        background: var(--color-border);
+        color: var(--color-primary-dark);
     }
 
 .modules-edit-button {
-    background: #edf0ed;
-    color: #58685d;
+    background: var(--color-border-light);
+    color: var(--color-text-muted);
 }
 
     .modules-edit-button:hover {
-        background: #dfe7e0;
-        color: #304a36;
+        background: var(--color-border);
+        color: var(--color-primary-hover);
     }
 
     .modules-schedule-button:focus-visible,
     .modules-edit-button:focus-visible {
-        outline: 3px solid #9bc9b0;
+        outline: 3px solid var(--color-accent-light);
         outline-offset: 2px;
     }
 
@@ -258,7 +258,7 @@
 }
 
     .modules-state strong {
-        color: #37443b;
+        color: var(--color-text-secondary);
         font-size: 14px;
         font-weight: 700;
     }
@@ -267,19 +267,19 @@
         margin: 0;
         font-size: 13px;
         line-height: 1.6;
-        color: #909b93;
+        color: var(--color-text-faint);
     }
 
 .modules-spinner {
     width: 30px;
     height: 30px;
     margin-bottom: 10px;
-    color: #416a50;
+    color: var(--color-primary-light);
 }
 
 .modules-empty-icon {
     font-size: 28px;
-    color: #839a89;
+    color: var(--color-text-faint);
     margin-bottom: 8px;
 }
 
@@ -292,9 +292,9 @@
     margin: 20px 24px;
     padding: 14px 16px;
     border-radius: 8px;
-    background: #fff2f1;
-    border: 1px solid #f3d6d3;
-    color: #a13d38;
+    background: var(--color-danger-soft);
+    border: 1px solid var(--color-danger-border);
+    color: var(--color-danger-muted);
     font-size: 13px;
     line-height: 1.6;
 }
