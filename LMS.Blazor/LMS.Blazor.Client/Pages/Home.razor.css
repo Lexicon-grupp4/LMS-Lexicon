@@ -109,10 +109,6 @@
     grid-template-columns: 200px minmax(0, 1fr);
     margin-bottom: 1.45rem;
     overflow: hidden;
-    background: var(--color-white);
-    border: 1px solid var(--color-border);
-    border-radius: 16px;
-    box-shadow: 0 8px 26px rgba(24, 54, 37, 0.065);
 }
 
 .next-activity-date {
@@ -261,10 +257,6 @@
 .dashboard-card {
     min-height: 285px;
     padding: 1.45rem 1.5rem;
-    background: white;
-    border: 1px solid var(--color-border);
-    border-radius: 16px;
-    box-shadow: 0 3px 14px rgba(24, 54, 37, 0.04);
 }
 
 .dashboard-card-header {
@@ -273,7 +265,6 @@
     justify-content: space-between;
     gap: 1rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid var(--color-border-light);
 }
 
 .panel-title {
@@ -408,12 +399,8 @@ a.dashboard-list-item:hover {
 
 .status-label {
     flex-shrink: 0;
-    padding: 0.3rem 0.6rem;
     background: var(--color-surface-muted);
-    border-radius: 999px;
     color: var(--color-primary);
-    font-size: 0.72rem;
-    font-weight: 650;
 }
 
 
@@ -517,10 +504,7 @@ a.dashboard-list-item:hover {
 
 .notification-status {
     flex-shrink: 0;
-    padding: 0.28rem 0.6rem;
-    border-radius: 999px;
-    font-size: 0.7rem;
-    font-weight: 650;
+    color: var(--color-text-secondary);
 }
 
     .notification-status.new {

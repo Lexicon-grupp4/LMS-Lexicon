@@ -36,41 +36,11 @@
     color: var(--color-text-subtle);
 }
 
-/* ADD ACTIVITY BUTTON */
-
-.activities-add-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 9px;
-    min-height: 40px;
-    padding: 10px 18px;
-    border: 1px solid var(--color-primary-dark);
-    border-radius: 8px;
-    background: var(--color-primary-dark);
-    color: var(--color-white);
-    font-size: 13px;
-    font-weight: 600;
-    text-decoration: none;
-    white-space: nowrap;
-    transition: background-color 0.2s ease;
-}
-
-    .activities-add-button:hover {
-        background: var(--color-primary-hover);
-        border-color: var(--color-primary-hover);
-        color: var(--color-white);
-    }
-
 /* MAIN CARD */
 
 .activities-card {
     width: 100%;
-    background: var(--color-white);
-    border: 1px solid var(--color-border-light);
-    border-radius: 13px;
     overflow: hidden;
-    box-shadow: 0 3px 16px rgba(30, 50, 40, 0.035);
 }
 
 .activities-card-header {
@@ -79,7 +49,6 @@
     align-items: center;
     gap: 15px;
     padding: 23px 25px;
-    border-bottom: 1px solid var(--color-border-light);
 }
 
     .activities-card-header h2 {
@@ -108,15 +77,9 @@
 }
 
 .activities-table {
-    width: 100%;
     min-width: 900px;
-    border-collapse: collapse;
     text-align: left;
 }
-
-    .activities-table thead {
-        background: var(--color-surface);
-    }
 
     .activities-table th {
         padding: 17px 18px;
@@ -125,7 +88,6 @@
         font-weight: 700;
         letter-spacing: 0.65px;
         white-space: nowrap;
-        border-bottom: 1px solid var(--color-border-light);
     }
 
     .activities-table td {
@@ -133,33 +95,17 @@
         font-size: 13px;
         color: var(--color-text-subtle);
         vertical-align: middle;
-        border-bottom: 1px solid var(--color-border-light);
-    }
-
-    .activities-table tbody tr:last-child td {
-        border-bottom: none;
     }
 
     .activities-table tbody tr {
         transition: background-color 0.15s ease;
     }
 
-        .activities-table tbody tr:hover {
-            background: var(--color-surface);
-        }
-
 /* ACTIVITY TYPE */
 
 .activities-type-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 6px 10px;
-    border-radius: 6px;
     background: var(--color-surface-muted);
     color: var(--color-primary-light);
-    font-size: 11px;
-    font-weight: 600;
-    white-space: nowrap;
 }
 
 /* ACTIVITY CONTENT */
@@ -190,48 +136,6 @@
     gap: 8px;
 }
 
-.activities-edit-button,
-.activities-delete-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    text-decoration: none;
-    white-space: nowrap;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-.activities-edit-button {
-    background: var(--color-border-light);
-    color: var(--color-text-muted);
-}
-
-    .activities-edit-button:hover {
-        background: var(--color-border);
-        color: var(--color-primary-hover);
-    }
-
-.activities-delete-button {
-    background: var(--color-danger-soft);
-    color: var(--color-danger-accent);
-}
-
-    .activities-delete-button:hover {
-        background: var(--color-danger-border);
-        color: var(--color-danger-muted);
-    }
-
-    .activities-delete-button:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-
 /* PAGINATION */
 
 .activities-pagination {
@@ -244,31 +148,6 @@
     border-top: 1px solid var(--color-border-light);
 }
 
-.activities-page-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 9px 14px;
-    border: 1px solid var(--color-border);
-    border-radius: 7px;
-    background: var(--color-white);
-    color: var(--color-primary-hover);
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-    .activities-page-button:hover:not(:disabled) {
-        background: var(--color-surface-muted);
-        border-color: var(--color-border-strong);
-    }
-
-    .activities-page-button:disabled {
-        opacity: 0.4;
-        cursor: not-allowed;
-    }
-
 .activities-page-info {
     color: var(--color-text-subtle);
     font-size: 12px;
@@ -280,26 +159,6 @@
 .activities-footer {
     margin-top: 22px;
 }
-
-.activities-back-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 9px;
-    padding: 10px 16px;
-    border: 1px solid var(--color-border);
-    border-radius: 7px;
-    background: var(--color-white);
-    color: var(--color-primary-hover);
-    font-size: 12px;
-    font-weight: 600;
-    text-decoration: none;
-}
-
-    .activities-back-button:hover {
-        background: var(--color-surface-muted);
-        color: var(--color-primary-dark);
-    }
 
 /* LOADING AND EMPTY STATES */
 
@@ -347,24 +206,6 @@
     align-items: flex-start;
     gap: 10px;
     margin: 20px 24px;
-    padding: 14px 16px;
-    border-radius: 8px;
-    background: var(--color-danger-soft);
-    border: 1px solid var(--color-danger-border);
-    color: var(--color-danger-muted);
-    font-size: 13px;
-    line-height: 1.6;
-}
-
-/* ACCESSIBILITY */
-
-.activities-add-button:focus-visible,
-.activities-edit-button:focus-visible,
-.activities-delete-button:focus-visible,
-.activities-page-button:focus-visible,
-.activities-back-button:focus-visible {
-    outline: 3px solid var(--color-accent-light);
-    outline-offset: 3px;
 }
 
 /* RESPONSIVE */
@@ -394,16 +235,9 @@
 }
 
 @media (max-width: 480px) {
-    .activities-add-button {
-        width: 100%;
-    }
 
     .activities-pagination {
         gap: 10px;
-    }
-
-    .activities-page-button {
-        padding: 8px 10px;
     }
 }
 
@@ -415,9 +249,6 @@
     position: fixed;
     inset: 0;
     z-index: 2000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     padding: 20px;
     background: rgba(20, 32, 25, 0.48);
 }
@@ -425,10 +256,6 @@
 .activities-dialog {
     width: 100%;
     max-width: 440px;
-    background: var(--color-white);
-    border: 1px solid var(--color-border-light);
-    border-radius: 14px;
-    box-shadow: 0 20px 60px rgba(20, 32, 25, 0.2);
     overflow: hidden;
 }
 
@@ -495,55 +322,7 @@
     justify-content: flex-end;
     gap: 10px;
     padding: 18px 26px;
-    border-top: 1px solid var(--color-border-light);
 }
-
-.activities-dialog-cancel,
-.activities-dialog-confirm {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    min-height: 40px;
-    padding: 10px 16px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.activities-dialog-cancel {
-    border: 1px solid var(--color-border);
-    background: var(--color-white);
-    color: var(--color-text-muted);
-}
-
-    .activities-dialog-cancel:hover:not(:disabled) {
-        background: var(--color-surface-muted);
-    }
-
-.activities-dialog-confirm {
-    border: 1px solid var(--color-danger-accent);
-    background: var(--color-danger-accent);
-    color: var(--color-white);
-}
-
-    .activities-dialog-confirm:hover:not(:disabled) {
-        background: var(--color-danger-muted);
-        border-color: var(--color-danger-muted);
-    }
-
-    .activities-dialog-cancel:disabled,
-    .activities-dialog-confirm:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-    }
-
-    .activities-dialog-cancel:focus-visible,
-    .activities-dialog-confirm:focus-visible {
-        outline: 3px solid var(--color-accent-light);
-        outline-offset: 3px;
-    }
 
 @media (max-width: 480px) {
     .activities-dialog-header {
