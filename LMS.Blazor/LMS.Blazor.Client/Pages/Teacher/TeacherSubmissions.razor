@@ -440,7 +440,7 @@
     private static string GetDownloadUrl(int submissionId) =>
         $"api/proxy/teacher/submissions/{submissionId}/file";
 
-    private async void OpenFeedback(TeacherAssignmentSubmissionDto submission)
+    private async Task OpenFeedback(TeacherAssignmentSubmissionDto submission)
     {
         if (!submission.SubmissionId.HasValue)
             return;
@@ -450,6 +450,7 @@
         feedbackGrade = null;
         feedbackError = null;
         feedbackSuccess = null;
+        latestFeedback = null;
         showFeedbackModal = true;
         try
         {
@@ -465,7 +466,6 @@
                 feedbackComment = latestFeedback.Comment;
                 feedbackGrade = latestFeedback.Grade;
             }
-            await InvokeAsync(StateHasChanged);
 
         }
         catch (Exception ex)
@@ -514,6 +514,14 @@
         {
             feedbackError = "Grade must be between 0 and 10.";
             return;
+        }
+         
+        if (latestFeedback is not null &&
+           feedbackComment.Trim() == latestFeedback.Comment &&
+           feedbackGrade == latestFeedback.Grade)
+        {
+            feedbackError = "Change the comment or grade before submitting.";
+             return;
         }
 
         isSubmittingFeedback = true;
