@@ -66,6 +66,14 @@ namespace LMS.Presentation.Controllers
             int moduleId,
             [FromQuery] QueryParameters parameters)
         {
+            if (!User.IsInRole("Teacher"))
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (string.IsNullOrEmpty(userId) ||
+                    !await _serviceManager.CourseAccessService.CanAccessModuleAsync(userId, moduleId))
+                    return Forbid();
+            }
             var activities =
                 await _serviceManager.ActivityService.GetByModuleIdAsync(
                     moduleId, parameters);
@@ -92,6 +100,14 @@ namespace LMS.Presentation.Controllers
             StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetById(int id)
         {
+            if (!User.IsInRole("Teacher"))
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                if (string.IsNullOrEmpty(userId) ||
+                    !await _serviceManager.CourseAccessService.CanAccessActivityAsync(userId, id))
+                    return Forbid();
+            }
             var activity = await _serviceManager.ActivityService.GetByIdAsync(id);
 
             return Ok(activity);
