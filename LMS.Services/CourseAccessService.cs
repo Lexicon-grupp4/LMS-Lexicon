@@ -49,6 +49,9 @@ namespace LMS.Services
             if (activity == null)
                 return false;
 
+            if (activity?.ModuleId is null)
+                return false;
+
             var module = await _uow.ModuleRepository
                 .GetByIdAsync(activity.ModuleId.Value);
 

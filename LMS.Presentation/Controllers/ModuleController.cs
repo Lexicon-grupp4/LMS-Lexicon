@@ -27,6 +27,7 @@ namespace LMS.Presentation.Controllers
 
         // GET: api/Module
         [HttpGet]
+        [Authorize(Roles = "Teacher")]
         [SwaggerOperation(
             Summary = "Get all modules",
             Description = "Retrieves a paginated list of modules.")]
