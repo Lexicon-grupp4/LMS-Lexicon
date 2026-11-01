@@ -15,12 +15,12 @@
     .assignments-header h1 {
         font-size: 2rem;
         font-weight: 700;
-        color: #1f2937;
+        color: var(--color-text);
         margin-bottom: 0.5rem;
     }
 
     .assignments-header p {
-        color: #6b7280;
+        color: var(--color-text-subtle);
         margin: 0;
     }
 
@@ -29,8 +29,8 @@
    ========================================= */
 
 .assignment-card {
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
+    background: var(--color-white);
+    border: 1px solid var(--color-info-pale);
     border-radius: 14px;
     padding: 1.4rem 1.5rem;
     margin-bottom: 1rem;
@@ -43,7 +43,7 @@
 }
 
     .assignment-card:hover {
-        border-color: #d1d5db;
+        border-color: var(--color-info-soft-hover);
         box-shadow: 0 6px 18px rgba(15, 23, 42, 0.07);
         transform: translateY(-1px);
     }
@@ -56,12 +56,12 @@
     font-size: 1.1rem;
     font-weight: 650;
     margin: 0.65rem 0 0.3rem;
-    color: #111827;
+    color: var(--color-text-strong);
 }
 
 .assignment-deadline {
     margin: 0;
-    color: #6b7280;
+    color: var(--color-text-subtle);
     font-size: 0.9rem;
 }
 
@@ -81,30 +81,30 @@
 
     /* To do */
     .assignment-status.todo {
-        background-color: #e8f0eb;
-        color: #244a34;
+        background-color: var(--color-surface-muted);
+        color: var(--color-primary-dark);
         font-weight: 600;
     }
 
     /* Awaiting feedback */
     .assignment-status.awaiting {
-        background-color: #ffffff;
-        color: #6b7280;
-        border: 1px solid #d1d5db;
+        background-color: var(--color-white);
+        color: var(--color-text-subtle);
+        border: 1px solid var(--color-info-soft-hover);
         font-weight: 500;
     }
 
     /* Graded */
     .assignment-status.graded {
-        background-color: #e8f5ec;
-        color: #287a46;
+        background-color: var(--color-primary-soft);
+        color: var(--color-success-dark);
         font-weight: 600;
     }
 
     /* Overdue */
     .assignment-status.overdue {
-        background-color: #fef2f2;
-        color: #b42318;
+        background-color: var(--color-danger-soft);
+        color: var(--color-danger);
         font-weight: 600;
     }
 
@@ -114,8 +114,8 @@
 
 .assignment-button {
     border: none;
-    background-color: #274f38;
-    color: #ffffff;
+    background-color: var(--color-primary);
+    color: var(--color-white);
     padding: 0.7rem 1.1rem;
     border-radius: 9px;
     font-size: 0.9rem;
@@ -126,19 +126,19 @@
 }
 
     .assignment-button:hover {
-        background-color: #1f402e;
+        background-color: var(--color-primary-dark);
         transform: translateY(-1px);
     }
 
     .assignment-button.secondary {
-        background-color: #ffffff;
-        color: #374151;
-        border: 1px solid #d1d5db;
+        background-color: var(--color-white);
+        color: var(--color-text-secondary);
+        border: 1px solid var(--color-info-soft-hover);
     }
 
         .assignment-button.secondary:hover {
-            background-color: #f8faf9;
-            border-color: #b8c2bc;
+            background-color: var(--color-surface);
+            border-color: var(--color-border-strong);
         }
 
 /* =========================================
@@ -183,11 +183,11 @@
     max-height: 90vh;
     overflow-y: auto;
     padding: 1.5rem;
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
+    background: var(--color-white);
+    border: 1px solid var(--color-info-pale);
     border-radius: 14px;
     box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
-    color: #1f2937;
+    color: var(--color-text);
 }
 
 .assignment-modal-header {
@@ -202,24 +202,24 @@
         margin: 0.65rem 0 0;
         font-size: 1.3rem;
         font-weight: 650;
-        color: #111827;
+        color: var(--color-text-strong);
     }
 
 .assignment-modal-close {
     flex-shrink: 0;
     width: 34px;
     height: 34px;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--color-info-soft-hover);
     border-radius: 9px;
-    background: #ffffff;
-    color: #374151;
+    background: var(--color-white);
+    color: var(--color-text-secondary);
     font-size: 24px;
     cursor: pointer;
 }
 
     .assignment-modal-close:hover {
-        background: #f8faf9;
-        border-color: #b8c2bc;
+        background: var(--color-surface);
+        border-color: var(--color-border-strong);
     }
 
 /* =========================================
@@ -234,12 +234,12 @@
         margin: 0 0 0.5rem;
         font-size: 1rem;
         font-weight: 650;
-        color: #1f2937;
+        color: var(--color-text);
     }
 
     .assignment-modal-section p {
         margin: 0;
-        color: #6b7280;
+        color: var(--color-text-subtle);
         font-size: 0.9rem;
         line-height: 1.7;
         white-space: pre-line;
@@ -263,18 +263,18 @@
     gap: 0.5rem;
     min-width: 0;
     padding: 1rem;
-    background: #f8faf9;
-    border: 1px solid #e5e7eb;
+    background: var(--color-surface);
+    border: 1px solid var(--color-info-pale);
     border-radius: 9px;
 }
 
     .assignment-modal-info-item span {
-        color: #6b7280;
+        color: var(--color-text-subtle);
         font-size: 0.85rem;
     }
 
     .assignment-modal-info-item strong {
-        color: #1f2937;
+        color: var(--color-text);
         font-size: 0.9rem;
         overflow-wrap: anywhere;
     }
@@ -285,10 +285,10 @@
 
 .assignment-feedback {
     padding: 1rem;
-    background: #f8faf9;
-    border-left: 3px solid #274f38;
+    background: var(--color-surface);
+    border-left: 3px solid var(--color-primary);
     border-radius: 4px;
-    color: #374151;
+    color: var(--color-text-secondary);
     font-size: 0.9rem;
     line-height: 1.7;
     white-space: pre-line;
@@ -304,7 +304,7 @@
     justify-content: flex-end;
     margin-top: 1.5rem;
     padding-top: 1rem;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid var(--color-info-pale);
 }
 
     .assignment-modal-footer .assignment-button {
@@ -338,7 +338,7 @@
 .assignment-upload-section {
     margin-top: 1.75rem;
     padding-top: 1.5rem;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid var(--color-info-pale);
 }
 
 .assignment-upload-heading {
@@ -353,12 +353,12 @@
         margin: 0;
         font-size: 1.1rem;
         font-weight: 650;
-        color: #1f2937;
+        color: var(--color-text);
     }
 
 .assignment-upload-description {
     margin-bottom: 1.25rem;
-    color: #6b7280;
+    color: var(--color-text-subtle);
     font-size: 0.9rem;
 }
 
@@ -367,14 +367,14 @@
    ========================================= */
 
 .assignment-upload-area {
-    border: 2px dashed #d1d5db;
+    border: 2px dashed var(--color-info-soft-hover);
     border-radius: 14px;
-    background: #f8faf9;
+    background: var(--color-surface);
     transition: border-color 0.2s ease;
 }
 
     .assignment-upload-area:hover {
-        border-color: #274f38;
+        border-color: var(--color-primary);
     }
 
 .assignment-file-label {
@@ -388,7 +388,7 @@
     padding: 1.5rem;
     text-align: center;
     cursor: pointer;
-    color: #374151;
+    color: var(--color-text-secondary);
 }
 
     .assignment-file-label strong {
@@ -400,12 +400,12 @@
 
     .assignment-file-label span:not(.assignment-upload-icon) {
         font-size: 0.85rem;
-        color: #6b7280;
+        color: var(--color-text-subtle);
     }
 
 .assignment-upload-icon {
     font-size: 2rem;
-    color: #274f38;
+    color: var(--color-primary);
 }
 
 .assignment-file-input {
@@ -418,7 +418,7 @@
 }
 
     .assignment-file-input:focus-visible {
-        outline: 3px solid #274f38;
+        outline: 3px solid var(--color-primary);
         outline-offset: 2px;
     }
 
@@ -428,7 +428,7 @@
 
 .assignment-validation-info {
     padding: 1rem 0;
-    color: #374151;
+    color: var(--color-text-secondary);
 }
 
     .assignment-validation-info strong {
@@ -441,7 +441,7 @@
     .assignment-validation-info p {
         margin: 0.5rem 0 0;
         font-size: 0.85rem;
-        color: #6b7280;
+        color: var(--color-text-subtle);
         line-height: 1.6;
     }
 
@@ -459,8 +459,8 @@
     padding: 1rem;
     border: none;
     border-radius: 10px;
-    background: #274f38;
-    color: #ffffff;
+    background: var(--color-primary);
+    color: var(--color-white);
     font-size: 1rem;
     font-weight: 650;
     cursor: pointer;
@@ -468,7 +468,7 @@
 }
 
     .assignment-submit-button:hover:not(:disabled) {
-        background: #1f402e;
+        background: var(--color-primary-dark);
     }
 
     .assignment-submit-button:disabled {
@@ -489,15 +489,15 @@
 }
 
 .assignment-upload-error {
-    background: #fef2f2;
-    color: #b42318;
-    border: 1px solid #fecaca;
+    background: var(--color-danger-soft);
+    color: var(--color-danger);
+    border: 1px solid var(--color-danger-border);
 }
 
 .assignment-upload-success {
-    background: #e8f5ec;
-    color: #287a46;
-    border: 1px solid #bbdfc6;
+    background: var(--color-primary-soft);
+    color: var(--color-success-dark);
+    border: 1px solid var(--color-accent-light);
 }
 
 /* =========================================
@@ -507,18 +507,18 @@
 .assignment-submission-info {
     padding: 1rem;
     margin-bottom: 1rem;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--color-info-soft-hover);
     border-radius: 10px;
-    background: #f8faf9;
+    background: var(--color-surface);
 }
 
     .assignment-submission-info strong {
-        color: #244a34;
+        color: var(--color-primary-dark);
     }
 
     .assignment-submission-info p {
         margin: 0.4rem 0 0;
-        color: #374151;
+        color: var(--color-text-secondary);
         font-size: 0.85rem;
         overflow-wrap: anywhere;
     }

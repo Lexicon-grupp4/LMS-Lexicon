@@ -333,7 +333,8 @@
         {
             AssignmentStatus.Unsubmitted => "To do",
             AssignmentStatus.Submitted => "Submitted",
-            AssignmentStatus.Late => "Overdue",
+            AssignmentStatus.Late => "late",
+            AssignmentStatus.Overdue => "overdue",
             _ => "Unknown"
         };
     }
@@ -344,7 +345,8 @@
         {
             AssignmentStatus.Unsubmitted => "todo",
             AssignmentStatus.Submitted => "awaiting",
-            AssignmentStatus.Late => "overdue",
+            AssignmentStatus.Late => "late",
+            AssignmentStatus.Overdue => "overdue",
             _ => string.Empty
         };
     }

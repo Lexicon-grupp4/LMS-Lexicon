@@ -6,7 +6,7 @@
     max-width: 1180px;
     margin: 0 auto;
     padding: 2.75rem 2rem 4rem;
-    color: #18231d;
+    color: var(--color-text-strong);
 }
 
 /* PAGE HEADER */
@@ -21,7 +21,7 @@
 
 .courses-header-text h1 {
     margin: 0;
-    color: #17231c;
+    color: var(--color-text-strong);
     font-size: 2.5rem;
     font-weight: 650;
     letter-spacing: -0.035em;
@@ -29,7 +29,7 @@
 
 .courses-header-text p {
     margin: 0.65rem 0 0;
-    color: #657069;
+    color: var(--color-text-subtle);
     font-size: 1rem;
     line-height: 1.6;
 }
@@ -43,10 +43,10 @@
     gap: 0.6rem;
     flex-shrink: 0;
     padding: 0.85rem 1.3rem;
-    background: #173d2a;
-    border: 1px solid #173d2a;
+    background: var(--color-primary-dark);
+    border: 1px solid var(--color-primary-dark);
     border-radius: 10px;
-    color: #ffffff;
+    color: var(--color-white);
     font-size: 0.9rem;
     font-weight: 650;
     text-decoration: none;
@@ -54,9 +54,9 @@
 }
 
     .courses-create-button:hover {
-        background: #245337;
-        border-color: #245337;
-        color: #ffffff;
+        background: var(--color-primary);
+        border-color: var(--color-primary);
+        color: var(--color-white);
         text-decoration: none;
     }
 
@@ -64,8 +64,8 @@
 
 .courses-card {
     overflow: hidden;
-    background: #ffffff;
-    border: 1px solid #dce3de;
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
     border-radius: 16px;
     box-shadow: 0 3px 14px rgba(24, 54, 37, 0.04);
 }
@@ -76,24 +76,24 @@
     justify-content: space-between;
     gap: 1rem;
     padding: 1.5rem;
-    border-bottom: 1px solid #edf0ee;
+    border-bottom: 1px solid var(--color-border-light);
 }
 
     .courses-card-header h2 {
         margin: 0;
-        color: #243029;
+        color: var(--color-text);
         font-size: 1.15rem;
         font-weight: 650;
     }
 
     .courses-card-header p {
         margin: 0.4rem 0 0;
-        color: #7b847f;
+        color: var(--color-text-subtle);
         font-size: 0.85rem;
     }
 
 .courses-header-icon {
-    color: #315a42;
+    color: var(--color-primary-hover);
     font-size: 1.3rem;
 }
 
@@ -111,13 +111,13 @@
 }
 
     .courses-table thead {
-        background: #f8faf9;
+        background: var(--color-surface);
     }
 
     .courses-table th {
         padding: 1rem;
-        border-bottom: 1px solid #dce3de;
-        color: #66726a;
+        border-bottom: 1px solid var(--color-border);
+        color: var(--color-text-subtle);
         font-size: 0.75rem;
         font-weight: 650;
         text-transform: uppercase;
@@ -127,8 +127,8 @@
 
     .courses-table td {
         padding: 1.1rem 1rem;
-        border-bottom: 1px solid #edf0ee;
-        color: #33453a;
+        border-bottom: 1px solid var(--color-border-light);
+        color: var(--color-text-secondary);
         font-size: 0.87rem;
         vertical-align: middle;
     }
@@ -138,7 +138,7 @@
     }
 
     .courses-table tbody tr:hover {
-        background: #f8faf9;
+        background: var(--color-surface);
     }
 
 /* COURSE NAME */
@@ -147,14 +147,14 @@
     display: inline-flex;
     align-items: center;
     gap: 0.7rem;
-    color: #17231c;
+    color: var(--color-text-strong);
     font-size: 0.9rem;
     font-weight: 650;
     text-decoration: none;
 }
 
     .courses-name-link:hover {
-        color: #245337;
+        color: var(--color-primary);
         text-decoration: underline;
     }
 
@@ -165,9 +165,9 @@
     width: 34px;
     height: 34px;
     flex-shrink: 0;
-    background: #edf4ef;
+    background: var(--color-surface-muted);
     border-radius: 8px;
-    color: #315a42;
+    color: var(--color-primary-hover);
 }
 
 /* COURSE INFORMATION */
@@ -175,26 +175,26 @@
 .courses-code {
     display: inline-block;
     padding: 0.35rem 0.65rem;
-    background: #edf4ef;
+    background: var(--color-surface-muted);
     border-radius: 7px;
-    color: #245337;
+    color: var(--color-primary);
     font-size: 0.78rem;
     font-weight: 600;
     white-space: nowrap;
 }
 
 .courses-id {
-    color: #7b847f !important;
+    color: var(--color-text-subtle) !important;
 }
 
 .courses-description {
     min-width: 150px;
-    color: #657069 !important;
+    color: var(--color-text-subtle) !important;
     line-height: 1.5;
 }
 
 .courses-date {
-    color: #657069 !important;
+    color: var(--color-text-subtle) !important;
     white-space: nowrap;
 }
 
@@ -227,25 +227,25 @@
 }
 
 .courses-edit-button {
-    background: #edf4ef;
-    border: 1px solid #dce3de;
-    color: #245337;
+    background: var(--color-surface-muted);
+    border: 1px solid var(--color-border);
+    color: var(--color-primary);
 }
 
     .courses-edit-button:hover {
-        background: #dcece0;
-        color: #173d2a;
+        background: var(--color-primary-soft);
+        color: var(--color-primary-dark);
         text-decoration: none;
     }
 
 .courses-delete-button {
-    background: #fcebea;
-    border: 1px solid #f5d5d2;
-    color: #b42318;
+    background: var(--color-danger-soft);
+    border: 1px solid var(--color-danger-border);
+    color: var(--color-danger);
 }
 
     .courses-delete-button:hover {
-        background: #f8d9d6;
+        background: var(--color-danger-border);
     }
 
     .courses-delete-button:disabled {
@@ -261,10 +261,10 @@
     justify-content: center;
     gap: 0.45rem;
     padding: 0.55rem 0.8rem;
-    background: #edf3fa;
-    border: 1px solid #d4e2f2;
+    background: var(--color-info-pale);
+    border: 1px solid var(--color-info-soft-hover);
     border-radius: 8px;
-    color: #285b91;
+    color: var(--color-info-muted);
     font-size: 0.8rem;
     font-weight: 600;
     text-decoration: none;
@@ -273,9 +273,9 @@
 }
 
     .courses-view-modules-button:hover {
-        background: #dce9f7;
-        border-color: #bfd3eb;
-        color: #194875;
+        background: var(--color-info-soft-hover);
+        border-color: var(--color-info-border);
+        color: var(--color-info-dark);
         text-decoration: none;
     }
 
@@ -293,19 +293,19 @@
 }
 
     .courses-empty-state > .bi {
-        color: #315a42;
+        color: var(--color-primary-hover);
         font-size: 2rem;
     }
 
     .courses-empty-state strong {
-        color: #26332b;
+        color: var(--color-text);
         font-size: 1rem;
         font-weight: 650;
     }
 
     .courses-empty-state p {
         margin: 0;
-        color: #7b847f;
+        color: var(--color-text-subtle);
         font-size: 0.9rem;
     }
 
@@ -357,18 +357,18 @@
         justify-content: center;
         gap: 0.6rem;
         padding: 0.85rem 1.3rem;
-        background: #173d2a;
-        border: 1px solid #173d2a;
+        background: var(--color-primary-dark);
+        border: 1px solid var(--color-primary-dark);
         border-radius: 10px;
-        color: #ffffff;
+        color: var(--color-white);
         font-size: 0.9rem;
         font-weight: 650;
         text-decoration: none;
     }
 
         .courses-page ::deep a.courses-create-button:hover {
-            background: #245337;
-            color: #ffffff;
+            background: var(--color-primary);
+            color: var(--color-white);
             text-decoration: none;
         }
 
@@ -378,18 +378,18 @@
         justify-content: center;
         gap: 0.45rem;
         padding: 0.55rem 0.8rem;
-        background: #edf4ef;
-        border: 1px solid #dce3de;
+        background: var(--color-surface-muted);
+        border: 1px solid var(--color-border);
         border-radius: 8px;
-        color: #245337;
+        color: var(--color-primary);
         font-size: 0.8rem;
         font-weight: 600;
         text-decoration: none;
     }
 
         .courses-page ::deep a.courses-edit-button:hover {
-            background: #dcece0;
-            color: #173d2a;
+            background: var(--color-primary-soft);
+            color: var(--color-primary-dark);
             text-decoration: none;
         }
 
@@ -397,14 +397,14 @@
         display: inline-flex;
         align-items: center;
         gap: 0.7rem;
-        color: #17231c;
+        color: var(--color-text-strong);
         font-size: 0.9rem;
         font-weight: 650;
         text-decoration: none;
     }
 
         .courses-page ::deep a.courses-name-link:hover {
-            color: #245337;
+            color: var(--color-primary);
             text-decoration: underline;
         }
 
