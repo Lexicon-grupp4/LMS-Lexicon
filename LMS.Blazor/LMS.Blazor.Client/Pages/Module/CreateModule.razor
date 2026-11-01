@@ -23,10 +23,10 @@
     </header>
 
     <!-- MAIN CARD -->
-    <section class="create-module-card">
+    <section class="card create-module-card">
 
         <!-- CARD HEADER -->
-        <div class="create-module-card-header">
+        <div class="card-header create-module-card-header">
             <div>
                 <h2>Module Information</h2>
                 <p>Enter the details for the new module below.</p>
@@ -39,7 +39,7 @@
         <!-- ERROR MESSAGE -->
         @if (!string.IsNullOrWhiteSpace(errorMessage))
         {
-            <div class="create-module-error" role="alert">
+            <div class="alert alert-danger create-module-error" role="alert">
                 <span class="bi bi-exclamation-circle"
                       aria-hidden="true"></span>
                 <span>@errorMessage</span>
@@ -58,13 +58,13 @@
                 </div>                
 
                 <!-- MODULE NAME -->
-                <div class="create-module-field">
-                    <label for="moduleName">
+                <div>
+                    <label class="form-label" for="moduleName">
                         Module Name
                     </label>
 
                     <InputText id="moduleName"
-                               class="create-module-input"
+                               class="form-control"
                                @bind-Value="module.Name"
                                placeholder="Enter module name" />
 
@@ -73,13 +73,13 @@
                 </div>
 
                 <!-- DESCRIPTION -->
-                <div class="create-module-field">
-                    <label for="moduleDescription">
+                <div>
+                    <label class="form-label" for="moduleDescription">
                         Description
                     </label>
 
                     <InputTextArea id="moduleDescription"
-                                   class="create-module-input create-module-textarea"
+                                   class="form-control"
                                    @bind-Value="module.Description"
                                    placeholder="Enter module description"
                                    rows="4" />
@@ -89,28 +89,28 @@
                 </div>
 
                 <!-- DATE FIELDS -->
-                <div class="create-module-date-grid">
+                <div class="row g-4">
 
-                    <div class="create-module-field">
-                        <label for="moduleStartDate">
+                    <div class="col-md-6">
+                        <label class="form-label" for="moduleStartDate">
                             Start Date
                         </label>
 
                         <InputDate id="moduleStartDate"
-                                   class="create-module-input"
+                                   class="form-control"
                                    @bind-Value="module.StartDate" />
 
                         <ValidationMessage
                             For="@(() => module.StartDate)" />
                     </div>
 
-                    <div class="create-module-field">
-                        <label for="moduleEndDate">
+                    <div class="col-md-6">
+                        <label class="form-label" for="moduleEndDate">
                             End Date
                         </label>
 
                         <InputDate id="moduleEndDate"
-                                   class="create-module-input"
+                                   class="form-control"
                                    @bind-Value="module.EndDate" />
 
                         <ValidationMessage
@@ -124,13 +124,13 @@
             <!-- FORM FOOTER -->
             <div class="create-module-footer">
 
-                <a class="create-module-cancel-button"
+                <a class="btn btn-outline-secondary d-inline-flex align-items-center justify-content-center gap-2"
                    href="@($"/courses/{CourseId}/modules")">
                     Cancel
                 </a>
 
                 <button type="submit"
-                        class="create-module-save-button"
+                        class="btn btn-primary d-inline-flex align-items-center justify-content-center gap-2"
                         disabled="@isSaving">
 
                     @if (isSaving)

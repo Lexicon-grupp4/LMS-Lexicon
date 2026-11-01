@@ -18,11 +18,11 @@
     }
     else
     {
-        <section class="course-card">
+        <section class="card course-card">
             <div class="course-header">
                 <h2>@course.Name (@course.Code)</h2>
             </div>
-            <p>@course.Description ... <NavLink class="btn btn-sm btn-secondary ms-2" href="@($"courses/edit/{id}")">Edit
+            <p>@course.Description ... <NavLink class="btn btn-sm btn-outline-secondary ms-2" href="@($"courses/edit/{id}")">Edit
             </NavLink>
         </p>
         <div class="course-dates">

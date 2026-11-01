@@ -35,46 +35,11 @@
     color: var(--color-text-subtle);
 }
 
-/* ADD MODULE BUTTON */
-
-.modules-add-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 9px;
-    min-height: 40px;
-    padding: 10px 18px;
-    border: 1px solid var(--color-primary-dark);
-    border-radius: 8px;
-    background: var(--color-primary-dark);
-    color: var(--color-white);
-    font-size: 13px;
-    font-weight: 600;
-    text-decoration: none;
-    white-space: nowrap;
-    transition: background-color 0.2s ease;
-}
-
-    .modules-add-button:hover {
-        background: var(--color-primary-hover);
-        border-color: var(--color-primary-hover);
-        color: var(--color-white);
-    }
-
-    .modules-add-button:focus-visible {
-        outline: 3px solid var(--color-accent-light);
-        outline-offset: 3px;
-    }
-
 /* MAIN CARD */
 
 .modules-card {
     width: 100%;
-    background: var(--color-white);
-    border: 1px solid var(--color-border-light);
-    border-radius: 13px;
     overflow: hidden;
-    box-shadow: 0 3px 16px rgba(30, 50, 40, 0.035);
 }
 
 .modules-card-header {
@@ -83,7 +48,6 @@
     align-items: center;
     gap: 15px;
     padding: 23px 25px;
-    border-bottom: 1px solid var(--color-border-light);
 }
 
     .modules-card-header h2 {
@@ -113,15 +77,9 @@
 }
 
 .modules-table {
-    width: 100%;
     min-width: 690px;
-    border-collapse: collapse;
     text-align: left;
 }
-
-    .modules-table thead {
-        background: var(--color-surface);
-    }
 
     .modules-table th {
         padding: 17px 22px;
@@ -130,7 +88,6 @@
         font-weight: 700;
         letter-spacing: 0.65px;
         white-space: nowrap;
-        border-bottom: 1px solid var(--color-border-light);
     }
 
     .modules-table td {
@@ -138,20 +95,11 @@
         font-size: 13px;
         color: var(--color-text-subtle);
         vertical-align: middle;
-        border-bottom: 1px solid var(--color-border-light);
-    }
-
-    .modules-table tbody tr:last-child td {
-        border-bottom: none;
     }
 
     .modules-table tbody tr {
         transition: background-color 0.15s ease;
     }
-
-        .modules-table tbody tr:hover {
-            background: var(--color-surface);
-        }
 
 /* MODULE NAME */
 
@@ -184,60 +132,11 @@
 /* MODULE ID BADGE */
 
 .modules-id-badge {
-    display: inline-flex;
-    align-items: center;
     justify-content: center;
     min-width: 30px;
-    padding: 5px 9px;
-    border-radius: 6px;
-    background: var(--color-surface-muted);
-    color: var(--color-primary-light);
-    font-size: 11px;
-    font-weight: 700;
-}
-
-/* ACTION BUTTONS */
-
-.modules-schedule-button,
-.modules-edit-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 600;
-    text-decoration: none;
-    white-space: nowrap;
-    transition: background-color 0.2s ease;
-}
-
-.modules-schedule-button {
     background: var(--color-surface-muted);
     color: var(--color-primary-light);
 }
-
-    .modules-schedule-button:hover {
-        background: var(--color-border);
-        color: var(--color-primary-dark);
-    }
-
-.modules-edit-button {
-    background: var(--color-border-light);
-    color: var(--color-text-muted);
-}
-
-    .modules-edit-button:hover {
-        background: var(--color-border);
-        color: var(--color-primary-hover);
-    }
-
-    .modules-schedule-button:focus-visible,
-    .modules-edit-button:focus-visible {
-        outline: 3px solid var(--color-accent-light);
-        outline-offset: 2px;
-    }
 
 .modules-actions-heading,
 .modules-actions-cell {
@@ -290,13 +189,6 @@
     align-items: flex-start;
     gap: 10px;
     margin: 20px 24px;
-    padding: 14px 16px;
-    border-radius: 8px;
-    background: var(--color-danger-soft);
-    border: 1px solid var(--color-danger-border);
-    color: var(--color-danger-muted);
-    font-size: 13px;
-    line-height: 1.6;
 }
 
 /* RESPONSIVE */

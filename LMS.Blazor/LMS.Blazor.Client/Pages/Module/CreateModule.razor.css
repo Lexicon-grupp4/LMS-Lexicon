@@ -41,11 +41,7 @@
 
 .create-module-card {
     width: 100%;
-    background: var(--color-white);
-    border: 1px solid var(--color-border-light);
-    border-radius: 13px;
     overflow: hidden;
-    box-shadow: 0 3px 16px rgba(30, 50, 40, 0.035);
 }
 
 /* CARD HEADER */
@@ -56,7 +52,6 @@
     align-items: center;
     gap: 15px;
     padding: 23px 25px;
-    border-bottom: 1px solid var(--color-border-light);
 }
 
     .create-module-card-header h2 {
@@ -85,74 +80,6 @@
     flex-direction: column;
     gap: 24px;
     padding: 28px 30px 32px;
-}
-
-.create-module-field {
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
-}
-
-    .create-module-field label {
-        color: var(--color-text-secondary);
-        font-size: 13px;
-        font-weight: 600;
-    }
-
-    /* INPUT FIELDS */
-
-    .create-module-field ::deep .create-module-input {
-        display: block;
-        width: 100%;
-        min-height: 44px;
-        padding: 11px 14px;
-        border: 1px solid var(--color-border);
-        border-radius: 8px;
-        background: var(--color-white);
-        color: var(--color-text-secondary);
-        font-family: inherit;
-        font-size: 13px;
-        line-height: 1.5;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-        .create-module-field ::deep .create-module-input:hover {
-            border-color: var(--color-border-strong);
-        }
-
-        .create-module-field ::deep .create-module-input:focus {
-            outline: none;
-            border-color: var(--color-accent);
-            box-shadow: 0 0 0 3px rgba(101, 139, 112, 0.12);
-        }
-
-        .create-module-field ::deep .create-module-input::placeholder {
-            color: var(--color-text-faint);
-        }
-
-    /* DESCRIPTION */
-
-    .create-module-field ::deep .create-module-textarea {
-        min-height: 110px;
-        resize: vertical;
-    }
-
-    /* COURSE ID FIELD */
-
-    .create-module-field ::deep .create-module-input:disabled,
-    .create-module-field ::deep .create-module-input:read-only {
-        background: var(--color-surface);
-        border-color: var(--color-border-light);
-        color: var(--color-text-subtle);
-        cursor: not-allowed;
-    }
-
-/* DATE FIELDS */
-
-.create-module-date-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 22px;
 }
 
 /* INFORMATION BOX */
@@ -208,15 +135,6 @@
     display: none;
 }
 
-.create-module-field ::deep .validation-message {
-    color: var(--color-danger-accent);
-    font-size: 12px;
-}
-
-.create-module-field ::deep .create-module-input.invalid {
-    border-color: var(--color-danger-light);
-}
-
 /* ERROR MESSAGE */
 
 .create-module-error {
@@ -224,13 +142,6 @@
     align-items: flex-start;
     gap: 10px;
     margin: 20px 24px;
-    padding: 14px 16px;
-    background: var(--color-danger-soft);
-    border: 1px solid var(--color-danger-border);
-    border-radius: 8px;
-    color: var(--color-danger-muted);
-    font-size: 13px;
-    line-height: 1.6;
 }
 
 /* LOADING STATE */
@@ -279,65 +190,6 @@
     border-top: 1px solid var(--color-border-light);
 }
 
-/* BUTTONS */
-
-.create-module-save-button,
-.create-module-cancel-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 9px;
-    min-height: 40px;
-    padding: 10px 18px;
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 600;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-/* CREATE BUTTON */
-
-.create-module-save-button {
-    background: var(--color-primary-dark);
-    border: 1px solid var(--color-primary-dark);
-    color: var(--color-white);
-}
-
-    .create-module-save-button:hover:not(:disabled) {
-        background: var(--color-primary-hover);
-        border-color: var(--color-primary-hover);
-        color: var(--color-white);
-    }
-
-    .create-module-save-button:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-    }
-
-/* CANCEL BUTTON */
-
-.create-module-cancel-button {
-    background: var(--color-white);
-    border: 1px solid var(--color-border);
-    color: var(--color-text-muted);
-}
-
-    .create-module-cancel-button:hover {
-        background: var(--color-surface-muted);
-        color: var(--color-primary-hover);
-    }
-
-    /* ACCESSIBILITY */
-
-    .create-module-save-button:focus-visible,
-    .create-module-cancel-button:focus-visible {
-        outline: 3px solid var(--color-accent-light);
-        outline-offset: 3px;
-    }
-
 /* RESPONSIVE DESIGN */
 
 @media (max-width: 768px) {
@@ -362,11 +214,6 @@
         padding: 22px 18px;
     }
 
-    .create-module-date-grid {
-        grid-template-columns: 1fr;
-        gap: 22px;
-    }
-
     .create-module-footer {
         padding: 18px;
     }
@@ -381,10 +228,5 @@
     .create-module-footer {
         flex-direction: column-reverse;
         align-items: stretch;
-    }
-
-    .create-module-save-button,
-    .create-module-cancel-button {
-        width: 100%;
     }
 }

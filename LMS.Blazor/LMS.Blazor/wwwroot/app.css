@@ -55,13 +55,83 @@ a, .btn-link {
 }
 
 .btn-primary {
-    color: var(--color-white);
-    background-color: var(--color-info);
-    border-color: var(--color-link);
+    --bs-btn-color: var(--color-white);
+    --bs-btn-bg: var(--color-primary);
+    --bs-btn-border-color: var(--color-primary);
+    --bs-btn-hover-color: var(--color-white);
+    --bs-btn-hover-bg: var(--color-primary-hover);
+    --bs-btn-hover-border-color: var(--color-primary-hover);
+    --bs-btn-active-color: var(--color-white);
+    --bs-btn-active-bg: var(--color-primary-dark);
+    --bs-btn-active-border-color: var(--color-primary-dark);
+    --bs-btn-disabled-color: var(--color-white);
+    --bs-btn-disabled-bg: var(--color-primary);
+    --bs-btn-disabled-border-color: var(--color-primary);
+}
+
+.btn-outline-secondary {
+    --bs-btn-color: var(--color-text-muted);
+    --bs-btn-border-color: var(--color-border);
+    --bs-btn-hover-color: var(--color-primary-hover);
+    --bs-btn-hover-bg: var(--color-surface-muted);
+    --bs-btn-hover-border-color: var(--color-border);
+    --bs-btn-active-color: var(--color-primary-hover);
+    --bs-btn-active-bg: var(--color-surface-muted);
+    --bs-btn-active-border-color: var(--color-border);
+    --bs-btn-disabled-color: var(--color-text-muted);
+    --bs-btn-disabled-border-color: var(--color-border);
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem var(--color-focus);
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem var(--color-accent-light);
+}
+
+.card {
+    --bs-card-bg: var(--color-white);
+    --bs-card-border-color: var(--color-border);
+    --bs-card-border-radius: 13px;
+    --bs-card-inner-border-radius: 12px;
+    --bs-card-cap-bg: var(--color-white);
+    --bs-card-box-shadow: 0 3px 16px rgba(30, 50, 40, 0.035);
+    box-shadow: var(--bs-card-box-shadow);
+}
+
+.table {
+    --bs-table-border-color: var(--color-border-light);
+    --bs-table-hover-bg: var(--color-surface);
+}
+
+.table .btn-sm {
+    --bs-btn-font-size: 0.75rem;
+    --bs-btn-padding-x: 0.6rem;
+    --bs-btn-padding-y: 0.3rem;
+}
+
+.table-light {
+    --bs-table-bg: var(--color-surface);
+    --bs-table-color: var(--color-text-subtle);
+}
+
+.alert-danger {
+    --bs-alert-color: var(--color-danger-muted);
+    --bs-alert-bg: var(--color-danger-soft);
+    --bs-alert-border-color: var(--color-danger-border);
+}
+
+.alert-success {
+    --bs-alert-color: var(--color-primary);
+    --bs-alert-bg: var(--color-primary-soft);
+    --bs-alert-border-color: var(--color-accent-light);
+}
+
+.modal-content {
+    --bs-modal-bg: var(--color-white);
+    --bs-modal-border-color: var(--color-border-light);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(101, 139, 112, 0.12);
 }
 
 .content {

@@ -1,10 +1,6 @@
 .documents-card {
     margin-top: 1.35rem;
     padding: 1.45rem 1.5rem;
-    background: var(--color-white);
-    border: 1px solid var(--color-border);
-    border-radius: 16px;
-    box-shadow: 0 3px 14px rgba(24, 54, 37, 0.04);
 }
 
 .documents-header {
@@ -22,6 +18,7 @@
 
 .upload-area {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 0.75rem;
     margin: 1rem 0 0.5rem;
@@ -34,10 +31,6 @@
 }
 
 .upload-area ::deep input[type=file] { font-size: 0.85rem; }
-
-.doc-message { margin: 1rem 0 0; padding: 0.75rem 1rem; border-radius: 10px; font-size: 0.86rem; }
-.doc-message.success { background: var(--color-primary-soft); color: var(--color-primary); }
-.doc-message.error { background: var(--color-danger-soft); color: var(--color-danger-dark); }
 
 .document-item {
     display: flex;
@@ -52,17 +45,5 @@
 .document-item a { color: var(--color-text); font-size: 0.92rem; font-weight: 650; text-decoration: none; }
 .document-item a:hover { color: var(--color-primary-dark); text-decoration: underline; }
 .document-item p { margin: 0.3rem 0 0; color: var(--color-text-subtle); font-size: 0.83rem; }
-
-.delete-button {
-    flex-shrink: 0;
-    padding: 0.35rem 0.75rem;
-    border: 1px solid var(--color-danger-border);
-    border-radius: 8px;
-    background: transparent;
-    color: var(--color-danger-dark);
-    font-size: 0.8rem;
-    font-weight: 600;
-}
-.delete-button:hover { background: var(--color-danger-soft); }
 
 .empty-state { padding: 2rem 1rem; text-align: center; color: var(--color-text-subtle); font-size: 0.86rem; }

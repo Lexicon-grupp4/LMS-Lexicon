@@ -39,11 +39,7 @@
 
 .create-activity-card {
     width: 100%;
-    background: var(--color-white);
-    border: 1px solid var(--color-border-light);
-    border-radius: 13px;
     overflow: hidden;
-    box-shadow: 0 3px 16px rgba(30, 50, 40, 0.035);
 }
 
 /* CARD HEADER */
@@ -54,7 +50,6 @@
     align-items: center;
     gap: 15px;
     padding: 23px 25px;
-    border-bottom: 1px solid var(--color-border-light);
 }
 
     .create-activity-card-header h2 {
@@ -83,64 +78,6 @@
     flex-direction: column;
     gap: 24px;
     padding: 28px 30px 32px;
-}
-
-.create-activity-field {
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
-}
-
-    .create-activity-field label {
-        color: var(--color-text-secondary);
-        font-size: 13px;
-        font-weight: 600;
-    }
-
-    /* INPUT FIELDS */
-
-    .create-activity-field ::deep .create-activity-input {
-        display: block;
-        width: 100%;
-        min-height: 44px;
-        padding: 11px 14px;
-        border: 1px solid var(--color-border);
-        border-radius: 8px;
-        background: var(--color-white);
-        color: var(--color-text-secondary);
-        font-family: inherit;
-        font-size: 13px;
-        line-height: 1.5;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-        .create-activity-field ::deep .create-activity-input:hover {
-            border-color: var(--color-border-strong);
-        }
-
-        .create-activity-field ::deep .create-activity-input:focus {
-            outline: none;
-            border-color: var(--color-accent);
-            box-shadow: 0 0 0 3px rgba(101, 139, 112, 0.12);
-        }
-
-        .create-activity-field ::deep .create-activity-input::placeholder {
-            color: var(--color-text-faint);
-        }
-
-    /* DESCRIPTION */
-
-    .create-activity-field ::deep .create-activity-textarea {
-        min-height: 110px;
-        resize: vertical;
-    }
-
-/* DATE AND TIME */
-
-.create-activity-date-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 22px;
 }
 
 /* MODULE PERIOD INFORMATION */
@@ -203,15 +140,6 @@
     display: none;
 }
 
-.create-activity-field ::deep .validation-message {
-    color: var(--color-danger-accent);
-    font-size: 12px;
-}
-
-.create-activity-field ::deep .create-activity-input.invalid {
-    border-color: var(--color-danger-light);
-}
-
 /* FORM FOOTER */
 
 .create-activity-footer {
@@ -225,57 +153,6 @@
     background: var(--color-white);
 }
 
-/* BUTTONS */
-
-.create-activity-save-button,
-.create-activity-cancel-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 9px;
-    min-height: 40px;
-    padding: 10px 18px;
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 600;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-
-/* CREATE BUTTON */
-
-.create-activity-save-button {
-    border: 1px solid var(--color-primary-dark);
-    background: var(--color-primary-dark);
-    color: var(--color-white);
-}
-
-    .create-activity-save-button:hover:not(:disabled) {
-        background: var(--color-primary-hover);
-        border-color: var(--color-primary-hover);
-        color: var(--color-white);
-    }
-
-    .create-activity-save-button:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-    }
-
-/* CANCEL BUTTON */
-
-.create-activity-cancel-button {
-    border: 1px solid var(--color-border);
-    background: var(--color-white);
-    color: var(--color-text-muted);
-}
-
-    .create-activity-cancel-button:hover {
-        background: var(--color-surface-muted);
-        color: var(--color-primary-hover);
-    }
-
 /* ERROR MESSAGE */
 
 .create-activity-error {
@@ -283,13 +160,6 @@
     align-items: flex-start;
     gap: 10px;
     margin: 20px 24px;
-    padding: 14px 16px;
-    border: 1px solid var(--color-danger-border);
-    border-radius: 8px;
-    background: var(--color-danger-soft);
-    color: var(--color-danger-muted);
-    font-size: 13px;
-    line-height: 1.6;
 }
 
 /* LOADING STATE */
@@ -325,14 +195,6 @@
     color: var(--color-primary-light);
 }
 
-/* ACCESSIBILITY */
-
-.create-activity-save-button:focus-visible,
-.create-activity-cancel-button:focus-visible {
-    outline: 3px solid var(--color-accent-light);
-    outline-offset: 3px;
-}
-
 /* RESPONSIVE */
 
 @media (max-width: 768px) {
@@ -356,11 +218,6 @@
         padding: 22px 18px;
     }
 
-    .create-activity-date-grid {
-        grid-template-columns: 1fr;
-        gap: 22px;
-    }
-
     .create-activity-footer {
         padding: 18px;
     }
@@ -374,10 +231,5 @@
     .create-activity-footer {
         flex-direction: column-reverse;
         align-items: stretch;
-    }
-
-    .create-activity-save-button,
-    .create-activity-cancel-button {
-        width: 100%;
     }
 }

@@ -26,10 +26,10 @@
     </header>
 
     <!-- MAIN CARD -->
-    <section class="user-create-card">
+    <section class="card user-create-card">
 
         <!-- CARD HEADER -->
-        <div class="user-create-card-header">
+        <div class="card-header user-create-card-header">
             <div>
                 <h2>User Information</h2>
                 <p>Enter the details for the new user below.</p>
@@ -53,7 +53,7 @@
         <!-- ERROR MESSAGE -->
         @if (!string.IsNullOrWhiteSpace(errorMessage))
         {
-            <div class="user-create-error" role="alert">
+            <div class="alert alert-danger user-create-error" role="alert">
                 <span class="bi bi-exclamation-circle"
                       aria-hidden="true"></span>
 
@@ -75,13 +75,13 @@
                 </div>
 
                 <!-- FIRST NAME AND LAST NAME -->
-                <div class="user-create-name-grid">
+                <div class="row g-4">
 
-                    <div class="user-create-field">
-                        <label for="firstName">First Name</label>
+                    <div class="col-md-6">
+                        <label class="form-label" for="firstName">First Name</label>
 
                         <InputText id="firstName"
-                                   class="user-create-input"
+                                   class="form-control"
                                    @bind-Value="model.FirstName"
                                    placeholder="Enter first name" />
 
@@ -89,11 +89,11 @@
                             For="@(() => model.FirstName)" />
                     </div>
 
-                    <div class="user-create-field">
-                        <label for="lastName">Last Name</label>
+                    <div class="col-md-6">
+                        <label class="form-label" for="lastName">Last Name</label>
 
                         <InputText id="lastName"
-                                   class="user-create-input"
+                                   class="form-control"
                                    @bind-Value="model.LastName"
                                    placeholder="Enter last name" />
 
@@ -104,11 +104,11 @@
                 </div>
 
                 <!-- EMAIL -->
-                <div class="user-create-field">
-                    <label for="email">Email</label>
+                <div>
+                    <label class="form-label" for="email">Email</label>
 
                     <InputText id="email"
-                               class="user-create-input"
+                               class="form-control"
                                type="email"
                                @bind-Value="model.Email"
                                placeholder="Enter email address" />
@@ -118,11 +118,11 @@
                 </div>
 
                 <!-- ROLE -->
-                <div class="user-create-field">
-                    <label for="userRole">Role</label>
+                <div>
+                    <label class="form-label" for="userRole">Role</label>
 
                     <InputSelect id="userRole"
-                                 class="user-create-input"
+                                 class="form-select"
                                  @bind-Value="model.Role">
 
                         <option value="">-- Select role --</option>
@@ -136,11 +136,11 @@
                 </div>
 
                 <!-- COURSE -->
-                <div class="user-create-field">
-                    <label for="userCourse">Course (Optional)</label>
+                <div>
+                    <label class="form-label" for="userCourse">Course (Optional)</label>
 
                     <InputSelect id="userCourse"
-                                 class="user-create-input"
+                                 class="form-select"
                                  @bind-Value="model.CourseId"
                                  disabled="@isLoadingCourses">
 
@@ -155,7 +155,7 @@
 
                     </InputSelect>
 
-                    <p class="user-create-help-text">
+                    <p class="form-text">
                         Select a course to assign to the user,
                         or leave it unassigned.
                     </p>
@@ -184,14 +184,14 @@
             <div class="user-create-footer">
 
                 <button type="button"
-                        class="user-create-cancel-button"
+                        class="btn btn-outline-secondary"
                         @onclick="Cancel"
                         disabled="@isSaving">
                     Cancel
                 </button>
 
                 <button type="submit"
-                        class="user-create-save-button"
+                        class="btn btn-primary d-inline-flex align-items-center justify-content-center gap-2"
                         disabled="@isSaving">
 
                     @if (isSaving)
