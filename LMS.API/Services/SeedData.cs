@@ -65,7 +65,7 @@ internal static class SeedData
             activities.Add(CreateActivity(module, types[2], $"{module.Name} - Exercises",
                 day.AddDays(2).AddHours(13), day.AddDays(2).AddHours(16)));
             activities.Add(CreateActivity(module, types[3], $"{module.Name} - Assignment",
-                day.AddHours(9), module.EndDate.AddHours(-7)));
+                day.AddDays(3).AddHours(9), module.EndDate.AddHours(-7)));
         }
 
         return activities;
