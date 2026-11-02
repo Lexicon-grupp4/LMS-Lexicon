@@ -203,6 +203,9 @@ namespace LMS.Presentation.Controllers
         [ProducesResponseType(
             typeof(ProblemDetails),
             StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(
+            typeof(ProblemDetails),
+            StatusCodes.Status409Conflict)]
         public async Task<IActionResult> Delete(int id)
         {
             await _serviceManager.ActivityService.DeleteActivityAsync(id);
