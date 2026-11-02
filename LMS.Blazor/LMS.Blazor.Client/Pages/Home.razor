@@ -269,7 +269,19 @@
                             <figcaption class="feedback-footer">
 
                                 <div>
-                                    <p>Submission #@feedback.SubmissionId</p>
+                                    @if (feedback.ActivityId is int activityId)
+                                    {
+                                        <p>
+                                            <a class="feedback-link"
+                                               href="@($"/assignments?activityId={activityId}")">
+                                                @(feedback.AssignmentTitle ?? "View assignment")
+                                            </a>
+                                        </p>
+                                    }
+                                    else
+                                    {
+                                        <p>Submission #@feedback.SubmissionId</p>
+                                    }
 
                                     <small>
                                         @(feedback.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm"))
