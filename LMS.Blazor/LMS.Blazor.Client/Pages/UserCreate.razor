@@ -12,6 +12,7 @@
 
 @inject IApiProxyClient ApiProxyClient
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JS
 
 <PageTitle>Add User</PageTitle>
 
@@ -39,6 +40,71 @@
                   aria-hidden="true"></span>
         </div>
 
+        @if (createdUser is not null && setupLink is not null)
+        {
+            <!-- USER CREATED: SETUP LINK FOR THE NEW USER -->
+            <div class="user-create-form">
+
+                <div class="alert alert-success mb-0" role="status">
+                    @createdUser.FirstName @createdUser.LastName
+                    (@createdUser.Email) has been created.
+                </div>
+
+                <div class="user-create-info">
+
+                    <span class="user-create-info-icon bi bi-link-45deg"
+                          aria-hidden="true"></span>
+
+                    <div class="flex-grow-1">
+                        <strong>Password setup link</strong>
+
+                        <p>
+                            Send this link to the user. They open it to
+                            set their own password and then log in.
+                        </p>
+
+                        <div class="input-group mt-2">
+                            <input type="text"
+                                   class="form-control"
+                                   value="@setupLink"
+                                   aria-label="Password setup link"
+                                   readonly />
+
+                            <button type="button"
+                                    class="btn btn-outline-secondary"
+                                    @onclick="CopySetupLink">
+                                @(linkCopied ? "Copied" : "Copy link")
+                            </button>
+                        </div>
+
+                        @if (copyFailed)
+                        {
+                            <p class="text-danger mt-2">
+                                Copy failed. Select the link and copy it manually.
+                            </p>
+                        }
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="user-create-footer">
+
+                <button type="button"
+                        class="btn btn-outline-secondary"
+                        @onclick="AddAnotherUser">
+                    Add Another User
+                </button>
+
+                <a class="btn btn-primary" href="/users">
+                    Back to User Management
+                </a>
+
+            </div>
+        }
+        else
+        {
         <!-- LOADING COURSES -->
         @if (isLoadingCourses)
         {
@@ -215,6 +281,7 @@
             </div>
 
         </EditForm>
+        }
 
     </section>
 
@@ -229,6 +296,12 @@
     private bool isLoadingCourses = true;
 
     private string? errorMessage;
+
+    // Set after a user is created; the teacher passes the link on to the user
+    private UserDto? createdUser;
+    private string? setupLink;
+    private bool linkCopied;
+    private bool copyFailed;
 
     protected override async Task OnInitializedAsync()
     {
@@ -295,7 +368,8 @@
                 $"?userId={Uri.EscapeDataString(result.User.Id)}" +
                 $"&token={Uri.EscapeDataString(result.PasswordSetupToken)}";
 
-            NavigationManager.NavigateTo(setupUrl);
+            createdUser = result.User;
+            setupLink = NavigationManager.ToAbsoluteUri(setupUrl).ToString();
         }
         catch (UnauthorizedAccessException)
         {
@@ -320,5 +394,29 @@
     private void Cancel()
     {
         NavigationManager.NavigateTo("/users");
+    }
+
+    private async Task CopySetupLink()
+    {
+        copyFailed = false;
+
+        try
+        {
+            await JS.InvokeVoidAsync("navigator.clipboard.writeText", setupLink);
+            linkCopied = true;
+        }
+        catch (JSException)
+        {
+            copyFailed = true;
+        }
+    }
+
+    private void AddAnotherUser()
+    {
+        model = new();
+        createdUser = null;
+        setupLink = null;
+        linkCopied = false;
+        copyFailed = false;
     }
 }
