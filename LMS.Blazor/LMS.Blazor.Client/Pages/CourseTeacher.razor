@@ -107,7 +107,18 @@
                         @foreach (var participant in participants)
                         {
                             <tr @key="participant.Email">
-                                <td>@participant.FirstName @participant.LastName</td>
+                                <td>
+                                    @if (participant.Role == "Student" && participant.Id is not null)
+                                    {
+                                        <a href="@($"/students/{participant.Id}")">
+                                            @($"{participant.FirstName} {participant.LastName}")
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        @($"{participant.FirstName} {participant.LastName}")
+                                    }
+                                </td>
                                 <td>@participant.Email</td>
                                 <td>@participant.Role</td>
                             </tr>
