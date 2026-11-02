@@ -1,7 +1,9 @@
 ﻿
 @page "/modules/create/{CourseId:int}"
 
+@using LMS.Shared.DTOs.CourseDtos
 @using LMS.Shared.DTOs.Module
+@using LMS.Shared.Paging
 @using LMS.Blazor.Client.Services.ApiProxy
 @using Microsoft.AspNetCore.Authorization
 
@@ -46,6 +48,18 @@
             </div>
         }
 
+        @if (isLoading)
+        {
+            <div class="create-module-state">
+                <div class="spinner-border create-module-spinner"
+                     role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <strong>Loading course...</strong>
+            </div>
+        }
+        else if (course is not null)
+        {
         <!-- CREATE FORM -->
         <EditForm Model="module" OnValidSubmit="CreateModules">
 
@@ -55,7 +69,63 @@
 
                 <div class="create-module-validation">
                     <ValidationSummary />
-                </div>                
+                </div>
+
+                <!-- COURSE INFORMATION -->
+                <div class="create-module-info">
+
+                    <span class="create-module-info-icon bi bi-info-circle"
+                          aria-hidden="true"></span>
+
+                    <div>
+                        <strong>@course.Name</strong>
+
+                        <p>
+                            @course.StartDate.ToString("yyyy-MM-dd")
+                            –
+                            @course.EndDate.ToString("yyyy-MM-dd")
+                        </p>
+
+                        <div class="create-module-periods">
+                            <div>
+                                <strong>Booked</strong>
+
+                                @if (bookedModules.Count == 0)
+                                {
+                                    <p>No modules created yet.</p>
+                                }
+
+                                @foreach (var booked in bookedModules)
+                                {
+                                    <p @key="booked.Id">
+                                        @booked.Name:
+                                        @booked.StartDate.ToString("yyyy-MM-dd")
+                                        –
+                                        @booked.EndDate.ToString("yyyy-MM-dd")
+                                    </p>
+                                }
+                            </div>
+
+                            <div>
+                                <strong>Available</strong>
+
+                                @if (availablePeriods.Count == 0)
+                                {
+                                    <p>No available dates</p>
+                                }
+
+                                @foreach (var period in availablePeriods)
+                                {
+                                    <p @key="period.Start">
+                                        @period.Start.ToString("yyyy-MM-dd")
+                                        –
+                                        @period.End.ToString("yyyy-MM-dd")
+                                    </p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- MODULE NAME -->
                 <div>
@@ -154,6 +224,7 @@
             </div>
 
         </EditForm>
+        }
 
     </section>
 
@@ -163,14 +234,102 @@
     [Parameter]
     public int CourseId { get; set; }
 
-    private CreateModuleDto module = new();
+    private sealed record DatePeriod(DateTime Start, DateTime End);
 
+    private CreateModuleDto module = new();
+    private CourseDto? course;
+    private List<ModuleDto> bookedModules = [];
+    private List<DatePeriod> availablePeriods = [];
+
+    private bool isLoading = true;
     private bool isSaving;
     private string? errorMessage;
 
     protected override void OnParametersSet()
     {
         module.CourseId = CourseId;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var loadedCourse =
+                await ApiProxyClient.GetAsync<CourseDto>(
+                    $"courses/{CourseId}");
+
+            var response =
+                await ApiProxyClient.GetAsync<PagedResponse<ModuleDto>>(
+                    $"Module/course/{CourseId}");
+
+            if (loadedCourse is null)
+            {
+                errorMessage = "The course could not be loaded.";
+                return;
+            }
+
+            bookedModules = response?.Items
+                .OrderBy(m => m.StartDate)
+                .ThenBy(m => m.Id)
+                .ToList() ?? [];
+
+            availablePeriods =
+                GetAvailablePeriods(loadedCourse, bookedModules);
+
+            var defaultPeriod = availablePeriods.FirstOrDefault()
+                ?? new DatePeriod(loadedCourse.StartDate, loadedCourse.EndDate);
+
+            module.StartDate = defaultPeriod.Start;
+            module.EndDate = defaultPeriod.End;
+            course = loadedCourse;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            NavigationManager.NavigateTo(
+                "/Account/Login",
+                forceLoad: true);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    // Expects modules sorted by start date. A day with a module counts as booked.
+    private static List<DatePeriod> GetAvailablePeriods(
+        CourseDto course,
+        List<ModuleDto> modules)
+    {
+        var periods = new List<DatePeriod>();
+        var nextFree = course.StartDate;
+
+        foreach (var booked in modules)
+        {
+            var lastFree = booked.StartDate.Date.AddDays(-1);
+
+            if (nextFree.Date <= lastFree)
+            {
+                periods.Add(new DatePeriod(nextFree, lastFree));
+            }
+
+            var afterModule = booked.EndDate.Date.AddDays(1);
+
+            if (afterModule > nextFree)
+            {
+                nextFree = afterModule;
+            }
+        }
+
+        if (nextFree.Date <= course.EndDate.Date)
+        {
+            periods.Add(new DatePeriod(nextFree, course.EndDate));
+        }
+
+        return periods;
     }
 
     private async Task CreateModules()
