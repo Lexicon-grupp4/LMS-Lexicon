@@ -114,7 +114,13 @@
     color: var(--color-text-secondary);
     font-size: 13px;
     font-weight: 600;
+    text-decoration: none;
 }
+
+    .activities-title:hover {
+        color: var(--color-primary-dark);
+        text-decoration: underline;
+    }
 
 .activities-description {
     color: var(--color-text-subtle);

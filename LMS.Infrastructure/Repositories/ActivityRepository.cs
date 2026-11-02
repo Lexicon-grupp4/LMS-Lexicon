@@ -58,7 +58,8 @@ namespace LMS.Infrastructure.Repositories
             int id,
             bool trackChanges = false)
         {
-            IQueryable<Activity> query = _context.Activities;
+            IQueryable<Activity> query = _context.Activities
+                .Include(a => a.ActionType);
 
             if (!trackChanges)
             {

@@ -102,7 +102,7 @@ else if (module is not null)
                     {
                         <li class="list-group-item d-flex flex-wrap justify-content-between gap-2" @key="activity.Id">
                             <div>
-                                <strong>@activity.Title</strong>
+                                <a class="fw-bold" href="@($"/activities/{activity.Id}")">@activity.Title</a>
                                 <span class="badge text-bg-light ms-2">@activity.ActionTypeName</span>
                             </div>
                             <span class="text-muted">
