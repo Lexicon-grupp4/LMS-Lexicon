@@ -100,6 +100,69 @@
                         <ValidationSummary />
                     </div>
 
+                    <!-- MODULE INFORMATION -->
+                    <div class="create-activity-info">
+
+                        <span class="create-activity-info-icon bi bi-info-circle"
+                              aria-hidden="true"></span>
+
+                        <div>
+                            <strong>@module.Name</strong>
+
+                            <p class="create-activity-period">
+                                @module.StartDate.ToString("yyyy-MM-dd")
+                                –
+                                @module.EndDate.ToString("yyyy-MM-dd")
+                            </p>
+
+                            <p>
+                                The activity must be scheduled within this
+                                period and must not overlap another activity
+                                in the module.
+                            </p>
+
+                            <div class="create-activity-periods">
+                                <div>
+                                    <strong>Booked</strong>
+
+                                    @if (bookedActivities.Count == 0)
+                                    {
+                                        <p>No activities created yet.</p>
+                                    }
+
+                                    @foreach (var booked in bookedActivities)
+                                    {
+                                        <p @key="booked.Id">
+                                            @booked.Title:
+                                            @booked.StartDate.ToString("yyyy-MM-dd HH:mm")
+                                            –
+                                            @booked.EndDate.ToString("yyyy-MM-dd HH:mm")
+                                        </p>
+                                    }
+                                </div>
+
+                                <div>
+                                    <strong>Available</strong>
+
+                                    @if (availablePeriods.Count == 0)
+                                    {
+                                        <p>No available dates</p>
+                                    }
+
+                                    @foreach (var period in availablePeriods)
+                                    {
+                                        <p @key="period.Start">
+                                            @period.Start.ToString("yyyy-MM-dd HH:mm")
+                                            –
+                                            @period.End.ToString("yyyy-MM-dd HH:mm")
+                                        </p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
                     <!-- ACTIVITY TYPE -->
                     <div>
 
@@ -201,30 +264,6 @@
 
                     </div>
 
-                    <!-- MODULE PERIOD INFO -->
-                    <div class="create-activity-info">
-
-                        <span class="create-activity-info-icon bi bi-info-circle"
-                              aria-hidden="true"></span>
-
-                        <div>
-                            <strong>Module Period</strong>
-
-                            <p class="create-activity-period">
-                                @module.StartDate.ToString("yyyy-MM-dd")
-                                –
-                                @module.EndDate.ToString("yyyy-MM-dd")
-                            </p>
-
-                            <p>
-                                The activity must be scheduled within this
-                                period and must not overlap another activity
-                                in the module.
-                            </p>
-                        </div>
-
-                    </div>
-
                 </div>
 
                 <!-- FORM FOOTER -->
@@ -270,9 +309,15 @@
     [Parameter]
     public int ModuleId { get; set; }
 
+    private sealed record DatePeriod(DateTime Start, DateTime End);
+
+    private static readonly TimeSpan DefaultDuration = TimeSpan.FromHours(1);
+
     private CreateActivityDto activity = new();
     private ModuleDto? module;
     private List<ActionTypeDto> actionTypes = new();
+    private List<ActivityDto> bookedActivities = [];
+    private List<DatePeriod> availablePeriods = [];
 
     private bool isLoading = true;
     private bool isSaving;
@@ -307,6 +352,27 @@
                 return;
             }
 
+            // Load booked activities, 100 is the API's largest page size
+            var activitiesResponse = await ApiProxyClient
+                .GetAsync<PagedResponse<ActivityDto>>(
+                    $"Activity/module/{ModuleId}?PageNumber=1&PageSize=100");
+
+            bookedActivities = activitiesResponse?.Items
+                .OrderBy(a => a.StartDate)
+                .ThenBy(a => a.Id)
+                .ToList() ?? [];
+
+            availablePeriods =
+                GetAvailablePeriods(module, bookedActivities);
+
+            var defaultPeriod = availablePeriods.FirstOrDefault()
+                ?? new DatePeriod(module.StartDate, module.EndDate);
+
+            activity.StartDate = defaultPeriod.Start;
+            activity.EndDate = defaultPeriod.Start + DefaultDuration < defaultPeriod.End
+                ? defaultPeriod.Start + DefaultDuration
+                : defaultPeriod.End;
+
             // Load action types from the paginated API response
             var response = await ApiProxyClient
                 .GetAsync<PagedResponse<ActionTypeDto>>("ActionType");
@@ -327,12 +393,47 @@
         }
         catch (Exception ex)
         {
+            // Without this data the form would show invalid defaults
+            module = null;
             errorMessage = ex.Message;
         }
         finally
         {
             isLoading = false;
         }
+    }
+
+    // Expects activities sorted by start time.
+    private static List<DatePeriod> GetAvailablePeriods(
+        ModuleDto module,
+        List<ActivityDto> activities)
+    {
+        var periods = new List<DatePeriod>();
+        var nextFree = module.StartDate;
+
+        foreach (var booked in activities)
+        {
+            var lastFree = booked.StartDate < module.EndDate
+                ? booked.StartDate
+                : module.EndDate;
+
+            if (nextFree < lastFree)
+            {
+                periods.Add(new DatePeriod(nextFree, lastFree));
+            }
+
+            if (booked.EndDate > nextFree)
+            {
+                nextFree = booked.EndDate;
+            }
+        }
+
+        if (nextFree < module.EndDate)
+        {
+            periods.Add(new DatePeriod(nextFree, module.EndDate));
+        }
+
+        return periods;
     }
 
     private async Task Create()
