@@ -80,11 +80,8 @@
     {
         try
         {
-            if (Type == "course")
-                documents = await ApiProxyClient.GetAsync<DocumentDto[]>($"documents/course/{Id}") ?? [];
-            else {
-                documents = await ApiProxyClient.GetAsync<DocumentDto[]>($"documents/module/{Id}") ?? [];
-            }
+            // Type is "course", "module" or "activity", matching the API route
+            documents = await ApiProxyClient.GetAsync<DocumentDto[]>($"documents/{Type}/{Id}") ?? [];
         }
         catch (Exception ex)
         {
