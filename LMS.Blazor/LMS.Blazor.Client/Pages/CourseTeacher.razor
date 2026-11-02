@@ -3,11 +3,14 @@
 
 @using LMS.Blazor.Client.Services.ApiProxy
 @using LMS.Shared.DTOs.CourseDtos
+@using LMS.Shared.DTOs.Module
+@using LMS.Shared.Paging
 
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize(Roles = "Teacher")]
 
 @inject IApiProxyClient ApiProxyClient
+@inject NavigationManager NavigationManager
 
 <PageTitle>Kurser</PageTitle>
 
@@ -22,13 +25,51 @@
             <div class="course-header">
                 <h2>@course.Name (@course.Code)</h2>
             </div>
-            <p>@course.Description ... <NavLink class="btn btn-sm btn-outline-secondary ms-2" href="@($"courses/edit/{id}")">Edit
+            <p>@course.Description ... <NavLink class="btn btn-sm btn-outline-secondary ms-2" href="@($"/course/edit/{id}")">Edit
             </NavLink>
         </p>
         <div class="course-dates">
             <span>@course.StartDate.ToShortDateString()</span> - <span>@course.EndDate.ToShortDateString()</span>
         </div>
     </section>
+
+    <section class="card modules-section">
+        <div class="modules-section-header">
+            <h2>Modules</h2>
+            <a class="btn btn-sm btn-primary d-inline-flex align-items-center justify-content-center gap-2"
+               href="@($"/modules/create/{id}")">
+                <span class="bi bi-plus-circle" aria-hidden="true"></span>
+                Add Module
+            </a>
+        </div>
+
+        @if (modulesError is not null)
+        {
+            <p class="alert alert-danger mb-0" role="alert">@modulesError</p>
+        }
+        else if (modules is null)
+        {
+            <p class="modules-empty">Loading...</p>
+        }
+        else if (modules.Count == 0)
+        {
+            <p class="modules-empty">No modules created yet.</p>
+        }
+        else
+        {
+            @foreach (var module in modules)
+            {
+                <a class="module-card" @key="module.Id" href="@($"/modules/{module.Id}/activities")">
+                    <div>
+                        <h3>@module.Name</h3>
+                        <p>@module.Description</p>
+                    </div>
+                    <span>@module.StartDate.ToShortDateString() - @module.EndDate.ToShortDateString()</span>
+                </a>
+            }
+        }
+    </section>
+
     <CourseDocuments Id="id" Type="course" />
 }
 </div>
@@ -37,9 +78,36 @@
     [Parameter] public int id { get; set; }
 
     private CourseDto? course;
+    private List<ModuleDto>? modules;
+    private string? modulesError;
 
     protected override async Task OnInitializedAsync()
     {
         course = await ApiProxyClient.GetAsync<CourseDto>($"courses/{id}");
+        await LoadModulesAsync();
+    }
+
+    private async Task LoadModulesAsync()
+    {
+        try
+        {
+            var response =
+                await ApiProxyClient.GetAsync<PagedResponse<ModuleDto>>(
+                    $"Module/course/{id}");
+
+            modules = response?.Items
+                .OrderBy(m => m.StartDate)
+                .ThenBy(m => m.Id)
+                .ToList() ?? [];
+        }
+        catch (UnauthorizedAccessException)
+        {
+            NavigationManager.NavigateTo(
+                "/Account/Login", forceLoad: true);
+        }
+        catch (Exception ex)
+        {
+            modulesError = ex.Message;
+        }
     }
 }

@@ -50,10 +50,30 @@
     color: var(--color-text-subtle);
 }
 
+.modules-section {
+    padding: 1.45rem 1.5rem;
+}
+
+.modules-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
 .modules-section h2 {
     font-size: 1.2rem;
     font-weight: 600;
-    margin-bottom: 1rem;
+    margin: 0;
+}
+
+.modules-empty {
+    margin: 0;
+    padding: 2rem 1rem;
+    text-align: center;
+    color: var(--color-text-subtle);
+    font-size: 0.86rem;
 }
 
 .module-card {
@@ -62,7 +82,24 @@
     justify-content: space-between;
     align-items: center;
     gap: 1rem;
+    text-decoration: none;
 }
+
+    .module-card:last-child {
+        margin-bottom: 0;
+    }
+
+    .module-card:hover {
+        border-color: var(--color-border-strong);
+    }
+
+    .module-card h3 {
+        font-size: 1rem;
+    }
+
+    .module-card p {
+        margin-bottom: 0;
+    }
 
     .module-card span {
         color: var(--color-info-bright);
