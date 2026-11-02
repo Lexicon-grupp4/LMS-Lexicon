@@ -120,6 +120,17 @@
     font-weight: 600;
 }
 
+.create-activity-periods {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 40px;
+    margin-top: 12px;
+}
+
+    .create-activity-periods strong {
+        margin-bottom: 4px;
+    }
+
 /* VALIDATION */
 
 .create-activity-validation ::deep .validation-summary-errors {
