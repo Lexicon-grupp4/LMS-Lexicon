@@ -93,7 +93,7 @@ public class CourseController(IServiceManager serviceManager) : ControllerBase
 
         var participants = await
         _serviceManager.UserService.GetCourseParticipantsAsync(user.CourseId.Value);
-        return Ok(participants);
+        return Ok(participants.Select(p => p with { Id = null }));
     }
 
     [HttpGet("{id:int}/participants")]
