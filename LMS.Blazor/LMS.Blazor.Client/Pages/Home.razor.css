@@ -473,6 +473,17 @@ a.dashboard-list-item:hover {
         font-size: 0.78rem;
     }
 
+.feedback-link {
+    color: var(--color-text);
+    font-weight: 650;
+    text-decoration: none;
+}
+
+    .feedback-link:hover {
+        color: var(--color-primary-dark);
+        text-decoration: underline;
+    }
+
 .grade-badge {
     display: flex;
     align-items: baseline;

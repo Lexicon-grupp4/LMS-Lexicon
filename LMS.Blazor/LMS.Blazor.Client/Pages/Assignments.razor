@@ -299,9 +299,20 @@
 
     private bool hasAssignments => assignments.Count > 0;
 
+    // Set by links such as the dashboard's recent feedback
+    [SupplyParameterFromQuery]
+    public int? ActivityId { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         await LoadAssignments();
+
+        // Only the student's own assignments are in the list, so other ids are ignored
+        var linked = assignments.FirstOrDefault(a => a.Id == ActivityId);
+        if (linked is not null)
+        {
+            await ViewDetails(linked);
+        }
     }
 
     private async Task LoadAssignments()
