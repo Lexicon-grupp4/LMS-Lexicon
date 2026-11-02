@@ -132,15 +132,17 @@
                             <tr>
 
                                 <td>
-                                    <span class="users-first-name">
+                                    <a class="users-first-name"
+                                       href="@DetailsUrl(user)">
                                         @user.FirstName
-                                    </span>
+                                    </a>
                                 </td>
 
                                 <td>
-                                    <span class="users-last-name">
+                                    <a class="users-last-name"
+                                       href="@DetailsUrl(user)">
                                         @user.LastName
-                                    </span>
+                                    </a>
                                 </td>
 
                                 <td class="users-email">
@@ -236,6 +238,12 @@
     private string searchTerm = string.Empty;
 
     private const int PageSize = 10;
+
+    // Students have an overview page; teachers open the edit form
+    private static string DetailsUrl(UserDto user) =>
+        user.Role == "Student"
+            ? $"/students/{user.Id}"
+            : $"/users/edit/{user.Id}";
 
     protected override async Task OnInitializedAsync()
     {
