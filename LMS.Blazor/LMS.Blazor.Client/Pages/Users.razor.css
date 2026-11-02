@@ -100,7 +100,14 @@
 .users-last-name {
     color: var(--color-text-strong);
     font-weight: 600;
+    text-decoration: none;
 }
+
+    .users-first-name:hover,
+    .users-last-name:hover {
+        color: var(--color-primary-dark);
+        text-decoration: underline;
+    }
 
 .users-email {
     color: var(--color-text-subtle) !important;
