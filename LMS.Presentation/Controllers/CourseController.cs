@@ -96,6 +96,23 @@ public class CourseController(IServiceManager serviceManager) : ControllerBase
         return Ok(participants);
     }
 
+    [HttpGet("{id:int}/participants")]
+    [Authorize(Roles = "Teacher")]
+    [SwaggerOperation(Summary = "Course participants", Description = "Returns the participants of a course")]
+    [SwaggerResponse(StatusCodes.Status200OK, "successful", typeof(IEnumerable<CourseParticipantDto>))]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "unauthorized")]
+    [SwaggerResponse(StatusCodes.Status403Forbidden, "forbidden")]
+    [SwaggerResponse(StatusCodes.Status404NotFound, "not found")]
+    public async Task<ActionResult<IEnumerable<CourseParticipantDto>>> GetCourseParticipants(int id)
+    {
+        if (await _serviceManager.CourseService.GetCourseAsync(id) is null)
+            return NotFound();
+
+        var participants = await
+        _serviceManager.UserService.GetCourseParticipantsAsync(id);
+        return Ok(participants);
+    }
+
     [HttpPost]
     [Authorize(Roles = "Teacher")]
     [SwaggerOperation(Summary = "New course", Description = "New course desc")]

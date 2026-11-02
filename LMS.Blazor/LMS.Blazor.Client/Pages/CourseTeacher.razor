@@ -4,6 +4,7 @@
 @using LMS.Blazor.Client.Services.ApiProxy
 @using LMS.Shared.DTOs.CourseDtos
 @using LMS.Shared.DTOs.Module
+@using LMS.Shared.DTOs.UserDtos
 @using LMS.Shared.Paging
 
 @using Microsoft.AspNetCore.Authorization
@@ -70,6 +71,53 @@
         }
     </section>
 
+    <section class="card modules-section">
+        <div class="modules-section-header">
+            <h2>Participants</h2>
+            @if (participants is not null)
+            {
+                <span class="participants-count">@participants.Count participants</span>
+            }
+        </div>
+
+        @if (participantsError is not null)
+        {
+            <p class="alert alert-danger mb-0" role="alert">@participantsError</p>
+        }
+        else if (participants is null)
+        {
+            <p class="modules-empty">Loading...</p>
+        }
+        else if (participants.Count == 0)
+        {
+            <p class="modules-empty">No participants yet.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var participant in participants)
+                        {
+                            <tr @key="participant.Email">
+                                <td>@participant.FirstName @participant.LastName</td>
+                                <td>@participant.Email</td>
+                                <td>@participant.Role</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
+
     <CourseDocuments Id="id" Type="course" />
 }
 </div>
@@ -80,11 +128,40 @@
     private CourseDto? course;
     private List<ModuleDto>? modules;
     private string? modulesError;
+    private List<CourseParticipantDto>? participants;
+    private string? participantsError;
 
     protected override async Task OnInitializedAsync()
     {
         course = await ApiProxyClient.GetAsync<CourseDto>($"courses/{id}");
         await LoadModulesAsync();
+        await LoadParticipantsAsync();
+    }
+
+    private async Task LoadParticipantsAsync()
+    {
+        try
+        {
+            var response =
+                await ApiProxyClient.GetAsync<List<CourseParticipantDto>>(
+                    $"courses/{id}/participants");
+
+            // Teachers first, then by name
+            participants = response?
+                .OrderByDescending(p => p.Role == "Teacher")
+                .ThenBy(p => p.LastName)
+                .ThenBy(p => p.FirstName)
+                .ToList() ?? [];
+        }
+        catch (UnauthorizedAccessException)
+        {
+            NavigationManager.NavigateTo(
+                "/Account/Login", forceLoad: true);
+        }
+        catch (Exception ex)
+        {
+            participantsError = ex.Message;
+        }
     }
 
     private async Task LoadModulesAsync()

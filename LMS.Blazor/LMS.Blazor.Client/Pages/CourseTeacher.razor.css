@@ -54,6 +54,16 @@
     padding: 1.45rem 1.5rem;
 }
 
+    .modules-section + .modules-section {
+        margin-top: 1.35rem;
+    }
+
+.participants-count {
+    color: var(--color-text-subtle);
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
 .modules-section-header {
     display: flex;
     align-items: center;
